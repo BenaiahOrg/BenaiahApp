@@ -1,0 +1,12 @@
+name: feature
+description: Generates a full feature module with clean architecture (no use cases). Includes data, domain, and presentation layers with injectable annotations.
+version: 0.1.0+1
+
+environment:
+  mason: ^0.1.2
+
+vars:
+  name:
+    type: string
+    description: The feature name (e.g., auth, video, messaging)
+    prompt: What is the feature name?
