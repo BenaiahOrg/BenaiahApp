@@ -1,0 +1,16 @@
+name: page
+description: Adds a new page to an existing feature with screen, sections, and widgets structure. Uses part/part of for private classes.
+version: 0.1.0+1
+
+environment:
+  mason: ^0.1.2
+
+vars:
+  feature:
+    type: string
+    description: The feature this page belongs to (e.g., auth, video)
+    prompt: Which feature does this page belong to?
+  name:
+    type: string
+    description: The page name (e.g., login, register)
+    prompt: What is the page name?
