@@ -1,6 +1,6 @@
+import 'package:benaiah_app/core/network/http_client.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:benaiah_app/core/network/http_client.dart';
 
 @LazySingleton(as: HttpClient)
 class DioHttpClient implements HttpClient {

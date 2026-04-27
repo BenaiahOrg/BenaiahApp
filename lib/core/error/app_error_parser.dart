@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:benaiah_app/core/error/app_error.dart';
+import 'package:dio/dio.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 final class AppErrorParser {
@@ -34,8 +34,7 @@ final class AppErrorParser {
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode ?? 0;
         final data = error.response?.data;
-        final message =
-            _extractMessage(data) ?? _fallbackForCode(statusCode);
+        final message = _extractMessage(data) ?? _fallbackForCode(statusCode);
         return ServerError(
           statusCode: statusCode,
           message: message,
@@ -55,19 +54,18 @@ final class AppErrorParser {
 
   static String? _extractMessage(dynamic data) {
     if (data is Map<String, dynamic>) {
-      return data['message'] as String? ??
-          data['error'] as String?;
+      return data['message'] as String? ?? data['error'] as String?;
     }
     return null;
   }
 
   static String _fallbackForCode(int code) => switch (code) {
-        400 => 'Bad request.',
-        401 => 'Session expired. Please log in again.',
-        403 => 'You do not have permission to do that.',
-        404 => 'Resource not found.',
-        429 => 'Too many requests. Please slow down.',
-        >= 500 => 'Server error. Our team has been notified.',
-        _ => 'An unexpected error occurred.',
-      };
+    400 => 'Bad request.',
+    401 => 'Session expired. Please log in again.',
+    403 => 'You do not have permission to do that.',
+    404 => 'Resource not found.',
+    429 => 'Too many requests. Please slow down.',
+    >= 500 => 'Server error. Our team has been notified.',
+    _ => 'An unexpected error occurred.',
+  };
 }

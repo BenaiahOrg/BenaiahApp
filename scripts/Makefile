@@ -12,17 +12,17 @@ PURO := $(shell command -v puro 2>/dev/null)
 FVM := $(shell command -v fvm 2>/dev/null)
 
 ifneq ($(PURO),)
-	FLUTTER := puro flutter
-	DART := puro dart
-	$(info ▸ Using Puro for Flutter/Dart)
+FLUTTER := puro flutter
+DART := puro dart
+$(info ▸ Using Puro for Flutter/Dart)
 else ifneq ($(FVM),)
-	FLUTTER := fvm flutter
-	DART := fvm dart
-	$(info ▸ Using FVM for Flutter/Dart)
+FLUTTER := fvm flutter
+DART := fvm dart
+$(info ▸ Using FVM for Flutter/Dart)
 else
-	FLUTTER := flutter
-	DART := dart
-	$(info ▸ Using Global Flutter/Dart)
+FLUTTER := flutter
+DART := dart
+$(info ▸ Using Global Flutter/Dart)
 endif
 
 FLUTTERGEN := $(DART) pub global run flutter_gen:flutter_gen_command

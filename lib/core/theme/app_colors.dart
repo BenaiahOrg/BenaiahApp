@@ -9,20 +9,20 @@ abstract class AppColors {
   static const darkGrey = Color(0xFF212121);
 
   // Light Theme (Mainly White background, Black accents)
-  static const lightPrimary = black;
-  static const lightOnPrimary = white;
-  static const lightBackground = white;
-  static const lightOnBackground = black;
-  static const lightSurface = white;
-  static const lightOnSurface = black;
+  static const Color lightPrimary = black;
+  static const Color lightOnPrimary = white;
+  static const Color lightBackground = white;
+  static const Color lightOnBackground = black;
+  static const Color lightSurface = white;
+  static const Color lightOnSurface = black;
   static const lightError = Color(0xFFB3261E);
 
   // Dark Theme (Mainly Black background, White accents)
-  static const darkPrimary = white;
-  static const darkOnPrimary = black;
-  static const darkBackground = black;
-  static const darkOnBackground = white;
-  static const darkSurface = darkGrey;
-  static const darkOnSurface = white;
+  static const Color darkPrimary = white;
+  static const Color darkOnPrimary = black;
+  static const Color darkBackground = black;
+  static const Color darkOnBackground = white;
+  static const Color darkSurface = darkGrey;
+  static const Color darkOnSurface = white;
   static const darkError = Color(0xFFF2B8B5);
 }

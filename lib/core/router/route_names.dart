@@ -1,3 +1,5 @@
 abstract class RouteNames {
-  static const home = 'home';
+  static const home = '/';
+  static const about = '/about';
+  static const settings = '/settings';
 }
