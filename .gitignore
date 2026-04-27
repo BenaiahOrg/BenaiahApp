@@ -79,3 +79,5 @@ secrets.json
 
 # FVM Version Cache
 .fvm/
+# Project Documentation
+docs/

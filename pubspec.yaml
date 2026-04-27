@@ -31,6 +31,7 @@ dev_dependencies:
   build_runner: ^2.4.0
   flutter_flavorizr: 2.4.2
   flutter_gen_runner: ^5.13.0+1
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   freezed: ^3.2.5
@@ -38,6 +39,13 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^4.0.0
   very_good_analysis: ^10.2.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon_white.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icons/app_icon_white.png"
 
 flavorizr:
   flavors:
@@ -73,3 +81,12 @@ flutter:
     - assets/translations/
     - assets/images/
     - assets/icons/
+    - assets/fonts/
+
+  fonts:
+    - family: BenaiahEn
+      fonts:
+        - asset: assets/fonts/Benaiah_en.ttf
+    - family: BenaiahAm
+      fonts:
+        - asset: assets/fonts/Benaiah_am.ttf
