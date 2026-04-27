@@ -1,4 +1,4 @@
-package com.example.benaiah_app
+package org.benaiah.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -45,23 +45,23 @@ flavorizr:
       app:
         name: "Benaiah [DEV]"
       android:
-        applicationId: "com.benaiah.app.dev"
+        applicationId: "org.benaiah.app.dev"
       ios:
-        bundleId: "com.benaiah.app.dev"
+        bundleId: "org.benaiah.app.dev"
     qa:
       app:
         name: "Benaiah [QA]"
       android:
-        applicationId: "com.benaiah.app.qa"
+        applicationId: "org.benaiah.app.qa"
       ios:
-        bundleId: "com.benaiah.app.qa"
+        bundleId: "org.benaiah.app.qa"
     prod:
       app:
         name: "Benaiah"
       android:
-        applicationId: "com.benaiah.app"
+        applicationId: "org.benaiah.app"
       ios:
-        bundleId: "com.benaiah.app"
+        bundleId: "org.benaiah.app"
 
 flutter_gen:
   output: lib/gen/
