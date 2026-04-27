@@ -41,8 +41,6 @@ void main() async {
           supportedLocales: const [
             Locale('en'),
             Locale('am'),
-            Locale('om'),
-            Locale('ti'),
           ],
           path: 'assets/translations/langs.csv',
           fallbackLocale: const Locale('en'),
