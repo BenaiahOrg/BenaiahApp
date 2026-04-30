@@ -1,0 +1,116 @@
+[
+  {
+    "series": "Love, Faith and Hope",
+    "topics": [
+      {
+        "id": "love",
+        "title": "Love",
+        "devotional": {
+          "title": "True Love",
+          "content": "One of the fruit of the Holy Spirit is love. Galatians 5:22. The kind of love that God has for us is unconditional and everlasting. In 1 Corinthians 13, the Bible gives us a clear picture of what love is. Love is patient, love is kind. It does not envy, it does not boast, it is not proud. It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. Love does not delight in evil but rejoices with the truth. It always protects, always trusts, always hopes, always perseveres. Love never fails.\n\nGod is love. He showed his love for us by sending his one and only Son into the world that we might live through him. This is love: not that we loved God, but that he loved us and sent his Son as an atoning sacrifice for our sins. Since God so loved us, we also ought to love one another. No one has ever seen God; but if we love one another, God lives in us and his love is made complete in us."
+        },
+        "study_material": {
+          "title": "A Love Like No Other",
+          "content": "The study of God's love is central to the Christian faith. It is not just an emotion, but a commitment and an action. The Greek word 'Agape' is used to describe the highest form of love, charity, and the love of God for man and of man for God. This love is selfless and sacrificial.\n\nKey scriptures to study:\n- John 3:16\n- 1 John 4:7-21\n- Ephesians 3:17-19"
+        }
+      },
+      {
+        "id": "faith",
+        "title": "Faith",
+        "devotional": {
+          "title": "Trusting Daily",
+          "content": "Faith is being sure of what we hope for and certain of what we do not see. Hebrews 11:1. It is the foundation of our relationship with God. Without faith, it is impossible to please God. Faith is not just a one-time decision, but a daily walk of trust. Even when we don't understand the 'why' or 'how', we trust in the 'Who'.\n\nAbraham is often called the father of faith. He left his home and went to a place he did not know, simply because God told him to. He believed God's promise of a son even when it seemed physically impossible. Our faith grows as we spend time in God's word and see His faithfulness in our lives."
+        },
+        "study_material": {
+          "title": "A CALL TO THE UNKNOWN",
+          "content": "Faith requires action. James tells us that faith without works is dead. This doesn't mean we are saved by our works, but that true faith naturally produces good works. Study the 'Hall of Faith' in Hebrews 11 to see how faith manifested in the lives of various biblical figures.\n\nReflect on:\n- How does faith impact your decisions?\n- What are the obstacles to your faith?\n- How can you strengthen your trust in God today?"
+        }
+      },
+      {
+        "id": "hope",
+        "title": "Hope",
+        "devotional": {
+          "title": "The Authenticity of the Sailor",
+          "content": "We have this hope as an anchor for the soul, firm and secure. Hebrews 6:19. In the midst of the storms of life, hope keeps us steady. It is not a wishful thinking, but a confident expectation based on God's promises. Our hope is not in our circumstances, but in the resurrected Christ.\n\nWhen everything around us seems to be falling apart, we can look to the one who holds all things together. Hope gives us the strength to endure and the courage to keep moving forward. It is a light that shines in the darkness, reminding us that the best is yet to come."
+        },
+        "study_material": {
+          "title": "A Reality Beyond Feelings",
+          "content": "Hope is rooted in the character of God. Because God is faithful, our hope is secure. This study explores the difference between worldly hope and biblical hope. Worldly hope is uncertain, while biblical hope is a certainty.\n\nScriptures to explore:\n- Romans 5:1-5\n- 1 Peter 1:3-9\n- Psalm 42:11"
+        }
+      }
+    ]
+  },
+  {
+    "series": "Names of God",
+    "topics": [
+      {
+        "id": "jehovah-jireh",
+        "title": "Jehovah Jireh",
+        "devotional": {
+          "title": "Jehovah Jireh — The Lord Our Provider",
+          "content": "The name Jehovah Jireh was first used by Abraham on Mount Moriah. When God asked him to sacrifice his only son Isaac, Abraham obeyed. Just as he was about to do it, God provided a ram caught in a thicket. Abraham called the place 'The Lord Will Provide'.\n\nGod knows our needs even before we ask. He is our source of everything. Whether it's physical, emotional, or spiritual needs, He is faithful to provide. We can trust Him with our future, knowing that He has already gone before us and made a way."
+        }
+      },
+      {
+        "id": "jehovah-shalom",
+        "title": "Jehovah Shalom",
+        "devotional": {
+          "title": "Jehovah Shalom — The Lord Our Peace",
+          "content": "In a world full of stress, depression, and anxiety, we find our hearts troubled. But Jesus, the Prince of Peace, tells us 'Let not your heart be troubled'. One of the fruits of the Spirit is peace. The only way we have true peace is through the Holy Spirit. His residence in us brings peace that transcends all understanding.\n\nGod is peace. He is faithful to lift up our hearts and raise our spirits. In Him lies rest. He is the God who listens to our hearts; we just need to ask for help."
+        },
+        "study_material": {
+          "title": "Jehovah Shalom",
+          "content": "God revealed Himself as Jehovah Shalom to Gideon. Gideon was full of fear, threshing wheat in a winepress to hide from the Midianites. God called him a 'Mighty Warrior' and reassured him, 'Peace be with you'.\n\nJehovah Shalom speaks boldly that the Lord doesn't only give peace; He is peace itself. In Him we find perfect wholeness, a sound mind, and sweet sleep. True peace is not the absence of trouble, but the presence of God in the midst of it."
+        }
+      },
+      {
+        "id": "jehovah-rapha",
+        "title": "Jehovah Rapha",
+        "devotional": {
+          "title": "Jehovah Rapha — The Lord Our Healer",
+          "content": "God reveals himself as the healer. Whether it's physical healing, emotional mending, or spiritual restoration, Jehovah Rapha is the one who makes us whole. He told the Israelites, 'I am the LORD who heals you' (Exodus 15:26). In a broken world, we all need His healing touch."
+        }
+      },
+      {
+        "id": "jehovah-goel",
+        "title": "Jehovah Goel",
+        "devotional": {
+          "title": "Jehovah Goel — The Lord Our Redeemer",
+          "content": "He exchanged his soul for mine. He bought me back with his own life. He gave himself away to return me home. He redeemed me. What power does a dead person have, if not for the man of redemption who comes and brings it back to life?"
+        }
+      },
+      {
+        "id": "jehovah-immeka",
+        "title": "Jehovah Immeka",
+        "devotional": {
+          "title": "Jehovah Immeka — The Lord Is With You",
+          "content": "As lonely as it gets, and as the comfort of the world flees, I know my lover is there. On my lowest days, he will guide; he will sit with the brokenhearted and listen to their cry. In his presence, my wounds are tended, my sorrow met with grace, and my weakness clothed in strength. He is with us always, to the very end of the age."
+        }
+      },
+      {
+        "id": "jehovah-bora",
+        "title": "Jehovah Bora",
+        "devotional": {
+          "title": "Jehovah Bora — The Lord Our Creator",
+          "content": "Everything was created by God and for His glory, including you. You weren't an accident. The same God who shaped the galaxies handcrafted you, uniquely and wonderfully. You were made to reflect His greatness and beauty in ways that no one else can. You bear His very image."
+        }
+      },
+      {
+        "id": "jehovah-maoz",
+        "title": "Jehovah Maoz",
+        "devotional": {
+          "title": "Jehovah Maoz — The Lord Our Fortress",
+          "content": "God is our refuge, our safe place, our unshakable foundation. If the One who created the heavens and the earth is holding onto us, what challenge could possibly overpower us? Christ is our shelter, our source of strength, and our victory. With Him, we can face anything."
+        }
+      },
+      {
+        "id": "jehovah-kanna",
+        "title": "Jehovah Kanna",
+        "devotional": {
+          "title": "Jehovah Kanna — The Lord Our Jealous God",
+          "content": "God identified Himself as a jealous God (El Qanna). This jealousy stems from love, not lack. He created us out of His abundant love and has always devoted Himself to humanity. In return, He expects us to worship Him with hearts fully devoted to Him. He cannot bear to see us belong to others when He created us to be His."
+        }
+      }
+    ]
+  }
+]

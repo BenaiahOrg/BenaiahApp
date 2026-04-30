@@ -23,6 +23,14 @@ import 'package:benaiah_app/features/about/data/repositories/about_repository_im
     as _i122;
 import 'package:benaiah_app/features/about/domain/repositories/about_repository.dart'
     as _i53;
+import 'package:benaiah_app/features/content/data/data_sources/content_local_data_source.dart'
+    as _i729;
+import 'package:benaiah_app/features/content/data/data_sources/content_remote_data_source.dart'
+    as _i660;
+import 'package:benaiah_app/features/content/data/repositories/content_repository_impl.dart'
+    as _i474;
+import 'package:benaiah_app/features/content/domain/repositories/content_repository.dart'
+    as _i426;
 import 'package:benaiah_app/features/home/data/data_sources/home_local_data_source.dart'
     as _i451;
 import 'package:benaiah_app/features/home/data/data_sources/home_remote_data_source.dart'
@@ -64,6 +72,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.secureStorage,
     );
+    gh.lazySingleton<_i729.ContentLocalDataSource>(
+      () => _i729.ContentLocalDataSourceImpl(),
+    );
     gh.lazySingleton<_i451.HomeLocalDataSource>(
       () => _i451.HomeLocalDataSourceImpl(),
     );
@@ -91,6 +102,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i65.SettingsRemoteDataSource>(
       () => _i65.SettingsRemoteDataSourceImpl(gh<_i751.HttpClient>()),
     );
+    gh.lazySingleton<_i660.ContentRemoteDataSource>(
+      () => _i660.ContentRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+    );
     gh.lazySingleton<_i402.HomeRemoteDataSource>(
       () => _i402.HomeRemoteDataSourceImpl(gh<_i751.HttpClient>()),
     );
@@ -98,6 +112,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i222.HomeRepositoryImpl(
         gh<_i402.HomeRemoteDataSource>(),
         gh<_i451.HomeLocalDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i426.ContentRepository>(
+      () => _i474.ContentRepositoryImpl(
+        gh<_i660.ContentRemoteDataSource>(),
+        gh<_i729.ContentLocalDataSource>(),
       ),
     );
     gh.lazySingleton<_i292.SettingsRepository>(
