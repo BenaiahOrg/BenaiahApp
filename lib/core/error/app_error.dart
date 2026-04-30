@@ -1,4 +1,4 @@
-sealed class AppError {
+sealed class AppError implements Exception {
   const AppError();
 
   String get userMessage;

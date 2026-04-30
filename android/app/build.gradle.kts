@@ -39,16 +39,25 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            storeFile = rootProject.file("../${debugKeyProperties["storeFile"]}")
+            storeFile = rootProject.file("../${debugKeyProperties["storeFile"] ?: "debug.keystore"}")
             storePassword = debugKeyProperties["storePassword"]
             keyAlias = debugKeyProperties["keyAlias"]
             keyPassword = debugKeyProperties["keyPassword"]
         }
         create("release") {
-            storeFile = rootProject.file("../${releaseKeyProperties["storeFile"]}")
-            storePassword = releaseKeyProperties["storePassword"]
-            keyAlias = releaseKeyProperties["keyAlias"]
-            keyPassword = releaseKeyProperties["keyPassword"]
+            val storeFilePath = releaseKeyProperties["storeFile"]
+            if (storeFilePath != null) {
+                storeFile = rootProject.file("../$storeFilePath")
+                storePassword = releaseKeyProperties["storePassword"]
+                keyAlias = releaseKeyProperties["keyAlias"]
+                keyPassword = releaseKeyProperties["keyPassword"]
+            } else {
+                // Fallback to debug if release keys are missing
+                storeFile = rootProject.file("../${debugKeyProperties["storeFile"] ?: "debug.keystore"}")
+                storePassword = debugKeyProperties["storePassword"]
+                keyAlias = debugKeyProperties["keyAlias"]
+                keyPassword = debugKeyProperties["keyPassword"]
+            }
         }
     }
 

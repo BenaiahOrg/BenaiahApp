@@ -11,6 +11,16 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsDataGen {
+  const $AssetsDataGen();
+
+  /// File path: assets/data/benaiah_content.json
+  String get benaiahContent => 'assets/data/benaiah_content.json';
+
+  /// List of all assets
+  List<String> get values => [benaiahContent];
+}
+
 class $AssetsFontsGen {
   const $AssetsFontsGen();
 
@@ -67,6 +77,7 @@ class $AssetsTranslationsGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsDataGen data = $AssetsDataGen();
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();

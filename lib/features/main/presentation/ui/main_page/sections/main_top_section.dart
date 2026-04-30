@@ -9,7 +9,9 @@ class _MainTopSection extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     // Only show the shared AppBar for Home and Settings.
     // About page handles its own SliverAppBar.
-    if (location == RouteNames.about) return const SizedBox.shrink();
+    if (location == RouteNames.about || location == RouteNames.home) {
+      return const SizedBox.shrink();
+    }
 
     return AppBar(
       title: Text(_getTitle(location).tr()),
@@ -22,7 +24,7 @@ class _MainTopSection extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => location == RouteNames.about 
+  Size get preferredSize => (location == RouteNames.about || location == RouteNames.home)
       ? Size.zero 
       : const Size.fromHeight(kToolbarHeight);
 }
