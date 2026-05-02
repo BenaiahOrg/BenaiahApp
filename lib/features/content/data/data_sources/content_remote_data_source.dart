@@ -78,8 +78,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
                     : 'Study material coming soon...',
                 authors: const [defaultAuthor],
               ),
-              graphics: const TopicContent(
-                data: [],
+              graphics: TopicContent(
+                data: [_getImageUrl(i + j + 100)],
                 authors: [defaultAuthor],
               ),
             ),
