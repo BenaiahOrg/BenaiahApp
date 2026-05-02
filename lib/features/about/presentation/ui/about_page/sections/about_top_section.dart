@@ -11,13 +11,28 @@ class _AboutTopSection extends StatelessWidget {
       expandedHeight: 350,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          'about'.tr(),
-          style: TextStyle(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : Colors.black,
-          ),
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            final settings = context.dependOnInheritedWidgetOfExactType<
+                FlexibleSpaceBarSettings>();
+            final isCollapsed = settings != null &&
+                settings.currentExtent <=
+                    settings.minExtent + (MediaQuery.of(context).padding.top);
+
+            return AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isCollapsed ? 1.0 : 0.0,
+              child: Text(
+                'about'.tr(),
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
         ),
         centerTitle: true,
         background: ColoredBox(
