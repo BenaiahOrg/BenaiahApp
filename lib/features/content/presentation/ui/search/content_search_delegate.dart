@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:benaiah_app/core/router/route_names.dart';
+import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/features/content/presentation/providers/series_list_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -89,11 +90,10 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                 (s) => ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      s.imageUrl,
+                    child: BenaiahNetworkImage(
+                      imageUrl: s.imageUrl,
                       width: 50,
                       height: 50,
-                      fit: BoxFit.cover,
                     ),
                   ),
                   title: Text(s.title),
@@ -131,11 +131,10 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                 return ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      imageUrl,
+                    child: BenaiahNetworkImage(
+                      imageUrl: imageUrl,
                       width: 50,
                       height: 50,
-                      fit: BoxFit.cover,
                     ),
                   ),
                   title: Text(t.title),

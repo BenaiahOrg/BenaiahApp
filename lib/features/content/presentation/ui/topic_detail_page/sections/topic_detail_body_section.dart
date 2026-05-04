@@ -66,15 +66,8 @@ class _TopicDetailBodySection extends ConsumerWidget {
                             if (imageUrl.isNotEmpty)
                               Hero(
                                 tag: 'topic_image_${topic.id}',
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Container(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                  ),
+                                child: BenaiahNetworkImage(
+                                  imageUrl: imageUrl,
                                 ),
                               )
                             else
@@ -133,7 +126,9 @@ class _TopicDetailBodySection extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Text(
-          error is AppError ? error.userMessage : 'Error: {}'.tr(args: [error.toString()]),
+          error is AppError
+              ? error.userMessage
+              : 'Error: {}'.tr(args: [error.toString()]),
           textAlign: TextAlign.center,
         ),
       ),
@@ -151,15 +146,6 @@ class _AuthorInfoRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: author.profileImageUrl != null
-                ? NetworkImage(author.profileImageUrl!)
-                : null,
-            child: author.profileImageUrl == null
-                ? Text(author.name[0].toUpperCase())
-                : null,
-          ),
           const SizedBox(width: 12),
           Text(
             author.name,
@@ -352,9 +338,8 @@ class _GraphicItem extends StatelessWidget {
             child: Stack(
               alignment: Alignment.bottomRight,
               children: [
-                Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
+                BenaiahNetworkImage(
+                  imageUrl: imageUrl,
                   width: double.infinity,
                 ),
                 Container(

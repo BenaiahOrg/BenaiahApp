@@ -10,7 +10,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
     final seriesAsync = ref.watch(seriesDetailProvider(seriesId));
 
     return seriesAsync.when(
-      data: (Series series) {
+      data: (series) {
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -20,7 +20,8 @@ class _SeriesDetailBodySection extends ConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.surface,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
-                  final isCollapsed = constraints.biggest.height <=
+                  final isCollapsed =
+                      constraints.biggest.height <=
                       kToolbarHeight + MediaQuery.of(context).padding.top + 16;
                   final titleColor = isCollapsed
                       ? Theme.of(context).colorScheme.onSurface
@@ -34,25 +35,24 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.network(
-                      series.imageUrl,
-                      fit: BoxFit.cover,
-                    ),
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black87],
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        BenaiahNetworkImage(
+                          imageUrl: series.imageUrl,
                         ),
-                      ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black87],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
+                  );
                 },
               ),
             ),
@@ -65,23 +65,23 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                     Text(
                       'About this series'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       series.description,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.grey[700],
-                            height: 1.5,
-                          ),
+                        color: Colors.grey[700],
+                        height: 1.5,
+                      ),
                     ),
                     const SizedBox(height: 32),
                     Text(
                       'Topics'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -104,9 +104,13 @@ class _SeriesDetailBodySection extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (Object error, StackTrace stack) => Center(
+      error: (error, stack) => Center(
         child: Text(
-          error is AppError ? error.userMessage : 'Error: {}'.tr(args: [error.toString()]),
+          error is AppError
+              ? error.userMessage
+              : 'Error: {}'.tr(
+                  args: [error.toString()],
+                ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -139,11 +143,10 @@ class _TopicItem extends StatelessWidget {
         leading: topic.graphics.data.isNotEmpty
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  topic.graphics.data.first,
+                child: BenaiahNetworkImage(
+                  imageUrl: topic.graphics.data.first,
                   width: 56,
                   height: 56,
-                  fit: BoxFit.cover,
                 ),
               )
             : Container(
@@ -153,7 +156,10 @@ class _TopicItem extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.article, color: Theme.of(context).colorScheme.primary),
+                child: Icon(
+                  Icons.article,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
         title: Text(
           topic.title,

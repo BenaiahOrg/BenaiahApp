@@ -104,7 +104,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
         .take(5)
         .toList();
 
-    var initialPage = _featuredTopics.isNotEmpty
+    final initialPage = _featuredTopics.isNotEmpty
         ? _featuredTopics.length ~/ 2
         : 0;
     _currentPage = initialPage;
@@ -218,9 +218,8 @@ class _FeaturedTopicHero extends StatelessWidget {
             if (hasImage)
               Hero(
                 tag: 'topic_image_${topic.id}',
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
+                child: BenaiahNetworkImage(
+                  imageUrl: imageUrl,
                 ),
               ),
             // Gradient Overlay
@@ -327,6 +326,7 @@ class _SeriesCard extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
@@ -336,10 +336,9 @@ class _SeriesCard extends StatelessWidget {
                     offset: const Offset(0, 4),
                   ),
                 ],
-                image: DecorationImage(
-                  image: NetworkImage(series.imageUrl),
-                  fit: BoxFit.cover,
-                ),
+              ),
+              child: BenaiahNetworkImage(
+                imageUrl: series.imageUrl,
               ),
             ),
           ),
