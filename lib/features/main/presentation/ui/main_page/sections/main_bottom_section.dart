@@ -17,12 +17,12 @@ class _MainBottomSection extends ConsumerWidget {
         BottomNavigationBarItem(
           icon: const Icon(Icons.home_outlined),
           activeIcon: const Icon(Icons.home),
-          label: 'home'.tr(),
+          label: 'Home'.tr(),
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.settings_outlined),
           activeIcon: const Icon(Icons.settings),
-          label: 'settings'.tr(),
+          label: 'Settings'.tr(),
         ),
       ],
     );

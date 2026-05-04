@@ -9,11 +9,11 @@ class _MainScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final location = GoRouterState.of(context).uri.path;
 
+    final isSpecialPage = location == RouteNames.home || location == RouteNames.about;
+
     return Scaffold(
-      appBar: _MainTopSection(location: location),
-      body: SafeArea(
-        child: child,
-      ),
+      appBar: isSpecialPage ? null : _MainTopSection(location: location),
+      body: isSpecialPage ? child : SafeArea(child: child),
       bottomNavigationBar: const _MainBottomSection(),
     );
   }

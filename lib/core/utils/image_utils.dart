@@ -16,14 +16,15 @@ class ImageUtils {
       }
 
       final tempDir = await getTemporaryDirectory();
-      final path = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      
+      final path =
+          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
       await _dio.download(url, path);
       await Gal.putImage(path);
-      
+
       // Clean up
       final file = File(path);
-      if (await file.exists()) {
+      if (file.existsSync()) {
         await file.delete();
       }
     } catch (e) {
@@ -34,11 +35,17 @@ class ImageUtils {
   static Future<void> shareImage(String url, String title) async {
     try {
       final tempDir = await getTemporaryDirectory();
-      final path = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      
+      final path =
+          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
       await _dio.download(url, path);
-      await Share.shareXFiles([XFile(path)], text: title);
-      
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(path)],
+          text: title,
+        ),
+      );
+
       // We don't delete immediately because share might need the file
       // In a real app we might want to clean up later
     } catch (e) {

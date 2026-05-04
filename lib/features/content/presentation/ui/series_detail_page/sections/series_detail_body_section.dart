@@ -63,7 +63,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'About this series',
+                      'About this series'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -78,7 +78,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                     ),
                     const SizedBox(height: 32),
                     Text(
-                      'Topics',
+                      'Topics'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -106,7 +106,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (Object error, StackTrace stack) => Center(
         child: Text(
-          error is AppError ? error.userMessage : 'Error: $error',
+          error is AppError ? error.userMessage : 'Error: {}'.tr(args: [error.toString()]),
           textAlign: TextAlign.center,
         ),
       ),
@@ -162,7 +162,7 @@ class _TopicItem extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        subtitle: const Text('Read devotional & study material'),
+        subtitle: Text('Read devotional & study material'.tr()),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: () {
           unawaited(

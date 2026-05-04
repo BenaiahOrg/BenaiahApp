@@ -7,25 +7,28 @@ class _HomeTopSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       floating: true,
+      snap: true,
       centerTitle: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Colors.transparent,
-      toolbarHeight: 70,
+      toolbarHeight: 50,
       title: Text(
-        'BENAIAH',
+        'BENAIAH'.tr(),
         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
+          fontWeight: FontWeight.w900,
+          letterSpacing: 2,
+        ),
       ),
       actions: [
         Consumer(
           builder: (context, ref, child) {
             return IconButton(
               onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: ContentSearchDelegate(ref),
+                unawaited(
+                  showSearch(
+                    context: context,
+                    delegate: ContentSearchDelegate(ref),
+                  ),
                 );
               },
               icon: const Icon(Icons.search),

@@ -23,7 +23,7 @@ class _AboutTopSection extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               opacity: isCollapsed ? 1.0 : 0.0,
               child: Text(
-                'about'.tr(),
+                'About'.tr(),
                 style: TextStyle(
                   color: Theme.of(context).brightness == Brightness.dark
                       ? Colors.white

@@ -10,9 +10,9 @@ class _SettingsBodySection extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _buildSectionHeader(context, 'appearance'.tr()),
+        _buildSectionHeader(context, 'Appearance'.tr()),
         ListTile(
-          title: Text('theme'.tr()),
+          title: Text('Theme'.tr()),
           trailing: DropdownButton<ThemeMode>(
             value: themeMode,
             onChanged: (mode) {
@@ -23,20 +23,20 @@ class _SettingsBodySection extends ConsumerWidget {
             items: [
               DropdownMenuItem(
                 value: ThemeMode.system,
-                child: Text('system'.tr()),
+                child: Text('System'.tr()),
               ),
               DropdownMenuItem(
                 value: ThemeMode.light,
-                child: Text('light'.tr()),
+                child: Text('Light'.tr()),
               ),
-              DropdownMenuItem(value: ThemeMode.dark, child: Text('dark'.tr())),
+              DropdownMenuItem(value: ThemeMode.dark, child: Text('Dark'.tr())),
             ],
           ),
         ),
         const Divider(),
-        _buildSectionHeader(context, 'language'.tr()),
+        _buildSectionHeader(context, 'Language'.tr()),
         ListTile(
-          title: Text('language'.tr()),
+          title: Text('Language'.tr()),
           trailing: DropdownButton<Locale>(
             value: context.locale,
             onChanged: (locale) {
@@ -47,19 +47,19 @@ class _SettingsBodySection extends ConsumerWidget {
             items: [
               DropdownMenuItem(
                 value: const Locale('en'),
-                child: Text('english'.tr()),
+                child: Text('English'.tr()),
               ),
               DropdownMenuItem(
                 value: const Locale('am'),
-                child: Text('amharic'.tr()),
+                child: Text('Amharic'.tr()),
               ),
             ],
           ),
         ),
         const Divider(),
-        _buildSectionHeader(context, 'about'.tr()),
+        _buildSectionHeader(context, 'About'.tr()),
         ListTile(
-          title: Text('about'.tr()),
+          title: Text('About'.tr()),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(RouteNames.about),
         ),

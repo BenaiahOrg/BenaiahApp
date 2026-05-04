@@ -5,6 +5,7 @@ import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/features/content/domain/entities/series.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/presentation/providers/series_detail_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:benaiah_app/core/router/route_names.dart';
-import 'package:benaiah_app/features/content/domain/entities/series.dart';
-import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/presentation/providers/series_list_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,22 +50,26 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
     return seriesListAsync.when(
       data: (seriesList) {
         final queryLower = query.toLowerCase();
-        final List<Series> matchedSeries = seriesList
-            .where((s) =>
-                s.title.toLowerCase().contains(queryLower) ||
-                s.description.toLowerCase().contains(queryLower))
+        final matchedSeries = seriesList
+            .where(
+              (s) =>
+                  s.title.toLowerCase().contains(queryLower) ||
+                  s.description.toLowerCase().contains(queryLower),
+            )
             .toList();
 
-        final List<Topic> matchedTopics = seriesList
+        final matchedTopics = seriesList
             .expand((s) => s.topics)
-            .where((t) =>
-                t.title.toLowerCase().contains(queryLower) ||
-                t.devotional.data.toLowerCase().contains(queryLower) ||
-                t.studyMaterial.data.toLowerCase().contains(queryLower))
+            .where(
+              (t) =>
+                  t.title.toLowerCase().contains(queryLower) ||
+                  t.devotional.data.toLowerCase().contains(queryLower) ||
+                  t.studyMaterial.data.toLowerCase().contains(queryLower),
+            )
             .toList();
 
         if (matchedSeries.isEmpty && matchedTopics.isEmpty) {
-          return const Center(child: Text('No results found.'));
+          return Center(child: Text('No results found.'.tr()));
         }
 
         return ListView(
@@ -74,45 +79,49 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Text(
-                  'Series',
+                  'Series'.tr(),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              ...matchedSeries.map((s) => ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        s.imageUrl,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      ),
+              ...matchedSeries.map(
+                (s) => ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      s.imageUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
                     ),
-                    title: Text(s.title),
-                    subtitle: Text(
-                      s.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    onTap: () {
-                      close(context, null);
+                  ),
+                  title: Text(s.title),
+                  subtitle: Text(
+                    s.description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    close(context, null);
+                    unawaited(
                       context.pushNamed(
                         RouteNames.seriesDetail,
                         pathParameters: {'seriesId': s.id},
-                      );
-                    },
-                  )),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
             if (matchedTopics.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Text(
-                  'Topics',
+                  'Topics'.tr(),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               ...matchedTopics.map((t) {
@@ -130,12 +139,14 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                     ),
                   ),
                   title: Text(t.title),
-                  subtitle: const Text('Read devotional & study material'),
+                  subtitle: Text('Read devotional & study material'.tr()),
                   onTap: () {
                     close(context, null);
-                    context.pushNamed(
-                      RouteNames.topicDetail,
-                      pathParameters: {'topicId': t.id},
+                    unawaited(
+                      context.pushNamed(
+                        RouteNames.topicDetail,
+                        pathParameters: {'topicId': t.id},
+                      ),
                     );
                   },
                 );
@@ -145,7 +156,7 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => const Center(child: Text('Error loading content.')),
+      error: (e, st) => Center(child: Text('Error loading content.'.tr())),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:benaiah_app/core/utils/image_utils.dart';
 import 'package:benaiah_app/features/content/domain/entities/author.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/presentation/providers/topic_detail_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 sealed class AppError implements Exception {
   const AppError();
 
@@ -10,7 +12,7 @@ final class NetworkError extends AppError {
   final String message;
 
   @override
-  String get userMessage => message;
+  String get userMessage => message.tr();
 }
 
 final class ServerError extends AppError {
@@ -20,7 +22,7 @@ final class ServerError extends AppError {
   final String message;
 
   @override
-  String get userMessage => message;
+  String get userMessage => message.tr();
 }
 
 final class GenericError extends AppError {
@@ -30,5 +32,5 @@ final class GenericError extends AppError {
   final Object? cause;
 
   @override
-  String get userMessage => 'Something went wrong. Please try again.';
+  String get userMessage => 'Something went wrong. Please try again.'.tr();
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:benaiah_app/core/error/app_error.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 final class AppErrorParser {
@@ -60,12 +61,12 @@ final class AppErrorParser {
   }
 
   static String _fallbackForCode(int code) => switch (code) {
-    400 => 'Bad request.',
-    401 => 'Session expired. Please log in again.',
-    403 => 'You do not have permission to do that.',
-    404 => 'Resource not found.',
-    429 => 'Too many requests. Please slow down.',
-    >= 500 => 'Server error. Our team has been notified.',
-    _ => 'An unexpected error occurred.',
+    400 => 'Bad request.'.tr(),
+    401 => 'Session expired. Please log in again.'.tr(),
+    403 => 'You do not have permission to do that.'.tr(),
+    404 => 'Resource not found.'.tr(),
+    429 => 'Too many requests. Please slow down.'.tr(),
+    >= 500 => 'Server error. Our team has been notified.'.tr(),
+    _ => 'An unexpected error occurred.'.tr(),
   };
 }

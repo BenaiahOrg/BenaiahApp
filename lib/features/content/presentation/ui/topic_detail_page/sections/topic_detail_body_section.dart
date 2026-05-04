@@ -109,10 +109,10 @@ class _TopicDetailBodySection extends ConsumerWidget {
                         ).colorScheme.onSurface.withAlpha(128),
                         indicatorColor: Theme.of(context).colorScheme.primary,
                         indicatorWeight: 3,
-                        tabs: const [
-                          Tab(text: 'Devotional'),
-                          Tab(text: 'Study'),
-                          Tab(text: 'Graphics'),
+                        tabs: [
+                          Tab(text: 'Devotional'.tr()),
+                          Tab(text: 'Study'.tr()),
+                          Tab(text: 'Graphics'.tr()),
                         ],
                       ),
                     ),
@@ -133,7 +133,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Text(
-          error is AppError ? error.userMessage : 'Error: $error',
+          error is AppError ? error.userMessage : 'Error: {}'.tr(args: [error.toString()]),
           textAlign: TextAlign.center,
         ),
       ),
@@ -205,7 +205,7 @@ class _DevotionalTab extends StatelessWidget {
                     const Divider(),
                     const SizedBox(height: 24),
                     Text(
-                      'Written by',
+                      'Written by'.tr(),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
@@ -259,7 +259,7 @@ class _StudyTab extends StatelessWidget {
                     const Divider(),
                     const SizedBox(height: 24),
                     Text(
-                      'Study material by',
+                      'Study material by'.tr(),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
@@ -374,23 +374,23 @@ class _GraphicItem extends StatelessWidget {
                             await ImageUtils.downloadAndSaveImage(imageUrl);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Image saved to gallery'),
+                                SnackBar(
+                                  content: Text('Image saved to gallery'.tr()),
                                 ),
                               );
                             }
                           } catch (e) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Error downloading image'),
+                                SnackBar(
+                                  content: Text('Error downloading image'.tr()),
                                 ),
                               );
                             }
                           }
                         },
                         icon: const Icon(Icons.download, color: Colors.white),
-                        tooltip: 'Download',
+                        tooltip: 'Download'.tr(),
                       ),
                       IconButton(
                         onPressed: () => ImageUtils.shareImage(
@@ -398,7 +398,7 @@ class _GraphicItem extends StatelessWidget {
                           topicTitle,
                         ),
                         icon: const Icon(Icons.share, color: Colors.white),
-                        tooltip: 'Share',
+                        tooltip: 'Share'.tr(),
                       ),
                     ],
                   ),

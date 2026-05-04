@@ -11,70 +11,69 @@ class _HomeBodySection extends ConsumerWidget {
       data: (seriesList) {
         if (seriesList.isEmpty) return const SizedBox.shrink();
 
-        return SafeArea(
-          bottom: false,
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              const _HomeTopSection(),
-              if (seriesList.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: _FeaturedCarousel(seriesList: seriesList),
-                ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                sliver: SliverToBoxAdapter(
-                  child: Row(
-                    children: [
-                      Text(
-                        'All Series',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            const _HomeTopSection(),
+            if (seriesList.isNotEmpty)
+              SliverToBoxAdapter(
+                child: _FeaturedCarousel(seriesList: seriesList),
+              ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  children: [
+                    Text(
+                      'All Series'.tr(),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Series List coming soon!'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        },
-                        child: const Text('View All'),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Series List coming soon!'.tr()),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
+                      child: Text('View All'.tr()),
+                    ),
+                  ],
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 24,
-                    childAspectRatio: 0.75,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final series = seriesList[index];
-                      return _SeriesCard(series: series);
-                    },
-                    childCount: seriesList.length,
-                  ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 24,
+                  childAspectRatio: 0.75,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final series = seriesList[index];
+                    return _SeriesCard(series: series);
+                  },
+                  childCount: seriesList.length,
                 ),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
-            ],
-          ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ],
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Text(
-          error is AppError ? error.userMessage : 'Error: $error',
+          error is AppError
+              ? error.userMessage
+              : 'Error: {}'.tr(args: [error.toString()]),
           textAlign: TextAlign.center,
         ),
       ),
@@ -104,10 +103,15 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
         .expand((s) => s.topics)
         .take(5)
         .toList();
-        
-    int initialPage = _featuredTopics.isNotEmpty ? _featuredTopics.length ~/ 2 : 0;
+
+    var initialPage = _featuredTopics.isNotEmpty
+        ? _featuredTopics.length ~/ 2
+        : 0;
     _currentPage = initialPage;
-    _pageController = PageController(viewportFraction: 0.8, initialPage: initialPage);
+    _pageController = PageController(
+      viewportFraction: 0.8,
+      initialPage: initialPage,
+    );
   }
 
   @override
@@ -135,13 +139,19 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
               return AnimatedBuilder(
                 animation: _pageController,
                 builder: (context, child) {
-                  final double offset = _pageController.position.haveDimensions
+                  final offset = _pageController.position.haveDimensions
                       ? _pageController.page! - index
                       : (index == _currentPage ? 0.0 : 1.0);
-                  
-                  final double scale = (1 - (offset.abs() * 0.12)).clamp(0.0, 1.0);
-                  final double opacity = (1 - (offset.abs() * 0.4)).clamp(0.0, 1.0);
-                  
+
+                  final scale = (1 - (offset.abs() * 0.12)).clamp(
+                    0.0,
+                    1.0,
+                  );
+                  final opacity = (1 - (offset.abs() * 0.4)).clamp(
+                    0.0,
+                    1.0,
+                  );
+
                   return Transform(
                     transform: Matrix4.identity()
                       ..setEntry(3, 2, 0.001)
@@ -234,13 +244,16 @@ class _FeaturedTopicHero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'FEATURED TOPIC',
+                      'FEATURED TOPIC'.tr(),
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -259,7 +272,7 @@ class _FeaturedTopicHero extends StatelessWidget {
                   Text(
                     topic.devotional.data.isNotEmpty
                         ? topic.devotional.data
-                        : 'Explore this topic in depth.',
+                        : 'Explore this topic in depth.'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.white70,
                     ),
@@ -281,7 +294,7 @@ class _FeaturedTopicHero extends StatelessWidget {
                       foregroundColor: Colors.black,
                       minimumSize: const Size(140, 48),
                     ),
-                    child: const Text('Read Topic'),
+                    child: Text('Read Topic'.tr()),
                   ),
                 ],
               ),
@@ -341,7 +354,7 @@ class _SeriesCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '${series.topics.length} Topics',
+            '{} Topics'.tr(args: [series.topics.length.toString()]),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey,
             ),
