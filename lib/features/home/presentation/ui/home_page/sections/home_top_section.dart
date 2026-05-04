@@ -25,7 +25,7 @@ class _HomeTopSection extends StatelessWidget {
             return IconButton(
               onPressed: () {
                 unawaited(
-                  showSearch(
+                  showSearch<String?>(
                     context: context,
                     delegate: ContentSearchDelegate(ref),
                   ),

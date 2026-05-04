@@ -314,6 +314,31 @@ class _GraphicsTab extends StatelessWidget {
                   ),
                 ),
               ),
+            SliverPadding(
+              padding: const EdgeInsets.all(24),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 48),
+                    const Divider(),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Graphics by'.tr(),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ...topic.graphics.authors.map(
+                      (author) => _AuthorInfoRow(author: author),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         );

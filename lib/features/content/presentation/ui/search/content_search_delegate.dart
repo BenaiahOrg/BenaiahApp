@@ -138,7 +138,9 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                     ),
                   ),
                   title: Text(t.title),
-                  subtitle: Text('Read devotional & study material'.tr()),
+                  subtitle: Text(
+                    'Read devotional, study material & graphics'.tr(),
+                  ),
                   onTap: () {
                     close(context, null);
                     unawaited(

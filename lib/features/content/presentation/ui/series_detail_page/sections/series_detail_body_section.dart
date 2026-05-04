@@ -168,7 +168,7 @@ class _TopicItem extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        subtitle: Text('Read devotional & study material'.tr()),
+        subtitle: Text('Read devotional, study material & graphics'.tr()),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: () {
           unawaited(
