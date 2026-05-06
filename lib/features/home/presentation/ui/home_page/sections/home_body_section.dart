@@ -270,7 +270,7 @@ class _FeaturedTopicHero extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     topic.devotional.data.isNotEmpty
-                        ? topic.devotional.data
+                        ? StringUtils.stripMarkdown(topic.devotional.data)
                         : 'Explore this topic in depth.'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.white70,

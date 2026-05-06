@@ -179,13 +179,8 @@ class _DevotionalTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      topic.devotional.data,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        height: 1.8,
-                        fontSize: 18,
-                        letterSpacing: 0.2,
-                      ),
+                    BenaiahMarkdown(
+                      data: topic.devotional.data,
                     ),
                     const SizedBox(height: 48),
                     const Divider(),
@@ -233,13 +228,8 @@ class _StudyTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      topic.studyMaterial.data,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        height: 1.8,
-                        fontSize: 18,
-                        letterSpacing: 0.2,
-                      ),
+                    BenaiahMarkdown(
+                      data: topic.studyMaterial.data,
                     ),
                     const SizedBox(height: 48),
                     const Divider(),
