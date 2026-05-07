@@ -13,7 +13,7 @@ class _MainBottomSection extends ConsumerWidget {
       onTap: (index) => _onTap(context, ref, index),
       selectedItemColor: isDark ? Colors.white : Colors.black,
       unselectedItemColor: Colors.grey,
-      backgroundColor: Colors.transparent,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: const Icon(Icons.home_outlined),

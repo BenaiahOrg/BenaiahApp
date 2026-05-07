@@ -5,8 +5,13 @@ class _TopicDetailBodySection extends ConsumerWidget {
 
   final String topicId;
 
-  void _preFetchBiblePassages(WidgetRef ref, BuildContext context, Topic topic) {
-    final markdownContent = '${topic.devotional.data}\n${topic.studyMaterial.data}';
+  void _preFetchBiblePassages(
+    WidgetRef ref,
+    BuildContext context,
+    Topic topic,
+  ) {
+    final markdownContent =
+        '${topic.devotional.data}\n${topic.studyMaterial.data}';
     final bibleLinkRegex = RegExp(r'bible://[^)\s"]+');
     final matches = bibleLinkRegex.allMatches(markdownContent);
 
@@ -15,8 +20,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
       if (href != null) {
         try {
           final uri = Uri.parse(href);
-          String passageId = '${uri.host}${uri.path}';
-          passageId = passageId
+          final passageId = '${uri.host}${uri.path}'
               .replaceAll('/', '.')
               .replaceAll(RegExp(r'\.+$'), '')
               .toUpperCase();
@@ -30,7 +34,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
             );
             ref.read(biblePassageProvider(param));
           }
-        } catch (e) {
+        } on Exception catch (e) {
           debugPrint('🚨 BenaiahApp pre-fetching error for link $href: $e');
         }
       }
@@ -63,37 +67,48 @@ class _TopicDetailBodySection extends ConsumerWidget {
                   expandedHeight: 300,
                   pinned: true,
                   elevation: 0,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainer,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
                       final isCollapsed =
                           constraints.biggest.height <=
                           kToolbarHeight +
                               MediaQuery.of(context).padding.top +
-                              48;
+                              48 +
+                              20;
                       final titleColor = isCollapsed
                           ? Theme.of(context).colorScheme.onSurface
                           : Colors.white;
 
                       return FlexibleSpaceBar(
                         centerTitle: false,
-                        titlePadding: const EdgeInsetsDirectional.only(
-                          start: 56,
-                          bottom: 64,
+                        titlePadding: EdgeInsetsDirectional.only(
+                          start: isCollapsed ? 72 : 24,
+                          bottom: isCollapsed ? 60 : 64,
+                          end: 24,
                         ),
-                        title: Text(
-                          topic.title,
-                          style: TextStyle(
-                            color: titleColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            shadows: const [
-                              Shadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                                color: Colors.black54,
+                        title: Hero(
+                          tag: 'topic_title_${topic.id}',
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Text(
+                              topic.title,
+                              style: TextStyle(
+                                color: titleColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: isCollapsed ? 18 : 22,
+                                shadows: isCollapsed
+                                    ? null
+                                    : const [
+                                        Shadow(
+                                          offset: Offset(0, 1),
+                                          blurRadius: 3,
+                                          color: Colors.black54,
+                                        ),
+                                      ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                         background: Stack(
@@ -103,7 +118,6 @@ class _TopicDetailBodySection extends ConsumerWidget {
                               Hero(
                                 tag: 'topic_image_${topic.id}',
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.zero,
                                   child: BenaiahNetworkImage(
                                     imageUrl: imageUrl,
                                   ),
@@ -125,6 +139,32 @@ class _TopicDetailBodySection extends ConsumerWidget {
                                 ),
                               ),
                             ),
+                            // Excerpt shown only when expanded
+                            Positioned(
+                              left: 24,
+                              right: 24,
+                              bottom: 104,
+                              child: Hero(
+                                  tag: 'topic_excerpt_${topic.id}',
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: Text(
+                                      topic.devotional.data.isNotEmpty
+                                          ? StringUtils.stripMarkdown(
+                                              topic.devotional.data,
+                                            )
+                                          : 'Explore this topic in depth.'.tr(),
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                            ),
                           ],
                         ),
                       );
@@ -133,7 +173,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
                   bottom: PreferredSize(
                     preferredSize: const Size.fromHeight(48),
                     child: Material(
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
                       child: TabBar(
                         labelColor: Theme.of(context).colorScheme.primary,
                         unselectedLabelColor: Theme.of(
@@ -170,282 +210,6 @@ class _TopicDetailBodySection extends ConsumerWidget {
               : 'Error: {}'.tr(args: [error.toString()]),
           textAlign: TextAlign.center,
         ),
-      ),
-    );
-  }
-}
-
-class _AuthorInfoRow extends StatelessWidget {
-  const _AuthorInfoRow({required this.author});
-  final Author author;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          const SizedBox(width: 12),
-          Text(
-            author.name,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DevotionalTab extends StatelessWidget {
-  const _DevotionalTab({required this.topic});
-  final Topic topic;
-
-  @override
-  Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return CustomScrollView(
-          key: const PageStorageKey('devotional'),
-          slivers: [
-            SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(24),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BenaiahMarkdown(
-                      data: topic.devotional.data,
-                    ),
-                    const SizedBox(height: 48),
-                    const Divider(),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Written by'.tr(),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ...topic.devotional.authors.map(
-                      (author) => _AuthorInfoRow(author: author),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _StudyTab extends StatelessWidget {
-  const _StudyTab({required this.topic});
-  final Topic topic;
-
-  @override
-  Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return CustomScrollView(
-          key: const PageStorageKey('study'),
-          slivers: [
-            SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(24),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BenaiahMarkdown(
-                      data: topic.studyMaterial.data,
-                    ),
-                    const SizedBox(height: 48),
-                    const Divider(),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Study material by'.tr(),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ...topic.studyMaterial.authors.map(
-                      (author) => _AuthorInfoRow(author: author),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _GraphicsTab extends StatelessWidget {
-  const _GraphicsTab({required this.topic});
-  final Topic topic;
-
-  @override
-  Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return CustomScrollView(
-          key: const PageStorageKey('graphics'),
-          slivers: [
-            SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
-            if (topic.graphics.data.isEmpty)
-              SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final imageUrl =
-                          'https://picsum.photos/seed/${topic.id}_$index/800/600';
-                      return _GraphicItem(
-                        imageUrl: imageUrl,
-                        topicTitle: topic.title,
-                      );
-                    },
-                    childCount: 3,
-                  ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final imageUrl = topic.graphics.data[index];
-                      return _GraphicItem(
-                        imageUrl: imageUrl,
-                        topicTitle: topic.title,
-                      );
-                    },
-                    childCount: topic.graphics.data.length,
-                  ),
-                ),
-              ),
-            SliverPadding(
-              padding: const EdgeInsets.all(24),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 48),
-                    const Divider(),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Graphics by'.tr(),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ...topic.graphics.authors.map(
-                      (author) => _AuthorInfoRow(author: author),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _GraphicItem extends StatelessWidget {
-  const _GraphicItem({required this.imageUrl, required this.topicTitle});
-  final String imageUrl;
-  final String topicTitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 32),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                BenaiahNetworkImage(
-                  imageUrl: imageUrl,
-                  width: double.infinity,
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withAlpha(150),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          try {
-                            await ImageUtils.downloadAndSaveImage(imageUrl);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Image saved to gallery'.tr()),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Error downloading image'.tr()),
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        icon: const Icon(Icons.download, color: Colors.white),
-                        tooltip: 'Download'.tr(),
-                      ),
-                      IconButton(
-                        onPressed: () => ImageUtils.shareImage(
-                          imageUrl,
-                          topicTitle,
-                        ),
-                        icon: const Icon(Icons.share, color: Colors.white),
-                        tooltip: 'Share'.tr(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

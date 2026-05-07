@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:benaiah_app/core/error/app_error.dart';
 import 'package:benaiah_app/core/router/route_names.dart';
@@ -13,9 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+
 part 'screen/home_screen.dart';
 part 'sections/home_body_section.dart';
 part 'sections/home_top_section.dart';
+part 'sections/home_featured_carousel_section.dart';
+part 'sections/home_all_series_section.dart';
+part 'widgets/series_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});

@@ -17,7 +17,8 @@ class _SeriesDetailBodySection extends ConsumerWidget {
             SliverAppBar(
               expandedHeight: 250,
               pinned: true,
-              backgroundColor: Theme.of(context).colorScheme.surface,
+              centerTitle: false,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
                   final isCollapsed =
@@ -28,6 +29,12 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                       : Colors.white;
 
                   return FlexibleSpaceBar(
+                    centerTitle: false,
+                    titlePadding: EdgeInsetsDirectional.only(
+                      start: isCollapsed ? 72 : 24,
+                      bottom: isCollapsed ? 16 : 48,
+                      end: 24,
+                    ),
                     title: Text(
                       series.title,
                       style: TextStyle(
@@ -139,19 +146,19 @@ class _TopicItem extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: topic.graphics.data.isNotEmpty
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: BenaiahNetworkImage(
                   imageUrl: topic.graphics.data.first,
-                  width: 56,
-                  height: 56,
+                  width: 80,
+                  height: 80,
                 ),
               )
             : Container(
-                width: 56,
-                height: 56,
+                width: 80,
+                height: 80,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),

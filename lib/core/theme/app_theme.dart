@@ -1,21 +1,35 @@
 import 'package:benaiah_app/core/theme/app_colors.dart';
 import 'package:benaiah_app/core/theme/app_text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 abstract class AppTheme {
+  static TextTheme _buildTextTheme(String titleFontFamily) {
+    final base = GoogleFonts.lexendTextTheme(AppTextTheme.textTheme);
+    return base.copyWith(
+      displayLarge: base.displayLarge?.copyWith(fontFamily: titleFontFamily),
+      displayMedium: base.displayMedium?.copyWith(fontFamily: titleFontFamily),
+      displaySmall: base.displaySmall?.copyWith(fontFamily: titleFontFamily),
+      headlineLarge: base.headlineLarge?.copyWith(fontFamily: titleFontFamily),
+      headlineMedium: base.headlineMedium?.copyWith(fontFamily: titleFontFamily),
+      headlineSmall: base.headlineSmall?.copyWith(fontFamily: titleFontFamily),
+      titleLarge: base.titleLarge?.copyWith(fontFamily: titleFontFamily),
+      titleMedium: base.titleMedium?.copyWith(fontFamily: titleFontFamily),
+    );
+  }
+
   static ThemeData light(String fontFamily) => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    fontFamily: fontFamily,
+    fontFamily: GoogleFonts.lexend().fontFamily,
     colorScheme: const ColorScheme.light(
       primary: AppColors.lightPrimary,
       error: AppColors.lightError,
     ),
     scaffoldBackgroundColor: AppColors.lightBackground,
-    textTheme: AppTextTheme.textTheme.apply(
+    textTheme: _buildTextTheme(fontFamily).apply(
       bodyColor: AppColors.lightOnBackground,
       displayColor: AppColors.lightOnBackground,
-      fontFamily: fontFamily,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.lightBackground,
@@ -55,17 +69,16 @@ abstract class AppTheme {
   static ThemeData dark(String fontFamily) => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    fontFamily: fontFamily,
+    fontFamily: GoogleFonts.lexend().fontFamily,
     colorScheme: const ColorScheme.dark(
       primary: AppColors.darkPrimary,
       surface: AppColors.darkSurface,
       error: AppColors.darkError,
     ),
     scaffoldBackgroundColor: AppColors.darkBackground,
-    textTheme: AppTextTheme.textTheme.apply(
+    textTheme: _buildTextTheme(fontFamily).apply(
       bodyColor: AppColors.darkOnBackground,
       displayColor: AppColors.darkOnBackground,
-      fontFamily: fontFamily,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.darkBackground,

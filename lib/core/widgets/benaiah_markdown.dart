@@ -50,14 +50,14 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
     // Standard high-readability body text style
     final baseBodyStyle =
         theme.textTheme.bodyLarge?.copyWith(
-          fontSize: 18,
-          height: 1.8,
+          fontSize: 15,
+          height: 1.6,
           letterSpacing: 0.2,
           fontFamily: baseFontFamily,
         ) ??
         TextStyle(
-          fontSize: 18,
-          height: 1.8,
+          fontSize: 15,
+          height: 1.6,
           letterSpacing: 0.2,
           fontFamily: baseFontFamily,
         );
