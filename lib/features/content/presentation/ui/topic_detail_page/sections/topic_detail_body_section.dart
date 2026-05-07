@@ -102,8 +102,11 @@ class _TopicDetailBodySection extends ConsumerWidget {
                             if (imageUrl.isNotEmpty)
                               Hero(
                                 tag: 'topic_image_${topic.id}',
-                                child: BenaiahNetworkImage(
-                                  imageUrl: imageUrl,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.zero,
+                                  child: BenaiahNetworkImage(
+                                    imageUrl: imageUrl,
+                                  ),
                                 ),
                               )
                             else

@@ -77,6 +77,16 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
+    applicationVariants.all {
+        val variant = this
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.ApkVariantOutputImpl }
+            .forEach { output ->
+                val flavor = if (variant.flavorName.isNotEmpty()) "-${variant.flavorName}" else ""
+                output.outputFileName = "Benaiah$flavor-${variant.buildType.name}.apk"
+            }
+    }
 }
 
 flutter {

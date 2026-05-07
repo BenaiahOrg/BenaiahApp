@@ -22,6 +22,7 @@ abstract class AppTheme {
       foregroundColor: AppColors.lightOnBackground,
       elevation: 0,
       centerTitle: true,
+      surfaceTintColor: Colors.transparent,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -71,6 +72,7 @@ abstract class AppTheme {
       foregroundColor: AppColors.darkOnSurface,
       elevation: 0,
       centerTitle: true,
+      surfaceTintColor: Colors.transparent,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

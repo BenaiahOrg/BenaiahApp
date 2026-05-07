@@ -9,8 +9,8 @@ class _HomeTopSection extends StatelessWidget {
       floating: true,
       snap: true,
       centerTitle: false,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      surfaceTintColor: Colors.transparent,
+      backgroundColor:
+          Colors.transparent, //Theme.of(context).colorScheme.surface,
       toolbarHeight: 50,
       title: Text(
         'BENAIAH'.tr(),

@@ -127,7 +127,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
     return Column(
       children: [
         SizedBox(
-          height: 400,
+          height: 300,
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -218,8 +218,11 @@ class _FeaturedTopicHero extends StatelessWidget {
             if (hasImage)
               Hero(
                 tag: 'topic_image_${topic.id}',
-                child: BenaiahNetworkImage(
-                  imageUrl: imageUrl,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: BenaiahNetworkImage(
+                    imageUrl: imageUrl,
+                  ),
                 ),
               ),
             // Gradient Overlay

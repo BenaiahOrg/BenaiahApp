@@ -43,12 +43,18 @@ test: ## Run unit/widget tests
 
 build-dev: ## Build APK for dev flavor
 	cd $(ROOT_DIR) && $(FLUTTER) build apk --flavor dev -t lib/main.dart
+	@mv $(ROOT_DIR)/build/app/outputs/flutter-apk/app-dev-release.apk $(ROOT_DIR)/build/app/outputs/flutter-apk/Benaiah-dev-release.apk 2>/dev/null || true
+	@echo "✓ Renamed & moved to: build/app/outputs/flutter-apk/Benaiah-dev-release.apk"
 
 build-qa: ## Build APK for qa flavor
 	cd $(ROOT_DIR) && $(FLUTTER) build apk --flavor qa -t lib/main.dart
+	@mv $(ROOT_DIR)/build/app/outputs/flutter-apk/app-qa-release.apk $(ROOT_DIR)/build/app/outputs/flutter-apk/Benaiah-qa-release.apk 2>/dev/null || true
+	@echo "✓ Renamed & moved to: build/app/outputs/flutter-apk/Benaiah-qa-release.apk"
 
 build-prod: ## Build APK for prod flavor
 	cd $(ROOT_DIR) && $(FLUTTER) build apk --flavor prod -t lib/main.dart
+	@mv $(ROOT_DIR)/build/app/outputs/flutter-apk/app-prod-release.apk $(ROOT_DIR)/build/app/outputs/flutter-apk/Benaiah-release.apk 2>/dev/null || true
+	@echo "✓ Renamed & moved to: build/app/outputs/flutter-apk/Benaiah-release.apk"
 
 build-all: build-dev build-qa build-prod ## Build APKs for all flavors
 
