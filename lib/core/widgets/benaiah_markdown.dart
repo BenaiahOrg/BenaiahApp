@@ -1,11 +1,13 @@
+import 'package:benaiah_app/features/content/presentation/widgets/scripture_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// A custom theme-aware Markdown renderer that applies Benaiah design guidelines.
 ///
 /// It supports dynamic Light/Dark themes, customizable line-height, text selection,
 /// and stylized headers, lists, code-blocks, and blockquotes.
-class BenaiahMarkdown extends StatelessWidget {
+class BenaiahMarkdown extends ConsumerStatefulWidget {
   const BenaiahMarkdown({
     required this.data,
     super.key,
@@ -25,6 +27,17 @@ class BenaiahMarkdown extends StatelessWidget {
 
   /// Padding around the markdown body.
   final EdgeInsetsGeometry padding;
+
+  @override
+  ConsumerState<BenaiahMarkdown> createState() => _BenaiahMarkdownState();
+}
+
+class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
+  final _overlayController = OverlayPortalController();
+  String? _passageId;
+  String? _bibleId;
+  Offset? _tapPosition;
+  Offset? _lastPointerPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -154,20 +167,68 @@ class BenaiahMarkdown extends StatelessWidget {
       ),
     );
 
-    return Padding(
-      padding: padding,
-      child: MarkdownBody(
-        data: data,
-        selectable: selectable,
-        styleSheet: styleSheet,
-        onTapLink:
-            onTapLink ??
-            (text, href, title) {
-              // Default fallback logging
-              debugPrint(
-                'Tapped link: text="$text", href="$href", title="$title"',
-              );
+    return OverlayPortal(
+      controller: _overlayController,
+      overlayChildBuilder: (context) {
+        if (_passageId == null || _tapPosition == null) return const SizedBox.shrink();
+        return ScriptureOverlay(
+          passageId: _passageId!,
+          bibleId: _bibleId,
+          tapPosition: _tapPosition!,
+          onDismiss: () {
+            setState(() {
+              _overlayController.hide();
+              _passageId = null;
+              _bibleId = null;
+              _tapPosition = null;
+            });
+          },
+        );
+      },
+      child: Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (event) {
+          _lastPointerPosition = event.position;
+        },
+        child: Padding(
+          padding: widget.padding,
+          child: MarkdownBody(
+            data: widget.data,
+            selectable: widget.selectable,
+            styleSheet: styleSheet,
+            onTapLink: (text, href, title) {
+              if (href != null && href.startsWith('bible://')) {
+                try {
+                  final uri = Uri.parse(href);
+                  String passageId = '${uri.host}${uri.path}';
+                  passageId = passageId
+                      .replaceAll('/', '.')
+                      .replaceAll(RegExp(r'\.+$'), '')
+                      .toUpperCase();
+                  final bibleId = uri.queryParameters['version'];
+
+
+
+                  setState(() {
+                    _passageId = passageId;
+                    _bibleId = bibleId;
+                    _tapPosition = _lastPointerPosition ?? const Offset(200, 300);
+                    _overlayController.show();
+                  });
+                } catch (e) {
+                  debugPrint('Error parsing bible link: $e');
+                }
+              } else if (widget.onTapLink != null) {
+                widget.onTapLink!(text, href, title);
+              } else {
+                // Default fallback logging
+                debugPrint(
+                  'Tapped link: text="$text", href="$href", title="$title"',
+                );
+              }
             },
+          ),
+        ),
       ),
     );
   }

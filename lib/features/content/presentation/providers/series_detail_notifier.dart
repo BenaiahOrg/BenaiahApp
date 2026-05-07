@@ -1,8 +1,8 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:benaiah_app/core/di/injection.dart';
 import 'package:benaiah_app/core/error/result.dart';
 import 'package:benaiah_app/features/content/domain/entities/series.dart';
 import 'package:benaiah_app/features/content/domain/repositories/content_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'series_detail_notifier.g.dart';
 

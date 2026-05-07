@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:benaiah_app/core/network/bible_service.dart' as _i435;
 import 'package:benaiah_app/core/network/dio_http_client.dart' as _i608;
 import 'package:benaiah_app/core/network/dio_module.dart' as _i642;
 import 'package:benaiah_app/core/network/http_client.dart' as _i751;
@@ -69,6 +70,7 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final secureStorageModule = _$SecureStorageModule();
     final dioModule = _$DioModule();
+    gh.lazySingleton<_i435.BibleService>(() => _i435.BibleService());
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.secureStorage,
     );
