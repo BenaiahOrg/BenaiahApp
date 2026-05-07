@@ -25,17 +25,17 @@ abstract class Env {
     Flavor.dev: const _FlavorEnv(
       sentryDsn: '',
       apiUrl: 'https://dev-api.benaiah.org',
-      youversionDeveloperToken: 'mock_dev_token',
+      youversionDeveloperToken: 'REDACTED',
     ),
     Flavor.qa: const _FlavorEnv(
       sentryDsn: '',
       apiUrl: 'https://qa-api.benaiah.org',
-      youversionDeveloperToken: 'mock_qa_token',
+      youversionDeveloperToken: 'REDACTED',
     ),
     Flavor.prod: const _FlavorEnv(
       sentryDsn: '',
       apiUrl: 'https://api.benaiah.org',
-      youversionDeveloperToken: 'mock_prod_token',
+      youversionDeveloperToken: 'REDACTED',
     ),
   };
 }

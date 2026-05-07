@@ -21,7 +21,7 @@ class BiblePassageParam extends Equatable {
   List<Object?> get props => [passageId, languageCode, bibleId];
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 FutureOr<Passage> biblePassage(Ref ref, BiblePassageParam param) {
   final bibleService = container<BibleService>();
 

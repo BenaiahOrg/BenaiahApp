@@ -5,12 +5,48 @@ class _TopicDetailBodySection extends ConsumerWidget {
 
   final String topicId;
 
+  void _preFetchBiblePassages(WidgetRef ref, BuildContext context, Topic topic) {
+    final markdownContent = '${topic.devotional.data}\n${topic.studyMaterial.data}';
+    final bibleLinkRegex = RegExp(r'bible://[^)\s"]+');
+    final matches = bibleLinkRegex.allMatches(markdownContent);
+
+    for (final match in matches) {
+      final href = match.group(0);
+      if (href != null) {
+        try {
+          final uri = Uri.parse(href);
+          String passageId = '${uri.host}${uri.path}';
+          passageId = passageId
+              .replaceAll('/', '.')
+              .replaceAll(RegExp(r'\.+$'), '')
+              .toUpperCase();
+          final bibleId = uri.queryParameters['version'];
+
+          for (final lang in ['en', 'am']) {
+            final param = BiblePassageParam(
+              passageId: passageId,
+              languageCode: lang,
+              bibleId: bibleId,
+            );
+            ref.read(biblePassageProvider(param));
+          }
+        } catch (e) {
+          debugPrint('🚨 BenaiahApp pre-fetching error for link $href: $e');
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final topicAsync = ref.watch(topicDetailProvider(topicId));
 
     return topicAsync.when(
       data: (topic) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _preFetchBiblePassages(ref, context, topic);
+        });
+
         final hasImage = topic.graphics.data.isNotEmpty;
         final imageUrl = hasImage
             ? topic.graphics.data.first

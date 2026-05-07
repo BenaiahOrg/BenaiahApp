@@ -217,6 +217,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             Expanded(
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(36),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   visualDensity: VisualDensity.compact,
                   shape: RoundedRectangleBorder(
@@ -233,6 +234,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
+                  minimumSize: const Size.fromHeight(36),
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: theme.colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 8),

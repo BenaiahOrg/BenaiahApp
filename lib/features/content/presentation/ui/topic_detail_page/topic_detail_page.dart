@@ -4,6 +4,7 @@ import 'package:benaiah_app/core/widgets/benaiah_markdown.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/features/content/domain/entities/author.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic.dart';
+import 'package:benaiah_app/features/content/presentation/providers/bible_passage_provider.dart';
 import 'package:benaiah_app/features/content/presentation/providers/topic_detail_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
