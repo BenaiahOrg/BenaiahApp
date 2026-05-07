@@ -9,8 +9,8 @@
       "args": [
         "--flavor",
         "dev",
-        "--dart-define",
-        "YOUVERSION_DEVELOPER_TOKEN=REDACTED"
+        "--dart-define-from-file",
+        "secrets.json"
       ]
     },
     {
@@ -20,7 +20,9 @@
       "program": "lib/main.dart",
       "args": [
         "--flavor",
-        "qa"
+        "qa",
+        "--dart-define-from-file",
+        "secrets.json"
       ]
     },
     {
@@ -30,7 +32,9 @@
       "program": "lib/main.dart",
       "args": [
         "--flavor",
-        "prod"
+        "prod",
+        "--dart-define-from-file",
+        "secrets.json"
       ]
     }
   ]
