@@ -1,3 +1,4 @@
+import 'package:benaiah_app/core/network/bible_service.dart';
 import 'package:benaiah_app/features/content/presentation/widgets/scripture_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -170,10 +171,12 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
     return OverlayPortal(
       controller: _overlayController,
       overlayChildBuilder: (context) {
-        if (_passageId == null || _tapPosition == null) return const SizedBox.shrink();
+        if (_passageId == null || _bibleId == null || _tapPosition == null) {
+          return const SizedBox.shrink();
+        }
         return ScriptureOverlay(
           passageId: _passageId!,
-          bibleId: _bibleId,
+          bibleId: _bibleId!,
           tapPosition: _tapPosition!,
           onDismiss: () {
             setState(() {
@@ -197,28 +200,25 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
             selectable: widget.selectable,
             styleSheet: styleSheet,
             onTapLink: (text, href, title) {
-              if (href != null && href.startsWith('bible://')) {
-                try {
-                  final uri = Uri.parse(href);
-                  String passageId = '${uri.host}${uri.path}';
-                  passageId = passageId
-                      .replaceAll('/', '.')
-                      .replaceAll(RegExp(r'\.+$'), '')
-                      .toUpperCase();
-                  final bibleId = uri.queryParameters['version'];
-
-
-
+              if (href != null) {
+                final parsed = BibleService.parseBibleLink(href);
+                if (parsed != null) {
                   setState(() {
-                    _passageId = passageId;
-                    _bibleId = bibleId;
-                    _tapPosition = _lastPointerPosition ?? const Offset(200, 300);
+                    _passageId = parsed.$1;
+                    _bibleId = parsed.$2;
+                    _tapPosition =
+                        _lastPointerPosition ??
+                        const Offset(
+                          200,
+                          300,
+                        );
                     _overlayController.show();
                   });
-                } catch (e) {
-                  debugPrint('Error parsing bible link: $e');
+                  return;
                 }
-              } else if (widget.onTapLink != null) {
+              }
+
+              if (widget.onTapLink != null) {
                 widget.onTapLink!(text, href, title);
               } else {
                 // Default fallback logging

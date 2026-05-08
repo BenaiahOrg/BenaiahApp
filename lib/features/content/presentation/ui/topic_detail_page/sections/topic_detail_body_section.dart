@@ -12,24 +12,20 @@ class _TopicDetailBodySection extends ConsumerWidget {
   ) {
     final markdownContent =
         '${topic.devotional.data}\n${topic.studyMaterial.data}';
-    final bibleLinkRegex = RegExp(r'bible://[^)\s"]+');
+    final bibleLinkRegex = RegExp(
+      r'https?://(?:www\.)?bible\.com/bible/[^)\s"]+',
+    );
     final matches = bibleLinkRegex.allMatches(markdownContent);
 
     for (final match in matches) {
       final href = match.group(0);
       if (href != null) {
         try {
-          final uri = Uri.parse(href);
-          final passageId = '${uri.host}${uri.path}'
-              .replaceAll('/', '.')
-              .replaceAll(RegExp(r'\.+$'), '')
-              .toUpperCase();
-          final bibleId = uri.queryParameters['version'];
-
-          for (final lang in ['en', 'am']) {
+          final parsed = BibleService.parseBibleLink(href);
+          if (parsed != null) {
+            final (passageId, bibleId) = parsed;
             final param = BiblePassageParam(
               passageId: passageId,
-              languageCode: lang,
               bibleId: bibleId,
             );
             ref.read(biblePassageProvider(param));

@@ -9,16 +9,14 @@ part 'bible_passage_provider.g.dart';
 class BiblePassageParam extends Equatable {
   const BiblePassageParam({
     required this.passageId,
-    required this.languageCode,
-    this.bibleId,
+    required this.bibleId,
   });
 
   final String passageId;
-  final String languageCode;
-  final String? bibleId;
+  final String bibleId;
 
   @override
-  List<Object?> get props => [passageId, languageCode, bibleId];
+  List<Object?> get props => [passageId, bibleId];
 }
 
 @Riverpod(keepAlive: true)
@@ -27,7 +25,6 @@ FutureOr<Passage> biblePassage(Ref ref, BiblePassageParam param) {
 
   return bibleService.getPassage(
     param.passageId,
-    languageCode: param.languageCode,
     bibleId: param.bibleId,
   );
 }

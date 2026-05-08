@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:benaiah_app/features/content/presentation/providers/bible_passage_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +11,14 @@ import 'package:youversion_sdk/youversion_sdk.dart';
 class ScriptureOverlay extends ConsumerStatefulWidget {
   const ScriptureOverlay({
     required this.passageId,
+    required this.bibleId,
     required this.onDismiss,
     required this.tapPosition,
-    this.bibleId,
     super.key,
   });
 
   final String passageId;
-  final String? bibleId;
+  final String bibleId;
   final Offset tapPosition;
   final VoidCallback onDismiss;
 
@@ -55,9 +57,11 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
   }
 
   void _handleDismiss() {
-    _animController.reverse().then((_) {
-      widget.onDismiss();
-    });
+    unawaited(
+      _animController.reverse().then((_) {
+        widget.onDismiss();
+      }),
+    );
   }
 
   @override
@@ -70,7 +74,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
 
     final param = BiblePassageParam(
       passageId: widget.passageId,
-      languageCode: context.locale.languageCode,
       bibleId: widget.bibleId,
     );
 
@@ -80,17 +83,15 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
     const double cardWidth = 320;
 
     // Clamp left coordinate to prevent screen boundary overflows
-    final double left = (widget.tapPosition.dx - cardWidth / 2).clamp(
+    final left = (widget.tapPosition.dx - cardWidth / 2).clamp(
       16.0,
       screenWidth - cardWidth - 16.0,
     );
 
     // If tap is in the upper 45% of the screen, show popover below. Otherwise, show above.
-    final bool isBelow = widget.tapPosition.dy < screenHeight * 0.45;
-    final double? top = isBelow ? widget.tapPosition.dy + 12 : null;
-    final double? bottom = isBelow
-        ? null
-        : (screenHeight - widget.tapPosition.dy) + 12;
+    final isBelow = widget.tapPosition.dy < screenHeight * 0.45;
+    final top = isBelow ? widget.tapPosition.dy + 12 : null;
+    final bottom = isBelow ? null : (screenHeight - widget.tapPosition.dy) + 12;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
