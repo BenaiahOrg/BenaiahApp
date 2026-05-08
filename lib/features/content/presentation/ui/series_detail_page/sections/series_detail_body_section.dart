@@ -21,18 +21,26 @@ class _SeriesDetailBodySection extends ConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
-                  final isCollapsed =
-                      constraints.biggest.height <=
-                      kToolbarHeight + MediaQuery.of(context).padding.top + 16;
-                  final titleColor = isCollapsed
-                      ? Theme.of(context).colorScheme.onSurface
-                      : Colors.white;
+                  final mediaQuery = MediaQuery.of(context);
+                  final minHeight = kToolbarHeight + mediaQuery.padding.top;
+                  const maxHeight = 250.0;
+                  final delta = maxHeight - minHeight;
+                  final currentHeight = constraints.biggest.height;
+                  final t =
+                      ((currentHeight - minHeight) / delta).clamp(0.0, 1.0);
+
+                  final titleColor = Color.lerp(
+                        Theme.of(context).colorScheme.onSurface,
+                        Colors.white,
+                        t,
+                      ) ??
+                      Colors.white;
 
                   return FlexibleSpaceBar(
                     centerTitle: false,
                     titlePadding: EdgeInsetsDirectional.only(
-                      start: isCollapsed ? 72 : 24,
-                      bottom: isCollapsed ? 16 : 48,
+                      start: 24.0 + (48.0 * (1.0 - t)),
+                      bottom: 16.0 + (32.0 * t),
                       end: 24,
                     ),
                     title: Text(

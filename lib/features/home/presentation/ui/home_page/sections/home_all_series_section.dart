@@ -12,27 +12,11 @@ class _HomeAllSeriesSection extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
           sliver: SliverToBoxAdapter(
-            child: Row(
-              children: [
-                Text(
-                  'All Series'.tr(),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Series List coming soon!'.tr()),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                  child: Text('View All'.tr()),
-                ),
-              ],
+            child: Text(
+              'All Series'.tr(),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
         ),

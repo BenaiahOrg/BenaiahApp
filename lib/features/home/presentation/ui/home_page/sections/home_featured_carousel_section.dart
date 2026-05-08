@@ -202,12 +202,12 @@ class _FeaturedTopicHero extends StatelessWidget {
             ),
             // Hero Image with stunning parallax slide
             if (hasImage)
-              Transform.scale(
-                scale: 1.2,
-                child: Transform.translate(
-                  offset: Offset(scrollOffset * 30, 0),
-                  child: Hero(
-                    tag: 'topic_image_${topic.id}',
+              Hero(
+                tag: 'topic_image_${topic.id}',
+                child: Transform.scale(
+                  scale: 1.2,
+                  child: Transform.translate(
+                    offset: Offset(scrollOffset * 30, 0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: BenaiahNetworkImage(
@@ -217,17 +217,23 @@ class _FeaturedTopicHero extends StatelessWidget {
                   ),
                 ),
               ),
-            // High-contrast Gradient Overlay
+            // High-contrast Gradient Overlay (adaptive for theme brightness)
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withAlpha(50),
-                    Colors.black.withAlpha(120),
-                    Colors.black.withAlpha(220),
-                  ],
+                  colors: Theme.of(context).brightness == Brightness.dark
+                      ? [
+                          Colors.black.withAlpha(20),
+                          Colors.black.withAlpha(70),
+                          Colors.black.withAlpha(140),
+                        ]
+                      : [
+                          Colors.black.withAlpha(50),
+                          Colors.black.withAlpha(120),
+                          Colors.black.withAlpha(220),
+                        ],
                   stops: const [0, 0.4, 1],
                 ),
               ),
@@ -275,10 +281,10 @@ class _FeaturedTopicHero extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     // Title with sub-parallax shift
-                    Transform.translate(
-                      offset: Offset(scrollOffset * -25, 0),
-                      child: Hero(
-                        tag: 'topic_title_${topic.id}',
+                    Hero(
+                      tag: 'topic_title_${topic.id}',
+                      child: Transform.translate(
+                        offset: Offset(scrollOffset * -25, 0),
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
@@ -294,10 +300,10 @@ class _FeaturedTopicHero extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     // Excerpt with separate shift speed
-                    Transform.translate(
-                      offset: Offset(scrollOffset * -35, 0),
-                      child: Hero(
-                        tag: 'topic_excerpt_${topic.id}',
+                    Hero(
+                      tag: 'topic_excerpt_${topic.id}',
+                      child: Transform.translate(
+                        offset: Offset(scrollOffset * -35, 0),
                         child: Material(
                           color: Colors.transparent,
                           child: Text(

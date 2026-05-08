@@ -67,21 +67,29 @@ class _TopicDetailBodySection extends ConsumerWidget {
                       Theme.of(context).colorScheme.surfaceContainer,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
-                      final isCollapsed =
-                          constraints.biggest.height <=
-                          kToolbarHeight +
-                              MediaQuery.of(context).padding.top +
-                              48 +
-                              20;
-                      final titleColor = isCollapsed
-                          ? Theme.of(context).colorScheme.onSurface
-                          : Colors.white;
+                      final mediaQuery = MediaQuery.of(context);
+                      final minHeight =
+                          kToolbarHeight + mediaQuery.padding.top + 48.0;
+                      const maxHeight = 300.0;
+                      final delta = maxHeight - minHeight;
+                      final currentHeight = constraints.biggest.height;
+                      final t =
+                          ((currentHeight - minHeight) / delta).clamp(0.0, 1.0);
+
+                      final titleColor = Color.lerp(
+                            Theme.of(context).colorScheme.onSurface,
+                            Colors.white,
+                            t,
+                          ) ??
+                          Colors.white;
+
+                      final fontSize = 18.0 + (4.0 * t);
 
                       return FlexibleSpaceBar(
                         centerTitle: false,
                         titlePadding: EdgeInsetsDirectional.only(
-                          start: isCollapsed ? 72 : 24,
-                          bottom: isCollapsed ? 60 : 64,
+                          start: 24.0 + (48.0 * (1.0 - t)),
+                          bottom: 60.0 + (4.0 * t),
                           end: 24,
                         ),
                         title: Hero(
@@ -93,16 +101,16 @@ class _TopicDetailBodySection extends ConsumerWidget {
                               style: TextStyle(
                                 color: titleColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: isCollapsed ? 18 : 22,
-                                shadows: isCollapsed
-                                    ? null
-                                    : const [
-                                        Shadow(
-                                          offset: Offset(0, 1),
-                                          blurRadius: 3,
-                                          color: Colors.black54,
-                                        ),
-                                      ],
+                                fontSize: fontSize,
+                                shadows: [
+                                  Shadow(
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 3,
+                                    color: Colors.black.withValues(
+                                      alpha: 0.54 * t,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -113,6 +121,29 @@ class _TopicDetailBodySection extends ConsumerWidget {
                             if (imageUrl.isNotEmpty)
                               Hero(
                                 tag: 'topic_image_${topic.id}',
+                                flightShuttleBuilder: (
+                                  flightContext,
+                                  animation,
+                                  flightDirection,
+                                  fromHeroContext,
+                                  toHeroContext,
+                                ) {
+                                  final radiusTween = BorderRadiusTween(
+                                    begin: BorderRadius.circular(16),
+                                    end: BorderRadius.zero,
+                                  );
+
+                                  return AnimatedBuilder(
+                                    animation: animation,
+                                    builder: (context, child) {
+                                      return ClipRRect(
+                                        borderRadius: radiusTween
+                                            .evaluate(animation)!,
+                                        child: toHeroContext.widget,
+                                      );
+                                    },
+                                  );
+                                },
                                 child: ClipRRect(
                                   child: BenaiahNetworkImage(
                                     imageUrl: imageUrl,
@@ -140,7 +171,9 @@ class _TopicDetailBodySection extends ConsumerWidget {
                               left: 24,
                               right: 24,
                               bottom: 104,
-                              child: Hero(
+                              child: Opacity(
+                                opacity: t,
+                                child: Hero(
                                   tag: 'topic_excerpt_${topic.id}',
                                   child: Material(
                                     color: Colors.transparent,
@@ -160,6 +193,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
+                              ),
                             ),
                           ],
                         ),
