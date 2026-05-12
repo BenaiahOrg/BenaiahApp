@@ -14,8 +14,9 @@ class _StudyTab extends StatelessWidget {
               key: const PageStorageKey('study'),
               slivers: [
                 SliverOverlapInjector(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                    context,
+                  ),
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.all(24),
@@ -31,12 +32,12 @@ class _StudyTab extends StatelessWidget {
                         const SizedBox(height: 24),
                         Text(
                           'Study material by'.tr(),
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                    letterSpacing: 1.2,
-                                  ),
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                                letterSpacing: 1.2,
+                              ),
                         ),
                         const SizedBox(height: 16),
                         ...topic.studyMaterial.authors.map(
@@ -55,7 +56,7 @@ class _StudyTab extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: 0,
-          child: _FloatingAudioPlayer(
+          child: FloatingAudioPlayer(
             title: 'Study Narration'.tr(),
             subtitle: topic.title,
             totalDurationSeconds: 312, // 5:12

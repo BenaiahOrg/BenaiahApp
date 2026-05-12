@@ -14,8 +14,9 @@ class _DevotionalTab extends StatelessWidget {
               key: const PageStorageKey('devotional'),
               slivers: [
                 SliverOverlapInjector(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                    context,
+                  ),
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.all(24),
@@ -31,12 +32,12 @@ class _DevotionalTab extends StatelessWidget {
                         const SizedBox(height: 24),
                         Text(
                           'Written by'.tr(),
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                    letterSpacing: 1.2,
-                                  ),
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                                letterSpacing: 1.2,
+                              ),
                         ),
                         const SizedBox(height: 16),
                         ...topic.devotional.authors.map(
@@ -55,7 +56,7 @@ class _DevotionalTab extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: 0,
-          child: _FloatingAudioPlayer(
+          child: FloatingAudioPlayer(
             title: 'Devotional Narration'.tr(),
             subtitle: topic.title,
             totalDurationSeconds: 225, // 3:45
