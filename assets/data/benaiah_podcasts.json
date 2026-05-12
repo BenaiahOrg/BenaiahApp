@@ -1,0 +1,82 @@
+[
+  {
+    "id": "ep1",
+    "title": "The Anchor of Hope",
+    "description": "In this episode, we explore what it means to anchor our souls in biblical hope during life's most intense storms. Taking our core inspiration from Hebrews 6:19, we unpack the stark difference between worldly wishful thinking and the certain, unwavering anchor that is Jesus Christ. Learn how to stand firm and secure when everything around you seems to be shifting.",
+    "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    "durationSeconds": 372,
+    "imageUrl": "https://picsum.photos/id/1015/800/600",
+    "publishDate": "2026-05-10T10:00:00Z",
+    "episodeNumber": 1,
+    "seasonNumber": 1,
+    "category": "Faith",
+    "hosts": [
+      {
+        "id": "h1",
+        "name": "Benaiah Team",
+        "bio": "A collective of authors, creators, and teachers dedicated to bringing God's word to life through digital media.",
+        "imageUrl": "https://picsum.photos/id/1011/200/200"
+      }
+    ]
+  },
+  {
+    "id": "ep2",
+    "title": "Understanding Agape Love",
+    "description": "Love is often described as an emotion, but the biblical concept of Agape is a proactive commitment and sacrificial choice. Join Dr. Abenezer Bekele as we do a deep theological and practical dive into 1 Corinthians 13. We'll examine how God's unconditional love should flow through our daily relationships, our work, and our ministries, transforming how we see and treat others.",
+    "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    "durationSeconds": 585,
+    "imageUrl": "https://picsum.photos/id/1019/800/600",
+    "publishDate": "2026-05-05T09:30:00Z",
+    "episodeNumber": 2,
+    "seasonNumber": 1,
+    "category": "Devotional",
+    "hosts": [
+      {
+        "id": "h2",
+        "name": "Dr. Abenezer Bekele",
+        "bio": "Theologian and author with over 15 years of experience teaching biblical studies across Ethiopia and East Africa.",
+        "imageUrl": "https://picsum.photos/id/1025/200/200"
+      }
+    ]
+  },
+  {
+    "id": "ep3",
+    "title": "The Power of Stillness",
+    "description": "In our fast-paced, high-stress world, silence is rare. In this session, Selah Abebe discusses the spiritual discipline of silence and solitude. We explore Psalm 46:10 ('Be still, and know that I am God') and look at how Jesus regularly withdrew to quiet places to pray and recharge. Find practical advice on carving out moments of stillness in your hectic modern routine.",
+    "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    "durationSeconds": 412,
+    "imageUrl": "https://picsum.photos/id/1016/800/600",
+    "publishDate": "2026-04-28T14:15:00Z",
+    "episodeNumber": 3,
+    "seasonNumber": 1,
+    "category": "Wisdom",
+    "hosts": [
+      {
+        "id": "h3",
+        "name": "Selah Abebe",
+        "bio": "Spiritual counselor and creator of the Selah meditation series, passionate about quiet reflection and mental well-being in Christ.",
+        "imageUrl": "https://picsum.photos/id/1062/200/200"
+      }
+    ]
+  },
+  {
+    "id": "ep4",
+    "title": "In All Things Give Thanks",
+    "description": "How do we cultivate gratitude when circumstances are difficult? This episode tackles the difficult biblical command in 1 Thessalonians 5:18 to give thanks in all circumstances. We look at the lives of the apostles and modern believers who found supernatural joy and gratitude in times of hardship, showing how thankfulness can change our perspective and unlock spiritual power.",
+    "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+    "durationSeconds": 508,
+    "imageUrl": "https://picsum.photos/id/1018/800/600",
+    "publishDate": "2026-04-20T08:00:00Z",
+    "episodeNumber": 4,
+    "seasonNumber": 1,
+    "category": "Devotional",
+    "hosts": [
+      {
+        "id": "h1",
+        "name": "Benaiah Team",
+        "bio": "A collective of authors, creators, and teachers dedicated to bringing God's word to life through digital media.",
+        "imageUrl": "https://picsum.photos/id/1011/200/200"
+      }
+    ]
+  }
+]

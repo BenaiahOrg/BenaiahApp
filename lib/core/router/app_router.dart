@@ -8,6 +8,8 @@ import 'package:benaiah_app/features/content/presentation/ui/topic_detail_page/t
 import 'package:benaiah_app/features/home/presentation/ui/home_page/home_page.dart';
 import 'package:benaiah_app/features/main/presentation/ui/main_page/main_page.dart';
 import 'package:benaiah_app/features/settings/presentation/ui/settings_page/settings_page.dart';
+import 'package:benaiah_app/features/podcast/presentation/ui/podcast_page/podcast_page.dart';
+import 'package:benaiah_app/features/podcast/presentation/ui/podcast_detail_page/podcast_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -46,6 +48,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                       position: animation.drive(
                         Tween<Offset>(
                           begin: begin,
+                          end: Offset.zero,
+                        ).chain(CurveTween(curve: Curves.easeInOut)),
+                      ),
+                      child: child,
+                    );
+                  },
+            ),
+          ),
+          GoRoute(
+            path: RouteNames.podcasts,
+            name: RouteNames.podcasts,
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const PodcastPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    final previousIndex = ref.read(previousNavIndexProvider);
+                    final currentIndex = ref.read(navIndexProvider);
+                    final begin = currentIndex >= previousIndex
+                        ? const Offset(1, 0)
+                        : const Offset(-1, 0);
+                    return SlideTransition(
+                      position: animation.drive(
+                        Tween<Offset>(
+                           begin: begin,
                           end: Offset.zero,
                         ).chain(CurveTween(curve: Curves.easeInOut)),
                       ),
@@ -100,6 +127,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final seriesId = state.pathParameters['seriesId']!;
           return SeriesDetailPage(seriesId: seriesId);
+        },
+      ),
+      GoRoute(
+        path: RouteNames.podcastDetail,
+        name: RouteNames.podcastDetail,
+        builder: (context, state) {
+          final episodeId = state.pathParameters['episodeId']!;
+          return PodcastDetailPage(episodeId: episodeId);
         },
       ),
     ],

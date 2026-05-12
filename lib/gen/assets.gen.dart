@@ -17,8 +17,11 @@ class $AssetsDataGen {
   /// File path: assets/data/benaiah_content.json
   String get benaiahContent => 'assets/data/benaiah_content.json';
 
+  /// File path: assets/data/benaiah_podcasts.json
+  String get benaiahPodcasts => 'assets/data/benaiah_podcasts.json';
+
   /// List of all assets
-  List<String> get values => [benaiahContent];
+  List<String> get values => [benaiahContent, benaiahPodcasts];
 }
 
 class $AssetsFontsGen {

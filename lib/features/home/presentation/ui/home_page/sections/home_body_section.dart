@@ -14,8 +14,6 @@ class _HomeBodySection extends ConsumerWidget {
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            const _HomeTopSection(),
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
             if (seriesList.isNotEmpty)
               SliverToBoxAdapter(
                 child: _FeaturedCarousel(seriesList: seriesList),

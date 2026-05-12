@@ -21,6 +21,11 @@ class _MainBottomSection extends ConsumerWidget {
           label: 'Home'.tr(),
         ),
         BottomNavigationBarItem(
+          icon: const Icon(Icons.podcasts_outlined),
+          activeIcon: const Icon(Icons.podcasts),
+          label: 'Podcasts'.tr(),
+        ),
+        BottomNavigationBarItem(
           icon: const Icon(Icons.settings_outlined),
           activeIcon: const Icon(Icons.settings),
           label: 'Settings'.tr(),
@@ -30,7 +35,8 @@ class _MainBottomSection extends ConsumerWidget {
   }
 
   int _getCurrentIndex(String location) {
-    if (location == RouteNames.settings) return 1;
+    if (location == RouteNames.podcasts) return 1;
+    if (location == RouteNames.settings) return 2;
     return 0;
   }
 
@@ -40,6 +46,8 @@ class _MainBottomSection extends ConsumerWidget {
       case 0:
         context.go(RouteNames.home);
       case 1:
+        context.go(RouteNames.podcasts);
+      case 2:
         context.go(RouteNames.settings);
     }
   }

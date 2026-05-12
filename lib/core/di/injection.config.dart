@@ -48,6 +48,14 @@ import 'package:benaiah_app/features/main/data/repositories/main_repository_impl
     as _i1043;
 import 'package:benaiah_app/features/main/domain/repositories/main_repository.dart'
     as _i917;
+import 'package:benaiah_app/features/podcast/data/data_sources/podcast_local_data_source.dart'
+    as _i206;
+import 'package:benaiah_app/features/podcast/data/data_sources/podcast_remote_data_source.dart'
+    as _i167;
+import 'package:benaiah_app/features/podcast/data/repositories/podcast_repository_impl.dart'
+    as _i341;
+import 'package:benaiah_app/features/podcast/domain/repositories/podcast_repository.dart'
+    as _i433;
 import 'package:benaiah_app/features/settings/data/data_sources/settings_local_data_source.dart'
     as _i298;
 import 'package:benaiah_app/features/settings/data/data_sources/settings_remote_data_source.dart'
@@ -92,11 +100,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i923.AboutLocalDataSource>(
       () => _i923.AboutLocalDataSourceImpl(),
     );
+    gh.lazySingleton<_i206.PodcastLocalDataSource>(
+      () => _i206.PodcastLocalDataSourceImpl(),
+    );
     gh.lazySingleton<_i361.Dio>(
       () => dioModule.dio(gh<_i243.AuthInterceptor>()),
     );
     gh.lazySingleton<_i751.HttpClient>(
       () => _i608.DioHttpClient(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i167.PodcastRemoteDataSource>(
+      () => _i167.PodcastRemoteDataSourceImpl(gh<_i751.HttpClient>()),
     );
     gh.lazySingleton<_i949.AboutRemoteDataSource>(
       () => _i949.AboutRemoteDataSourceImpl(gh<_i751.HttpClient>()),
@@ -114,6 +128,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i222.HomeRepositoryImpl(
         gh<_i402.HomeRemoteDataSource>(),
         gh<_i451.HomeLocalDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i433.PodcastRepository>(
+      () => _i341.PodcastRepositoryImpl(
+        gh<_i167.PodcastRemoteDataSource>(),
+        gh<_i206.PodcastLocalDataSource>(),
       ),
     );
     gh.lazySingleton<_i426.ContentRepository>(
