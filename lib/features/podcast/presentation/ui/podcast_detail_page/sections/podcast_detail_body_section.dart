@@ -5,7 +5,11 @@ class _PodcastDetailBodySection extends ConsumerWidget {
 
   final PodcastEpisode episode;
 
-  void _playEpisode(BuildContext context, WidgetRef ref, PodcastEpisode episode) {
+  void _playEpisode(
+    BuildContext context,
+    WidgetRef ref,
+    PodcastEpisode episode,
+  ) {
     ref.read(podcastPlayerProvider.notifier).play(episode);
     unawaited(
       showModalBottomSheet<void>(
@@ -31,13 +35,16 @@ class _PodcastDetailBodySection extends ConsumerWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withAlpha(25),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    episode.category.toUpperCase(),
+                    episode.category.tr().toUpperCase(),
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -47,7 +54,14 @@ class _PodcastDetailBodySection extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Season ${episode.seasonNumber} • Episode ${episode.episodeNumber}'.toUpperCase(),
+                  'Season {} • Episode {}'
+                      .tr(
+                        args: [
+                          episode.seasonNumber.toString(),
+                          episode.episodeNumber.toString(),
+                        ],
+                      )
+                      .toUpperCase(),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
@@ -68,23 +82,31 @@ class _PodcastDetailBodySection extends ConsumerWidget {
             const SizedBox(height: 12),
             // Publish Date and Duration
             Text(
-              'Published on {} • {}'
-                  .tr(args: [
-                    DateTimeUtils.formatDate(episode.publishDate), 
-                    '${episode.durationSeconds ~/ 60} minutes'.tr()
-                  ]),
+              'Published on {} • {}'.tr(
+                args: [
+                  DateTimeUtils.formatDate(episode.publishDate),
+                  '{} minutes'.tr(
+                    args: [
+                      (episode.durationSeconds ~/ 60).toString(),
+                    ],
+                  ),
+                ],
+              ),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.grey,
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Large custom Play Button
             ElevatedButton.icon(
               icon: const Icon(Icons.play_arrow_rounded, size: 28),
               label: Text(
                 'Play Episode'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
               onPressed: () => _playEpisode(context, ref, episode),
               style: ElevatedButton.styleFrom(

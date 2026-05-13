@@ -52,7 +52,10 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
                       top: 12,
                       left: 12,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primary,
                           borderRadius: BorderRadius.circular(12),
@@ -79,7 +82,7 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            episode.category.toUpperCase(),
+                            episode.category.tr().toUpperCase(),
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: Colors.grey,
                               fontWeight: FontWeight.bold,
@@ -87,8 +90,12 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${DateTimeUtils.formatDate(episode.publishDate)} • ${DateTimeUtils.formatDuration(episode.durationSeconds)}',
-                            style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey),
+                            '${DateTimeUtils.formatDate(episode.publishDate)} • ${DateTimeUtils.formatDuration(
+                              episode.durationSeconds,
+                            )}',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: Colors.grey,
+                            ),
                           ),
                         ],
                       ),
@@ -102,7 +109,9 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         episode.description,
-                        style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),

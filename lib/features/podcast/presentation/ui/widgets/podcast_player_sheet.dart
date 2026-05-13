@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
-import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_player_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -204,7 +202,11 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              'Season ${episode.seasonNumber} • Episode ${episode.episodeNumber}'
+              'Season {} • Episode {}'
+                  .tr(args: [
+                    episode.seasonNumber.toString(),
+                    episode.episodeNumber.toString(),
+                  ])
                   .toUpperCase(),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary,

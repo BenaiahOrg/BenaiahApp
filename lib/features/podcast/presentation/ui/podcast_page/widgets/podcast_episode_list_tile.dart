@@ -55,7 +55,10 @@ class _PodcastEpisodeListTile extends ConsumerWidget {
               // Text details
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 4,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -63,13 +66,16 @@ class _PodcastEpisodeListTile extends ConsumerWidget {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primary.withAlpha(20),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              episode.category.toUpperCase(),
+                              episode.category.tr().toUpperCase(),
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: theme.colorScheme.primary,
                                 fontSize: 8,
@@ -79,7 +85,9 @@ class _PodcastEpisodeListTile extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '${DateTimeUtils.formatDate(episode.publishDate)} • ${DateTimeUtils.formatDuration(episode.durationSeconds)}',
+                            '${DateTimeUtils.formatDate(episode.publishDate)} • ${DateTimeUtils.formatDuration(
+                              episode.durationSeconds,
+                            )}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: Colors.grey,
                               fontSize: 10,
@@ -133,7 +141,9 @@ class _PodcastEpisodeListTile extends ConsumerWidget {
                       ref.read(podcastPlayerProvider.notifier).play(episode);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Now Playing: {}'.tr(args: [episode.title])),
+                          content: Text(
+                            'Now Playing: {}'.tr(args: [episode.title]),
+                          ),
                           duration: const Duration(seconds: 2),
                           behavior: SnackBarBehavior.floating,
                         ),
