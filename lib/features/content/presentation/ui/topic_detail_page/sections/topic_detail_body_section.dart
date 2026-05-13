@@ -10,8 +10,9 @@ class _TopicDetailBodySection extends ConsumerWidget {
     BuildContext context,
     Topic topic,
   ) {
+    final lang = context.locale.languageCode;
     final markdownContent =
-        '${topic.devotional.data}\n${topic.studyMaterial.data}';
+        '${topic.localizedDevotional(lang).data}\n${topic.localizedStudyMaterial(lang).data}';
     final bibleLinkRegex = RegExp(
       r'https?://(?:www\.)?bible\.com/bible/[^)\s"]+',
     );
@@ -63,8 +64,9 @@ class _TopicDetailBodySection extends ConsumerWidget {
                   expandedHeight: 300,
                   pinned: true,
                   elevation: 0,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainer,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainer,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
                       final mediaQuery = MediaQuery.of(context);
@@ -73,10 +75,13 @@ class _TopicDetailBodySection extends ConsumerWidget {
                       const maxHeight = 300.0;
                       final delta = maxHeight - minHeight;
                       final currentHeight = constraints.biggest.height;
-                      final t =
-                          ((currentHeight - minHeight) / delta).clamp(0.0, 1.0);
+                      final t = ((currentHeight - minHeight) / delta).clamp(
+                        0.0,
+                        1.0,
+                      );
 
-                      final titleColor = Color.lerp(
+                      final titleColor =
+                          Color.lerp(
                             Theme.of(context).colorScheme.onSurface,
                             Colors.white,
                             t,
@@ -97,7 +102,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
                           child: Material(
                             color: Colors.transparent,
                             child: Text(
-                              topic.title,
+                              topic.localizedTitle(context.locale.languageCode),
                               style: TextStyle(
                                 color: titleColor,
                                 fontWeight: FontWeight.bold,
@@ -121,29 +126,31 @@ class _TopicDetailBodySection extends ConsumerWidget {
                             if (imageUrl.isNotEmpty)
                               Hero(
                                 tag: 'topic_image_${topic.id}',
-                                flightShuttleBuilder: (
-                                  flightContext,
-                                  animation,
-                                  flightDirection,
-                                  fromHeroContext,
-                                  toHeroContext,
-                                ) {
-                                  final radiusTween = BorderRadiusTween(
-                                    begin: BorderRadius.circular(16),
-                                    end: BorderRadius.zero,
-                                  );
+                                flightShuttleBuilder:
+                                    (
+                                      flightContext,
+                                      animation,
+                                      flightDirection,
+                                      fromHeroContext,
+                                      toHeroContext,
+                                    ) {
+                                      final radiusTween = BorderRadiusTween(
+                                        begin: BorderRadius.circular(16),
+                                        end: BorderRadius.zero,
+                                      );
 
-                                  return AnimatedBuilder(
-                                    animation: animation,
-                                    builder: (context, child) {
-                                      return ClipRRect(
-                                        borderRadius: radiusTween
-                                            .evaluate(animation)!,
-                                        child: toHeroContext.widget,
+                                      return AnimatedBuilder(
+                                        animation: animation,
+                                        builder: (context, child) {
+                                          return ClipRRect(
+                                            borderRadius: radiusTween.evaluate(
+                                              animation,
+                                            )!,
+                                            child: toHeroContext.widget,
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
                                 child: ClipRRect(
                                   child: BenaiahNetworkImage(
                                     imageUrl: imageUrl,
@@ -178,9 +185,18 @@ class _TopicDetailBodySection extends ConsumerWidget {
                                   child: Material(
                                     color: Colors.transparent,
                                     child: Text(
-                                      topic.devotional.data.isNotEmpty
+                                      topic
+                                              .localizedDevotional(
+                                                context.locale.languageCode,
+                                              )
+                                              .data
+                                              .isNotEmpty
                                           ? StringUtils.stripMarkdown(
-                                              topic.devotional.data,
+                                              topic
+                                                  .localizedDevotional(
+                                                    context.locale.languageCode,
+                                                  )
+                                                  .data,
                                             )
                                           : 'Explore this topic in depth.'.tr(),
                                       style: const TextStyle(

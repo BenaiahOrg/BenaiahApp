@@ -24,7 +24,9 @@ class _GraphicsTab extends StatelessWidget {
                           'https://picsum.photos/seed/${topic.id}_$index/800/600';
                       return _GraphicItem(
                         imageUrl: imageUrl,
-                        topicTitle: topic.title,
+                        topicTitle: topic.localizedTitle(
+                          context.locale.languageCode,
+                        ),
                       );
                     },
                     childCount: 3,
@@ -40,7 +42,9 @@ class _GraphicsTab extends StatelessWidget {
                       final imageUrl = topic.graphics.data[index];
                       return _GraphicItem(
                         imageUrl: imageUrl,
-                        topicTitle: topic.title,
+                        topicTitle: topic.localizedTitle(
+                          context.locale.languageCode,
+                        ),
                       );
                     },
                     childCount: topic.graphics.data.length,
@@ -59,10 +63,10 @@ class _GraphicsTab extends StatelessWidget {
                     Text(
                       'Graphics by'.tr(),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                            letterSpacing: 1.2,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        letterSpacing: 1.2,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     ...topic.graphics.authors.map(

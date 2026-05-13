@@ -57,41 +57,87 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         final topics = <Topic>[];
         for (var j = 0; j < topicsJson.length; j++) {
           final topicJson = topicsJson[j] as Map<String, dynamic>;
-          final devJson =
-              topicJson['devotional'] as Map<String, dynamic>?;
-          final studyJson =
-              topicJson['study_material'] as Map<String, dynamic>?;
+          
+          final titleEn = topicJson['title_en'] as String? ?? topicJson['title'] as String;
+          final titleAm = topicJson['title_am'] as String? ?? topicJson['title'] as String;
+
+          final devEnJson = topicJson['devotional_en'] as Map<String, dynamic>?;
+          final devAmJson = topicJson['devotional_am'] as Map<String, dynamic>?;
+          final studyEnJson = topicJson['study_material_en'] as Map<String, dynamic>?;
+          final studyAmJson = topicJson['study_material_am'] as Map<String, dynamic>?;
+
+          final graphicsList = (topicJson['graphics'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList();
+          final List<String> finalGraphics =
+              (graphicsList != null && graphicsList.isNotEmpty)
+                  ? graphicsList
+                  : [_getImageUrl(i + j + 100)];
 
           topics.add(
             Topic(
               id: topicJson['id'] as String,
               title: topicJson['title'] as String,
+              titleEn: titleEn,
+              titleAm: titleAm,
               devotional: TopicContent(
-                data: devJson != null
-                    ? devJson['content'] as String
+                data: devEnJson != null
+                    ? devEnJson['content'] as String
                     : 'Content coming soon...',
                 authors: const [defaultAuthor],
               ),
+              devotionalEn: TopicContent(
+                data: devEnJson != null
+                    ? devEnJson['content'] as String
+                    : 'Content coming soon...',
+                authors: const [defaultAuthor],
+              ),
+              devotionalAm: TopicContent(
+                data: devAmJson != null
+                    ? devAmJson['content'] as String
+                    : 'ይዘቱ በቅርቡ ይቀርባል...',
+                authors: const [defaultAuthor],
+              ),
               studyMaterial: TopicContent(
-                data: studyJson != null
-                    ? studyJson['content'] as String
+                data: studyEnJson != null
+                    ? studyEnJson['content'] as String
                     : 'Study material coming soon...',
                 authors: const [defaultAuthor],
               ),
+              studyMaterialEn: TopicContent(
+                data: studyEnJson != null
+                    ? studyEnJson['content'] as String
+                    : 'Study material coming soon...',
+                authors: const [defaultAuthor],
+              ),
+              studyMaterialAm: TopicContent(
+                data: studyAmJson != null
+                    ? studyAmJson['content'] as String
+                    : 'የጥናት ቁሳቁስ በቅርቡ ይቀርባል...',
+                authors: const [defaultAuthor],
+              ),
               graphics: TopicContent(
-                data: [_getImageUrl(i + j + 100)],
+                data: finalGraphics,
                 authors: [defaultAuthor],
               ),
             ),
           );
         }
 
+        final seriesTitleEn = seriesJson['series_en'] as String? ?? seriesJson['series'] as String;
+        final seriesTitleAm = seriesJson['series_am'] as String? ?? seriesJson['series'] as String;
+
         seriesList.add(
           Series(
             id: 's$i',
             title: seriesJson['series'] as String,
-            description: 'Exploring the ${seriesJson['series']} '
-                'theme with depth and biblical insight.',
+            titleEn: seriesTitleEn,
+            titleAm: seriesTitleAm,
+            description: 'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
+            descriptionEn: 'Exploring the $seriesTitleEn theme with depth and biblical insight.',
+            descriptionAm: seriesJson['series_am'] != null
+                ? 'የ$seriesTitleAmን ጭብጥ በጥልቀት እና በመጽሐፍ ቅዱሳዊ ግንዛቤ መመርመር።'
+                : 'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
             imageUrl: _getImageUrl(i),
             topics: topics,
           ),

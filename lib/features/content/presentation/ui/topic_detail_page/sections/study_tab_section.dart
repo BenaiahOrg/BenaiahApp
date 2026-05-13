@@ -25,7 +25,7 @@ class _StudyTab extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         BenaiahMarkdown(
-                          data: topic.studyMaterial.data,
+                          data: topic.localizedStudyMaterial(context.locale.languageCode).data,
                         ),
                         const SizedBox(height: 48),
                         const Divider(),
@@ -58,7 +58,7 @@ class _StudyTab extends StatelessWidget {
           bottom: 0,
           child: FloatingAudioPlayer(
             title: 'Study Narration'.tr(),
-            subtitle: topic.title,
+            subtitle: topic.localizedTitle(context.locale.languageCode),
             totalDurationSeconds: 312, // 5:12
             imageUrl: topic.graphics.data.isNotEmpty
                 ? topic.graphics.data.first

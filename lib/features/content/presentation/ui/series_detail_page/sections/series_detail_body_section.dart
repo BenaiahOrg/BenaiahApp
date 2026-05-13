@@ -44,7 +44,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                       end: 24,
                     ),
                     title: Text(
-                      series.title,
+                      series.localizedTitle(context.locale.languageCode),
                       style: TextStyle(
                         color: titleColor,
                         fontWeight: FontWeight.bold,
@@ -85,7 +85,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      series.description,
+                      series.localizedDescription(context.locale.languageCode),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Colors.grey[700],
                         height: 1.5,
@@ -177,7 +177,7 @@ class _TopicItem extends StatelessWidget {
                 ),
               ),
         title: Text(
-          topic.title,
+          topic.localizedTitle(context.locale.languageCode),
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,

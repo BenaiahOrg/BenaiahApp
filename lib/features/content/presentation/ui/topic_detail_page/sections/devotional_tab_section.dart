@@ -25,7 +25,7 @@ class _DevotionalTab extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         BenaiahMarkdown(
-                          data: topic.devotional.data,
+                          data: topic.localizedDevotional(context.locale.languageCode).data,
                         ),
                         const SizedBox(height: 48),
                         const Divider(),
@@ -58,7 +58,7 @@ class _DevotionalTab extends StatelessWidget {
           bottom: 0,
           child: FloatingAudioPlayer(
             title: 'Devotional Narration'.tr(),
-            subtitle: topic.title,
+            subtitle: topic.localizedTitle(context.locale.languageCode),
             totalDurationSeconds: 225, // 3:45
             imageUrl: topic.graphics.data.isNotEmpty
                 ? topic.graphics.data.first

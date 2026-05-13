@@ -136,7 +136,7 @@ class FeaturedTopicHero extends StatelessWidget {
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            topic.title,
+                            topic.localizedTitle(context.locale.languageCode),
                             style: Theme.of(context).textTheme.headlineMedium
                                 ?.copyWith(
                                   color: Colors.white,
@@ -155,9 +155,9 @@ class FeaturedTopicHero extends StatelessWidget {
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            topic.devotional.data.isNotEmpty
+                            topic.localizedDevotional(context.locale.languageCode).data.isNotEmpty
                                 ? StringUtils.stripMarkdown(
-                                    topic.devotional.data,
+                                    topic.localizedDevotional(context.locale.languageCode).data,
                                   )
                                 : 'Explore this topic in depth.'.tr(),
                             style: Theme.of(context).textTheme.bodyMedium
