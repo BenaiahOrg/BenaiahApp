@@ -1,12 +1,12 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:benaiah_app/core/di/injection.dart';
 import 'package:benaiah_app/core/error/result.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/domain/repositories/content_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'topic_detail_notifier.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class TopicDetailNotifier extends _$TopicDetailNotifier {
   ContentRepository get _repository => container<ContentRepository>();
 

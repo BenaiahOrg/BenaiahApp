@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'series_detail_notifier.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SeriesDetailNotifier extends _$SeriesDetailNotifier {
   ContentRepository get _repository => container<ContentRepository>();
 

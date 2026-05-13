@@ -1,4 +1,5 @@
 import 'package:benaiah_app/gen/assets.gen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BenaiahNetworkImage extends StatelessWidget {
@@ -25,17 +26,16 @@ class BenaiahNetworkImage extends StatelessWidget {
       return errorWidget ?? _buildFallback(context);
     }
 
-    return Image.network(
-      imageUrl,
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
       fit: fit,
       width: width,
       height: height,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
+      progressIndicatorBuilder: (context, url, downloadProgress) {
         return placeholder ??
-            _buildLoadingPlaceholder(context, loadingProgress);
+            _buildLoadingPlaceholder(context, downloadProgress);
       },
-      errorBuilder: (context, error, stackTrace) {
+      errorWidget: (context, url, error) {
         return errorWidget ?? _buildFallback(context);
       },
     );
@@ -43,7 +43,7 @@ class BenaiahNetworkImage extends StatelessWidget {
 
   Widget _buildLoadingPlaceholder(
     BuildContext context,
-    ImageChunkEvent loadingProgress,
+    DownloadProgress downloadProgress,
   ) {
     return Container(
       width: width,
@@ -54,10 +54,7 @@ class BenaiahNetworkImage extends StatelessWidget {
       child: Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          value: loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-              : null,
+          value: downloadProgress.progress,
         ),
       ),
     );
