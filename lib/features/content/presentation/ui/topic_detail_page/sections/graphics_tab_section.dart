@@ -16,25 +16,49 @@ class _GraphicsTab extends StatelessWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.all(16),
-              sliver: SliverMasonryGrid.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childCount: topic.graphics.data.isEmpty
-                    ? 3
-                    : topic.graphics.data.length,
-                itemBuilder: (context, index) {
-                  final imageUrl = topic.graphics.data.isEmpty
-                      ? 'https://picsum.photos/seed/${topic.id}_$index/800/600'
-                      : topic.graphics.data[index];
-                  return _GraphicItem(
-                    imageUrl: imageUrl,
-                    topicTitle: topic.localizedTitle(
-                      context.locale.languageCode,
+              sliver: topic.graphics.data.isEmpty
+                  ? SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 48),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 48,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No graphics available for this topic'.tr(),
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 16,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SliverMasonryGrid.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childCount: topic.graphics.data.length,
+                      itemBuilder: (context, index) {
+                        final allImages = topic.graphics.data;
+                        final imageUrl = allImages[index];
+                        return _GraphicItem(
+                          imageUrl: imageUrl,
+                          topicTitle: topic.localizedTitle(
+                            context.locale.languageCode,
+                          ),
+                          allImages: allImages,
+                          initialIndex: index,
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
             SliverPadding(
               padding: const EdgeInsets.all(24),

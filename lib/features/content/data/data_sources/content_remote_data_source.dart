@@ -98,7 +98,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
           final List<String> finalGraphics =
               (graphicsList != null && graphicsList.isNotEmpty)
               ? graphicsList
-              : [_getImageUrl(i + j + 100)];
+              : const <String>[];
 
           topics.add(
             Topic(
@@ -157,6 +157,15 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             seriesJson['series_am'] as String? ??
             seriesJson['series'] as String;
 
+        String? firstGraphic;
+        for (final topic in topics) {
+          if (topic.graphics.data.isNotEmpty) {
+            firstGraphic = topic.graphics.data.first;
+            break;
+          }
+        }
+        final seriesImageUrl = firstGraphic ?? '';
+
         seriesList.add(
           Series(
             id: 's$i',
@@ -170,7 +179,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             descriptionAm: seriesJson['series_am'] != null
                 ? 'የ$seriesTitleAmን ጭብጥ በጥልቀት እና በመጽሐፍ ቅዱሳዊ ግንዛቤ መመርመር።'
                 : 'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
-            imageUrl: _getImageUrl(i),
+            imageUrl: seriesImageUrl,
             topics: topics,
           ),
         );

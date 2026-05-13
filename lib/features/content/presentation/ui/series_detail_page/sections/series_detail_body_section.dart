@@ -53,9 +53,7 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                     background: Stack(
                       fit: StackFit.expand,
                       children: [
-                        BenaiahNetworkImage(
-                          imageUrl: series.imageUrl,
-                        ),
+                        _SeriesGraphicsSlideshow(series: series),
                         const DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -194,6 +192,82 @@ class _TopicItem extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _SeriesGraphicsSlideshow extends StatefulWidget {
+  const _SeriesGraphicsSlideshow({required this.series});
+  final Series series;
+
+  @override
+  State<_SeriesGraphicsSlideshow> createState() =>
+      _SeriesGraphicsSlideshowState();
+}
+
+class _SeriesGraphicsSlideshowState extends State<_SeriesGraphicsSlideshow> {
+  late final PageController _pageController;
+  late final List<String> _shuffledGraphics;
+  Timer? _timer;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    final allGraphics = <String>[];
+    for (final topic in widget.series.topics) {
+      allGraphics.addAll(topic.graphics.data);
+    }
+
+    if (allGraphics.isNotEmpty) {
+      _shuffledGraphics = List<String>.from(allGraphics)..shuffle();
+      _startSlideshow();
+    } else {
+      _shuffledGraphics = const [];
+    }
+  }
+
+  void _startSlideshow() {
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (!mounted) return;
+      if (_shuffledGraphics.length <= 1) return;
+
+      setState(() {
+        _currentPage = (_currentPage + 1) % _shuffledGraphics.length;
+      });
+
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 1000),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_shuffledGraphics.isEmpty) {
+      return const BenaiahNetworkImage(imageUrl: '');
+    }
+
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: _shuffledGraphics.length,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return BenaiahNetworkImage(
+          imageUrl: _shuffledGraphics[index],
+        );
+      },
     );
   }
 }
