@@ -12,8 +12,10 @@ import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/presentation/providers/bible_passage_provider.dart';
 import 'package:benaiah_app/features/content/presentation/providers/topic_detail_notifier.dart';
 import 'package:benaiah_app/features/content/presentation/ui/topic_detail_page/widgets/audio_detailed_player_sheet.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'screen/topic_detail_screen.dart';

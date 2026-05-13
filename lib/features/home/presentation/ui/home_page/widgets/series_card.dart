@@ -39,7 +39,7 @@ class _SeriesCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            series.title,
+            series.localizedTitle(context.locale.languageCode),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),

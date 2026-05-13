@@ -12,7 +12,7 @@ class _AuthorInfoRow extends StatelessWidget {
         children: [
           const SizedBox(width: 12),
           Text(
-            author.name,
+            author.localizedName(context.locale.languageCode),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),

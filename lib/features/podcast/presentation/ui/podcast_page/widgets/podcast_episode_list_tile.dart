@@ -138,7 +138,9 @@ class _PodcastEpisodeListTile extends ConsumerWidget {
                     ),
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      ref.read(podcastPlayerProvider.notifier).play(episode);
+                      unawaited(
+                        ref.read(podcastPlayerProvider.notifier).play(episode),
+                      );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(

@@ -15,6 +15,10 @@ class SeriesModel extends Series {
     required super.description,
     required super.imageUrl,
     required this.topics,
+    required super.titleEn,
+    required super.titleAm,
+    required super.descriptionEn,
+    required super.descriptionAm,
   }) : super(topics: topics);
 
   factory SeriesModel.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +33,10 @@ class SeriesModel extends Series {
       description: entity.description,
       imageUrl: entity.imageUrl,
       topics: entity.topics.map((e) => TopicModel.fromEntity(e)).toList(),
+      titleEn: entity.titleEn,
+      titleAm: entity.titleAm,
+      descriptionEn: entity.descriptionEn,
+      descriptionAm: entity.descriptionAm,
     );
   }
 }

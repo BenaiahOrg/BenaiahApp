@@ -10,7 +10,7 @@ class _PodcastDetailBodySection extends ConsumerWidget {
     WidgetRef ref,
     PodcastEpisode episode,
   ) {
-    ref.read(podcastPlayerProvider.notifier).play(episode);
+    unawaited(ref.read(podcastPlayerProvider.notifier).play(episode));
     unawaited(
       showModalBottomSheet<void>(
         context: context,

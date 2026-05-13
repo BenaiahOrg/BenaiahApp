@@ -14,43 +14,28 @@ class _GraphicsTab extends StatelessWidget {
             SliverOverlapInjector(
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
             ),
-            if (topic.graphics.data.isEmpty)
-              SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final imageUrl =
-                          'https://picsum.photos/seed/${topic.id}_$index/800/600';
-                      return _GraphicItem(
-                        imageUrl: imageUrl,
-                        topicTitle: topic.localizedTitle(
-                          context.locale.languageCode,
-                        ),
-                      );
-                    },
-                    childCount: 3,
-                  ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final imageUrl = topic.graphics.data[index];
-                      return _GraphicItem(
-                        imageUrl: imageUrl,
-                        topicTitle: topic.localizedTitle(
-                          context.locale.languageCode,
-                        ),
-                      );
-                    },
-                    childCount: topic.graphics.data.length,
-                  ),
-                ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverMasonryGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childCount: topic.graphics.data.isEmpty
+                    ? 3
+                    : topic.graphics.data.length,
+                itemBuilder: (context, index) {
+                  final imageUrl = topic.graphics.data.isEmpty
+                      ? 'https://picsum.photos/seed/${topic.id}_$index/800/600'
+                      : topic.graphics.data[index];
+                  return _GraphicItem(
+                    imageUrl: imageUrl,
+                    topicTitle: topic.localizedTitle(
+                      context.locale.languageCode,
+                    ),
+                  );
+                },
               ),
+            ),
             SliverPadding(
               padding: const EdgeInsets.all(24),
               sliver: SliverToBoxAdapter(

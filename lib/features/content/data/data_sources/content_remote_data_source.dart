@@ -50,29 +50,55 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       final seriesList = <Series>[];
       const defaultAuthor = Author(id: 'benaiah_team', name: 'Benaiah Team');
 
-      for (var i = 0; i < jsonList.length; i++) {
+      for (var i = 0; i < (jsonList?.length as num).toInt(); i++) {
         final seriesJson = jsonList[i] as Map<String, dynamic>;
         final topicsJson = seriesJson['topics'] as List<dynamic>;
 
         final topics = <Topic>[];
+
+        List<Author> parseAuthors(Map<String, dynamic>? parentJson) {
+          if (parentJson == null) return const [defaultAuthor];
+          final list = parentJson['authors'] as List<dynamic>?;
+          if (list == null || list.isEmpty) return const [defaultAuthor];
+          return list.map((a) {
+            final map = a as Map<String, dynamic>;
+            final nameEn = map['name_en'] as String? ?? 'Benaiah Team';
+            final nameAm = map['name_am'] as String?;
+            return Author(
+              id: nameEn.toLowerCase().replaceAll(' ', '-'),
+              name: nameEn,
+              nameAm: nameAm,
+            );
+          }).toList();
+        }
+
         for (var j = 0; j < topicsJson.length; j++) {
           final topicJson = topicsJson[j] as Map<String, dynamic>;
-          
-          final titleEn = topicJson['title_en'] as String? ?? topicJson['title'] as String;
-          final titleAm = topicJson['title_am'] as String? ?? topicJson['title'] as String;
 
-          final devEnJson = topicJson['devotional_en'] as Map<String, dynamic>?;
-          final devAmJson = topicJson['devotional_am'] as Map<String, dynamic>?;
-          final studyEnJson = topicJson['study_material_en'] as Map<String, dynamic>?;
-          final studyAmJson = topicJson['study_material_am'] as Map<String, dynamic>?;
+          final titleEn =
+              topicJson['title_en'] as String? ?? topicJson['title'] as String;
+          final titleAm =
+              topicJson['title_am'] as String? ?? topicJson['title'] as String;
 
-          final graphicsList = (topicJson['graphics'] as List<dynamic>?)
+          final devEnJson = topicJson['devotional_en'] as Map<String, dynamic>? ??
+              topicJson['devotional'] as Map<String, dynamic>?;
+          final devAmJson = topicJson['devotional_am'] as Map<String, dynamic>? ??
+              topicJson['devotional'] as Map<String, dynamic>?;
+          final studyEnJson =
+              topicJson['study_material_en'] as Map<String, dynamic>? ??
+              topicJson['study_material'] as Map<String, dynamic>?;
+          final studyAmJson =
+              topicJson['study_material_am'] as Map<String, dynamic>? ??
+              topicJson['study_material'] as Map<String, dynamic>?;
+
+          final graphicsJson = topicJson['graphics'] as Map<String, dynamic>?;
+          final graphicsList = (graphicsJson?['data'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList();
           final List<String> finalGraphics =
               (graphicsList != null && graphicsList.isNotEmpty)
-                  ? graphicsList
-                  : [_getImageUrl(i + j + 100)];
+              ? graphicsList
+              : [_getImageUrl(i + j + 100)];
 
           topics.add(
             Topic(
@@ -84,48 +110,52 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
                 data: devEnJson != null
                     ? devEnJson['content'] as String
                     : 'Content coming soon...',
-                authors: const [defaultAuthor],
+                authors: parseAuthors(devEnJson),
               ),
               devotionalEn: TopicContent(
                 data: devEnJson != null
                     ? devEnJson['content'] as String
                     : 'Content coming soon...',
-                authors: const [defaultAuthor],
+                authors: parseAuthors(devEnJson),
               ),
               devotionalAm: TopicContent(
                 data: devAmJson != null
                     ? devAmJson['content'] as String
                     : 'ይዘቱ በቅርቡ ይቀርባል...',
-                authors: const [defaultAuthor],
+                authors: parseAuthors(devAmJson),
               ),
               studyMaterial: TopicContent(
                 data: studyEnJson != null
                     ? studyEnJson['content'] as String
                     : 'Study material coming soon...',
-                authors: const [defaultAuthor],
+                authors: parseAuthors(studyEnJson),
               ),
               studyMaterialEn: TopicContent(
                 data: studyEnJson != null
                     ? studyEnJson['content'] as String
                     : 'Study material coming soon...',
-                authors: const [defaultAuthor],
+                authors: parseAuthors(studyEnJson),
               ),
               studyMaterialAm: TopicContent(
                 data: studyAmJson != null
                     ? studyAmJson['content'] as String
                     : 'የጥናት ቁሳቁስ በቅርቡ ይቀርባል...',
-                authors: const [defaultAuthor],
+                authors: parseAuthors(studyAmJson),
               ),
               graphics: TopicContent(
                 data: finalGraphics,
-                authors: [defaultAuthor],
+                authors: parseAuthors(graphicsJson),
               ),
             ),
           );
         }
 
-        final seriesTitleEn = seriesJson['series_en'] as String? ?? seriesJson['series'] as String;
-        final seriesTitleAm = seriesJson['series_am'] as String? ?? seriesJson['series'] as String;
+        final seriesTitleEn =
+            seriesJson['series_en'] as String? ??
+            seriesJson['series'] as String;
+        final seriesTitleAm =
+            seriesJson['series_am'] as String? ??
+            seriesJson['series'] as String;
 
         seriesList.add(
           Series(
@@ -133,8 +163,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             title: seriesJson['series'] as String,
             titleEn: seriesTitleEn,
             titleAm: seriesTitleAm,
-            description: 'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
-            descriptionEn: 'Exploring the $seriesTitleEn theme with depth and biblical insight.',
+            description:
+                'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
+            descriptionEn:
+                'Exploring the $seriesTitleEn theme with depth and biblical insight.',
             descriptionAm: seriesJson['series_am'] != null
                 ? 'የ$seriesTitleAmን ጭብጥ በጥልቀት እና በመጽሐፍ ቅዱሳዊ ግንዛቤ መመርመር።'
                 : 'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',

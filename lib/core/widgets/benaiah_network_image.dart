@@ -1,6 +1,7 @@
 import 'package:benaiah_app/gen/assets.gen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BenaiahNetworkImage extends StatelessWidget {
   const BenaiahNetworkImage({
@@ -45,17 +46,19 @@ class BenaiahNetworkImage extends StatelessWidget {
     BuildContext context,
     DownloadProgress downloadProgress,
   ) {
-    return Container(
-      width: width,
-      height: height,
-      color: Theme.of(
-        context,
-      ).colorScheme.surfaceContainerHighest.withAlpha(100),
-      child: Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          value: downloadProgress.progress,
-        ),
+    return Shimmer.fromColors(
+      baseColor: Theme.of(context).colorScheme.surfaceContainerHighest
+          .withAlpha(
+            100,
+          ),
+      highlightColor: Theme.of(context).colorScheme.surfaceContainerHighest
+          .withAlpha(
+            200,
+          ),
+      child: Container(
+        width: width,
+        height: height,
+        color: Colors.white,
       ),
     );
   }

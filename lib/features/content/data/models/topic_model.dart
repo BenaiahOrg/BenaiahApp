@@ -1,6 +1,6 @@
+import 'package:benaiah_app/features/content/data/models/topic_content_model.dart';
+import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../domain/entities/topic.dart';
-import 'topic_content_model.dart';
 
 part 'topic_model.g.dart';
 
@@ -12,6 +12,14 @@ class TopicModel extends Topic {
   final TopicContentModel<String> studyMaterial;
   @override
   final TopicContentModel<List<String>> graphics;
+  @override
+  final TopicContentModel<String> devotionalEn;
+  @override
+  final TopicContentModel<String> devotionalAm;
+  @override
+  final TopicContentModel<String> studyMaterialEn;
+  @override
+  final TopicContentModel<String> studyMaterialAm;
 
   const TopicModel({
     required super.id,
@@ -19,11 +27,21 @@ class TopicModel extends Topic {
     required this.devotional,
     required this.studyMaterial,
     required this.graphics,
+    required super.titleEn,
+    required super.titleAm,
+    required this.devotionalEn,
+    required this.devotionalAm,
+    required this.studyMaterialEn,
+    required this.studyMaterialAm,
   }) : super(
-          devotional: devotional,
-          studyMaterial: studyMaterial,
-          graphics: graphics,
-        );
+         devotional: devotional,
+         studyMaterial: studyMaterial,
+         graphics: graphics,
+         devotionalEn: devotionalEn,
+         devotionalAm: devotionalAm,
+         studyMaterialEn: studyMaterialEn,
+         studyMaterialAm: studyMaterialAm,
+       );
 
   factory TopicModel.fromJson(Map<String, dynamic> json) =>
       _$TopicModelFromJson(json);
@@ -37,6 +55,16 @@ class TopicModel extends Topic {
       devotional: TopicContentModel<String>.fromEntity(entity.devotional),
       studyMaterial: TopicContentModel<String>.fromEntity(entity.studyMaterial),
       graphics: TopicContentModel<List<String>>.fromEntity(entity.graphics),
+      titleEn: entity.titleEn,
+      titleAm: entity.titleAm,
+      devotionalEn: TopicContentModel<String>.fromEntity(entity.devotionalEn),
+      devotionalAm: TopicContentModel<String>.fromEntity(entity.devotionalAm),
+      studyMaterialEn: TopicContentModel<String>.fromEntity(
+        entity.studyMaterialEn,
+      ),
+      studyMaterialAm: TopicContentModel<String>.fromEntity(
+        entity.studyMaterialAm,
+      ),
     );
   }
 }

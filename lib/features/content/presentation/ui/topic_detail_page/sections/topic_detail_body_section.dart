@@ -5,6 +5,23 @@ class _TopicDetailBodySection extends ConsumerWidget {
 
   final String topicId;
 
+  void _preFetchEverything(
+    WidgetRef ref,
+    BuildContext context,
+    Topic topic,
+  ) {
+    _preFetchBiblePassages(ref, context, topic);
+    _preFetchImages(context, topic);
+  }
+
+  void _preFetchImages(BuildContext context, Topic topic) {
+    for (final imageUrl in topic.graphics.data) {
+      if (imageUrl.isNotEmpty) {
+        unawaited(precacheImage(CachedNetworkImageProvider(imageUrl), context));
+      }
+    }
+  }
+
   void _preFetchBiblePassages(
     WidgetRef ref,
     BuildContext context,
@@ -45,7 +62,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
     return topicAsync.when(
       data: (topic) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _preFetchBiblePassages(ref, context, topic);
+          _preFetchEverything(ref, context, topic);
         });
 
         final hasImage = topic.graphics.data.isNotEmpty;

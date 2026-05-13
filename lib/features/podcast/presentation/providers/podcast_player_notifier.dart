@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'podcast_player_notifier.g.dart';
@@ -18,7 +20,8 @@ class PodcastPlayerState {
   final double playbackSpeed;
 
   int get durationSeconds => currentEpisode?.durationSeconds ?? 0;
-  double get progress => durationSeconds > 0 ? currentSeconds / durationSeconds : 0.0;
+  double get progress =>
+      durationSeconds > 0 ? currentSeconds / durationSeconds : 0.0;
 
   PodcastPlayerState copyWith({
     PodcastEpisode? currentEpisode,
@@ -28,7 +31,8 @@ class PodcastPlayerState {
     bool clearEpisode = false,
   }) {
     return PodcastPlayerState(
-      currentEpisode: clearEpisode ? null : (currentEpisode ?? this.currentEpisode),
+      currentEpisode:
+          clearEpisode ? null : (currentEpisode ?? this.currentEpisode),
       isPlaying: isPlaying ?? this.isPlaying,
       currentSeconds: currentSeconds ?? this.currentSeconds,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
@@ -38,93 +42,101 @@ class PodcastPlayerState {
 
 @riverpod
 class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
-  Timer? _playbackTimer;
+  late final AudioPlayer _audioPlayer;
+  StreamSubscription<Duration?>? _positionSubscription;
+  StreamSubscription<PlayerState>? _playerStateSubscription;
 
   @override
   PodcastPlayerState build() {
-    ref.onDispose(() {
-      _stopTimer();
+    _audioPlayer = AudioPlayer();
+
+    _positionSubscription = _audioPlayer.positionStream.listen((position) {
+      if (state.currentEpisode != null) {
+        state = state.copyWith(currentSeconds: position.inSeconds);
+      }
     });
+
+    _playerStateSubscription =
+        _audioPlayer.playerStateStream.listen((playerState) {
+      final isPlaying = playerState.playing;
+      final processingState = playerState.processingState;
+
+      if (processingState == ProcessingState.completed) {
+        unawaited(_audioPlayer.pause());
+        unawaited(_audioPlayer.seek(Duration.zero));
+        state = state.copyWith(isPlaying: false, currentSeconds: 0);
+      } else {
+        state = state.copyWith(isPlaying: isPlaying);
+      }
+    });
+
+    ref.onDispose(() {
+      unawaited(_positionSubscription?.cancel());
+      unawaited(_playerStateSubscription?.cancel());
+      unawaited(_audioPlayer.dispose());
+    });
+
     return const PodcastPlayerState();
   }
 
-  void play(PodcastEpisode episode) {
+  Future<void> play(PodcastEpisode episode) async {
     if (state.currentEpisode?.id == episode.id) {
       if (!state.isPlaying) {
-        _startTimer();
-        state = state.copyWith(isPlaying: true);
+        unawaited(_audioPlayer.play());
       }
       return;
     }
 
-    _stopTimer();
     state = PodcastPlayerState(
       currentEpisode: episode,
-      isPlaying: true,
-      currentSeconds: 0,
       playbackSpeed: state.playbackSpeed,
     );
-    _startTimer();
+
+    try {
+      await _audioPlayer.setUrl(episode.audioUrl);
+      await _audioPlayer.setSpeed(state.playbackSpeed);
+      unawaited(_audioPlayer.play());
+    } on Exception catch (e) {
+      developer.log(
+        'Error loading audio URL ${episode.audioUrl}',
+        error: e,
+        name: 'PodcastPlayerNotifier',
+      );
+    }
   }
 
-  void togglePlayback() {
+  Future<void> togglePlayback() async {
     if (state.currentEpisode == null) return;
 
     if (state.isPlaying) {
-      _stopTimer();
-      state = state.copyWith(isPlaying: false);
+      await _audioPlayer.pause();
     } else {
-      _startTimer();
-      state = state.copyWith(isPlaying: true);
+      unawaited(_audioPlayer.play());
     }
   }
 
-  void seek(double progressFraction) {
+  Future<void> seek(double progressFraction) async {
     if (state.currentEpisode == null) return;
-    final targetSeconds = (progressFraction * state.durationSeconds).round().clamp(0, state.durationSeconds);
-    state = state.copyWith(currentSeconds: targetSeconds);
+    final targetSeconds = (progressFraction * state.durationSeconds)
+        .round()
+        .clamp(0, state.durationSeconds);
+    await _audioPlayer.seek(Duration(seconds: targetSeconds));
   }
 
-  void skip(int deltaSeconds) {
+  Future<void> skip(int deltaSeconds) async {
     if (state.currentEpisode == null) return;
-    final targetSeconds = (state.currentSeconds + deltaSeconds).clamp(0, state.durationSeconds);
-    state = state.copyWith(currentSeconds: targetSeconds);
+    final targetSeconds = (state.currentSeconds + deltaSeconds)
+        .clamp(0, state.durationSeconds);
+    await _audioPlayer.seek(Duration(seconds: targetSeconds));
   }
 
-  void setPlaybackSpeed(double speed) {
+  Future<void> setPlaybackSpeed(double speed) async {
     state = state.copyWith(playbackSpeed: speed);
-    if (state.isPlaying) {
-      _startTimer(); // Restart timer with adjusted speed interval if playing
-    }
+    await _audioPlayer.setSpeed(speed);
   }
 
-  void reset() {
-    _stopTimer();
+  Future<void> reset() async {
+    await _audioPlayer.stop();
     state = const PodcastPlayerState();
-  }
-
-  void _startTimer() {
-    _playbackTimer?.cancel();
-    
-    // Simulate playback speed by adjusting the tick interval
-    // 1.0x speed -> 1000ms tick
-    // 1.25x speed -> 800ms tick
-    // 1.5x speed -> 667ms tick
-    // 2.0x speed -> 500ms tick
-    final msInterval = (1000 / state.playbackSpeed).round();
-    
-    _playbackTimer = Timer.periodic(Duration(milliseconds: msInterval), (timer) {
-      if (state.currentSeconds < state.durationSeconds) {
-        state = state.copyWith(currentSeconds: state.currentSeconds + 1);
-      } else {
-        _stopTimer();
-        state = state.copyWith(isPlaying: false, currentSeconds: 0);
-      }
-    });
-  }
-
-  void _stopTimer() {
-    _playbackTimer?.cancel();
-    _playbackTimer = null;
   }
 }

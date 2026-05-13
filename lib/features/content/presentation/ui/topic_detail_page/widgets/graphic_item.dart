@@ -16,7 +16,7 @@ class _GraphicItem extends StatelessWidget {
               unawaited(
                 showDialog<void>(
                   context: context,
-                  builder: (context) => Dialog.fullscreen(
+                  builder: (dialogContext) => Dialog.fullscreen(
                     backgroundColor: Colors.black,
                     child: Stack(
                       children: [
@@ -31,15 +31,75 @@ class _GraphicItem extends StatelessWidget {
                           ),
                         ),
                         Positioned(
-                          top: MediaQuery.of(context).padding.top + 8,
-                          right: 8,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                            onPressed: () => Navigator.of(context).pop(),
+                          top: MediaQuery.of(dialogContext).padding.top + 8,
+                          left: 16,
+                          right: 16,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.download,
+                                      color: Colors.white,
+                                      size: 28,
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        await ImageUtils.downloadAndSaveImage(
+                                          imageUrl,
+                                        );
+                                        if (dialogContext.mounted) {
+                                          ScaffoldMessenger.of(dialogContext)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Image saved to gallery'.tr(),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } on Exception catch (_) {
+                                        if (dialogContext.mounted) {
+                                          ScaffoldMessenger.of(dialogContext)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Error downloading image'.tr(),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    tooltip: 'Download'.tr(),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                      size: 28,
+                                    ),
+                                    onPressed: () => ImageUtils.shareImage(
+                                      imageUrl,
+                                      topicTitle,
+                                    ),
+                                    tooltip: 'Share'.tr(),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -50,64 +110,9 @@ class _GraphicItem extends StatelessWidget {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  BenaiahNetworkImage(
-                    imageUrl: imageUrl,
-                    width: double.infinity,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(150),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          onPressed: () async {
-                            try {
-                              await ImageUtils.downloadAndSaveImage(imageUrl);
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Image saved to gallery'.tr(),
-                                    ),
-                                  ),
-                                );
-                              }
-                            } on Exception catch (_) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Error downloading image'.tr(),
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          icon: const Icon(Icons.download, color: Colors.white),
-                          tooltip: 'Download'.tr(),
-                        ),
-                        IconButton(
-                          onPressed: () => ImageUtils.shareImage(
-                            imageUrl,
-                            topicTitle,
-                          ),
-                          icon: const Icon(Icons.share, color: Colors.white),
-                          tooltip: 'Share'.tr(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: BenaiahNetworkImage(
+                imageUrl: imageUrl,
+                width: double.infinity,
               ),
             ),
           ),

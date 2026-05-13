@@ -8,6 +8,7 @@ class AuthorModel extends Author {
   const AuthorModel({
     required super.id,
     required super.name,
+    super.nameAm,
     super.profileImageUrl,
   });
 
@@ -15,6 +16,7 @@ class AuthorModel extends Author {
     return AuthorModel(
       id: entity.id,
       name: entity.name,
+      nameAm: entity.nameAm,
       profileImageUrl: entity.profileImageUrl,
     );
   }

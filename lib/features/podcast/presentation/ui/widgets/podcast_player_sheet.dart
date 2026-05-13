@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_player_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -48,13 +49,13 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
   void _cyclePlaybackSpeed(double currentSpeed) {
     final notifier = ref.read(podcastPlayerProvider.notifier);
     if (currentSpeed == 1.0) {
-      notifier.setPlaybackSpeed(1.25);
+      unawaited(notifier.setPlaybackSpeed(1.25));
     } else if (currentSpeed == 1.25) {
-      notifier.setPlaybackSpeed(1.5);
+      unawaited(notifier.setPlaybackSpeed(1.5));
     } else if (currentSpeed == 1.5) {
-      notifier.setPlaybackSpeed(2.0);
+      unawaited(notifier.setPlaybackSpeed(2.0));
     } else {
-      notifier.setPlaybackSpeed(1.0);
+      unawaited(notifier.setPlaybackSpeed(1.0));
     }
   }
 
@@ -203,10 +204,12 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             ),
             child: Text(
               'Season {} • Episode {}'
-                  .tr(args: [
-                    episode.seasonNumber.toString(),
-                    episode.episodeNumber.toString(),
-                  ])
+                  .tr(
+                    args: [
+                      episode.seasonNumber.toString(),
+                      episode.episodeNumber.toString(),
+                    ],
+                  )
                   .toUpperCase(),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary,
@@ -252,7 +255,7 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             child: Slider(
               value: playerState.progress,
               onChanged: (val) =>
-                  ref.read(podcastPlayerProvider.notifier).seek(val),
+                  unawaited(ref.read(podcastPlayerProvider.notifier).seek(val)),
             ),
           ),
           Padding(
@@ -317,13 +320,15 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
               IconButton(
                 icon: const Icon(Icons.replay_10_rounded, size: 36),
                 color: theme.colorScheme.onSurface,
-                onPressed: () =>
-                    ref.read(podcastPlayerProvider.notifier).skip(-10),
+                onPressed: () => unawaited(
+                  ref.read(podcastPlayerProvider.notifier).skip(-10),
+                ),
               ),
               // Play/Pause circular button
               GestureDetector(
-                onTap: () =>
-                    ref.read(podcastPlayerProvider.notifier).togglePlayback(),
+                onTap: () => unawaited(
+                  ref.read(podcastPlayerProvider.notifier).togglePlayback(),
+                ),
                 child: Container(
                   width: 64,
                   height: 64,
@@ -351,32 +356,35 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
               IconButton(
                 icon: const Icon(Icons.forward_10_rounded, size: 36),
                 color: theme.colorScheme.onSurface,
-                onPressed: () =>
-                    ref.read(podcastPlayerProvider.notifier).skip(10),
+                onPressed: () => unawaited(
+                  ref.read(podcastPlayerProvider.notifier).skip(10),
+                ),
               ),
               // Quick description popup or small icon indicator
               IconButton(
                 icon: const Icon(Icons.info_outline_rounded, size: 28),
                 color: Colors.grey,
                 onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(episode.title),
-                      content: Scrollbar(
-                        child: SingleChildScrollView(
-                          child: Text(
-                            episode.description,
-                            style: theme.textTheme.bodyMedium,
+                  unawaited(
+                    showDialog<void>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(episode.title),
+                        content: Scrollbar(
+                          child: SingleChildScrollView(
+                            child: Text(
+                              episode.description,
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ),
                         ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('Close'.tr()),
+                          ),
+                        ],
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('Close'.tr()),
-                        ),
-                      ],
                     ),
                   );
                 },
