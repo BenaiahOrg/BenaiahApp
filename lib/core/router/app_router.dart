@@ -7,12 +7,13 @@ import 'package:benaiah_app/features/content/presentation/ui/series_detail_page/
 import 'package:benaiah_app/features/content/presentation/ui/topic_detail_page/topic_detail_page.dart';
 import 'package:benaiah_app/features/home/presentation/ui/home_page/home_page.dart';
 import 'package:benaiah_app/features/main/presentation/ui/main_page/main_page.dart';
-import 'package:benaiah_app/features/settings/presentation/ui/settings_page/settings_page.dart';
-import 'package:benaiah_app/features/podcast/presentation/ui/podcast_page/podcast_page.dart';
 import 'package:benaiah_app/features/podcast/presentation/ui/podcast_detail_page/podcast_detail_page.dart';
+import 'package:benaiah_app/features/podcast/presentation/ui/podcast_page/podcast_page.dart';
+import 'package:benaiah_app/features/settings/presentation/ui/settings_page/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 final routerRefreshListenableProvider = Provider<RouterRefreshListenable>((
   ref,
@@ -27,6 +28,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: refreshListenable,
     redirect: routerRedirect,
+    observers: [
+      SentryNavigatorObserver(),
+    ],
     routes: [
       ShellRoute(
         builder: (context, state, child) => MainPage(child: child),
@@ -72,7 +76,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     return SlideTransition(
                       position: animation.drive(
                         Tween<Offset>(
-                           begin: begin,
+                          begin: begin,
                           end: Offset.zero,
                         ).chain(CurveTween(curve: Curves.easeInOut)),
                       ),

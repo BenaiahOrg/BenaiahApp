@@ -81,3 +81,7 @@ secrets.json
 .fvm/
 # Project Documentation
 docs/
+
+sentry.properties
+
+sentry.properties

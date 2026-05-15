@@ -2,6 +2,7 @@ import 'package:benaiah_app/core/network/interceptors/auth_interceptor.dart';
 import 'package:benaiah_app/core/network/interceptors/logging_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 
 @module
 abstract class DioModule {
@@ -19,6 +20,7 @@ abstract class DioModule {
             },
           ),
         )
+        ..addSentry()
         ..interceptors.addAll([
           authInterceptor,
           LoggingInterceptor(),

@@ -33,7 +33,8 @@ void main() async {
         ..tracesSampleRate = F.appFlavor == Flavor.prod ? 0.3 : 1.0
         ..profilesSampleRate = F.appFlavor == Flavor.prod ? 0.1 : 1.0
         ..attachScreenshot = true
-        ..attachViewHierarchy = true;
+        ..attachViewHierarchy = true
+        ..sendDefaultPii = true;
     },
     appRunner: () => runApp(
       ProviderScope(
