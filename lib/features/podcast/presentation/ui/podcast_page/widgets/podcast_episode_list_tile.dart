@@ -121,37 +121,58 @@ class _PodcastEpisodeListTile extends ConsumerWidget {
               // Fast play icon button
               Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isDark ? Colors.white24 : Colors.black12,
-                    ),
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.play_arrow_rounded,
-                      size: 16,
-                      color: theme.colorScheme.primary,
-                    ),
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      unawaited(
-                        ref.read(podcastPlayerProvider.notifier).play(episode),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Now Playing: {}'.tr(args: [episode.title]),
-                          ),
-                          duration: const Duration(seconds: 2),
-                          behavior: SnackBarBehavior.floating,
+                child: Builder(
+                  builder: (context) {
+                    final playerState = ref.watch(podcastPlayerProvider);
+                    final isCurrentEpisode =
+                        playerState.currentEpisode?.id == episode.id;
+                    final isPlaying = isCurrentEpisode && playerState.isPlaying;
+
+                    return Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isCurrentEpisode
+                            ? theme.colorScheme.primary
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: isCurrentEpisode
+                              ? theme.colorScheme.primary
+                              : isDark
+                                  ? Colors.white24
+                                  : Colors.black12,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          size: 16,
+                          color: isCurrentEpisode
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.primary,
+                        ),
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          if (isPlaying) {
+                            unawaited(
+                              ref
+                                  .read(podcastPlayerProvider.notifier)
+                                  .togglePlayback(),
+                            );
+                          } else {
+                            unawaited(
+                              ref
+                                  .read(podcastPlayerProvider.notifier)
+                                  .play(episode),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

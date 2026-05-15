@@ -99,25 +99,46 @@ class _PodcastDetailBodySection extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // Large custom Play Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.play_arrow_rounded, size: 28),
-              label: Text(
-                'Play Episode'.tr(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              onPressed: () => _playEpisode(context, ref, episode),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                elevation: 0,
-              ),
+            Builder(
+              builder: (context) {
+                final playerState = ref.watch(podcastPlayerProvider);
+                final isCurrentEpisode =
+                    playerState.currentEpisode?.id == episode.id;
+                final isPlaying = isCurrentEpisode && playerState.isPlaying;
+
+                return ElevatedButton.icon(
+                  icon: Icon(
+                    isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    size: 28,
+                  ),
+                  label: Text(
+                    (isPlaying
+                            ? 'Pause Episode'
+                            : isCurrentEpisode
+                            ? 'Resume Episode'
+                            : 'Play Episode')
+                        .tr(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  onPressed: () => isPlaying
+                      ? ref
+                            .read(podcastPlayerProvider.notifier)
+                            .togglePlayback()
+                      : _playEpisode(context, ref, episode),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
+                    minimumSize: const Size.fromHeight(56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    elevation: 0,
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 32),
             const Divider(),

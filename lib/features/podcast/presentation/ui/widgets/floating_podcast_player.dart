@@ -64,7 +64,9 @@ class FloatingPodcastPlayer extends ConsumerWidget {
                     children: [
                       // Play/Pause icon button
                       GestureDetector(
-                        onTap: () => ref.read(podcastPlayerProvider.notifier).togglePlayback(),
+                        onTap: () => ref
+                            .read(podcastPlayerProvider.notifier)
+                            .togglePlayback(),
                         child: Container(
                           width: 38,
                           height: 38,
@@ -72,11 +74,21 @@ class FloatingPodcastPlayer extends ConsumerWidget {
                             color: theme.colorScheme.primary,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            playerState.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                            color: theme.colorScheme.onPrimary,
-                            size: 22,
-                          ),
+                          child: playerState.isBuffering
+                              ? const Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Icon(
+                                  playerState.isPlaying
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  color: theme.colorScheme.onPrimary,
+                                  size: 22,
+                                ),
                         ),
                       ),
                       const SizedBox(width: 12),

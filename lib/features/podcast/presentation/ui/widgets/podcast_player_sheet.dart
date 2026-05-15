@@ -343,13 +343,22 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                       ),
                     ],
                   ),
-                  child: Icon(
-                    playerState.isPlaying
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
-                    color: theme.colorScheme.onPrimary,
-                    size: 36,
-                  ),
+                  child: playerState.isBuffering
+                      ? const SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : Icon(
+                          playerState.isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: theme.colorScheme.onPrimary,
+                          size: 36,
+                        ),
                 ),
               ),
               // Skip 10s forward
