@@ -1,16 +1,17 @@
 part of '../main_page.dart';
 
 class _MainBottomSection extends ConsumerWidget {
-  const _MainBottomSection();
+  const _MainBottomSection({required this.navigationShell});
+
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final location = GoRouterState.of(context).uri.path;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BottomNavigationBar(
-      currentIndex: _getCurrentIndex(location),
-      onTap: (index) => _onTap(context, ref, index),
+      currentIndex: navigationShell.currentIndex,
+      onTap: (index) => _onTap(ref, index),
       selectedItemColor: isDark ? Colors.white : Colors.black,
       unselectedItemColor: Colors.grey,
       backgroundColor: isDark ? Colors.black : Colors.white,
@@ -34,21 +35,11 @@ class _MainBottomSection extends ConsumerWidget {
     );
   }
 
-  int _getCurrentIndex(String location) {
-    if (location == RouteNames.podcasts) return 1;
-    if (location == RouteNames.settings) return 2;
-    return 0;
-  }
-
-  void _onTap(BuildContext context, WidgetRef ref, int index) {
+  void _onTap(WidgetRef ref, int index) {
     NavUtils.updateIndex(ref, index);
-    switch (index) {
-      case 0:
-        context.go(RouteNames.home);
-      case 1:
-        context.go(RouteNames.podcasts);
-      case 2:
-        context.go(RouteNames.settings);
-    }
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
   }
 }

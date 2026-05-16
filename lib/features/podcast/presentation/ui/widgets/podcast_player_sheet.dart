@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
+import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_player_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +128,9 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: theme.colorScheme.primary.withAlpha(
-                            (15 * (1.25 - value) / 0.25).round().clamp(0, 255),
+                            (15 * (1.25 - value) / 0.25)
+                                .round()
+                                .clamp(0, 255),
                           ),
                         ),
                       );
@@ -254,8 +257,9 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             ),
             child: Slider(
               value: playerState.progress,
-              onChanged: (val) =>
-                  unawaited(ref.read(podcastPlayerProvider.notifier).seek(val)),
+              onChanged: (val) => unawaited(
+                ref.read(podcastPlayerProvider.notifier).seek(val),
+              ),
             ),
           ),
           Padding(
@@ -295,7 +299,8 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             children: [
               // Speed control button
               TextButton(
-                onPressed: () => _cyclePlaybackSpeed(playerState.playbackSpeed),
+                onPressed: () =>
+                    _cyclePlaybackSpeed(playerState.playbackSpeed),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -327,7 +332,9 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
               // Play/Pause circular button
               GestureDetector(
                 onTap: () => unawaited(
-                  ref.read(podcastPlayerProvider.notifier).togglePlayback(),
+                  ref
+                      .read(podcastPlayerProvider.notifier)
+                      .togglePlayback(),
                 ),
                 child: Container(
                   width: 64,

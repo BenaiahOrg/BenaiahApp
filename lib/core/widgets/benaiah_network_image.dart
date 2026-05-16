@@ -32,9 +32,11 @@ class BenaiahNetworkImage extends StatelessWidget {
       fit: fit,
       width: width,
       height: height,
-      progressIndicatorBuilder: (context, url, downloadProgress) {
-        return placeholder ??
-            _buildLoadingPlaceholder(context, downloadProgress);
+      fadeInDuration: const Duration(milliseconds: 150),
+      fadeOutDuration: Duration.zero,
+      placeholderFadeInDuration: Duration.zero,
+      placeholder: (context, url) {
+        return placeholder ?? _buildLoadingPlaceholder(context);
       },
       errorWidget: (context, url, error) {
         return errorWidget ?? _buildFallback(context);
@@ -44,7 +46,6 @@ class BenaiahNetworkImage extends StatelessWidget {
 
   Widget _buildLoadingPlaceholder(
     BuildContext context,
-    DownloadProgress downloadProgress,
   ) {
     return Shimmer.fromColors(
       baseColor: Theme.of(context).colorScheme.surfaceContainerHighest

@@ -7,6 +7,20 @@ abstract class StringUtils {
 
     var text = markdown;
 
+    // Strip HTML tags (e.g. <p>, <br>, <strong>, <em>, etc.)
+    text = text.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Decode common HTML entities
+    text = text
+        .replaceAll('&amp;', '&')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&#39;', "'")
+        .replaceAll('&quot;', '"')
+        .replaceAll('&#x27;', "'")
+        .replaceAll('&#x2F;', '/');
+
     // Remove blockquote signs (e.g. "> Quote" -> "Quote")
     text = text.replaceAll(RegExp(r'^\s*>\s*', multiLine: true), '');
 

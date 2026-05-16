@@ -1,9 +1,9 @@
 part of '../main_page.dart';
 
 class _MainScreen extends ConsumerWidget {
-  const _MainScreen({required this.child});
+  const _MainScreen({required this.navigationShell});
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +15,9 @@ class _MainScreen extends ConsumerWidget {
       appBar: isSpecialPage ? null : _MainTopSection(location: location),
       body: Stack(
         children: [
-          isSpecialPage ? child : SafeArea(child: child),
+          isSpecialPage
+              ? navigationShell
+              : SafeArea(child: navigationShell),
           const Positioned(
             left: 0,
             right: 0,
@@ -24,7 +26,7 @@ class _MainScreen extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const _MainBottomSection(),
+      bottomNavigationBar: _MainBottomSection(navigationShell: navigationShell),
     );
   }
 }

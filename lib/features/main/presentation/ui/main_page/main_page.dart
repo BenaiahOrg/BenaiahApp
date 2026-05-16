@@ -16,14 +16,14 @@ part 'sections/main_bottom_section.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({
-    required this.child,
+    required this.navigationShell,
     super.key,
   });
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return _MainScreen(child: child);
+    return _MainScreen(navigationShell: navigationShell);
   }
 }
