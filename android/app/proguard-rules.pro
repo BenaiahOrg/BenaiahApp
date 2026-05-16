@@ -1,0 +1,3 @@
+-keep class com.ryanheise.audioservice.** { *; }
+-keep class com.ryanheise.just_audio_background.** { *; }
+-keep class io.flutter.plugin.editing.** { *; }

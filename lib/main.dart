@@ -12,20 +12,14 @@ import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'org.benaiah.app.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
-
   await EasyLocalization.ensureInitialized();
   configureDependencies();
+
   ResponsiveConfig.init(designWidth: 375, designHeight: 812);
 
   F.appFlavor = Flavor.values.firstWhere(

@@ -141,11 +141,24 @@ class FloatingPodcastPlayer extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Maximize indicator
-                      Icon(
-                        Icons.keyboard_arrow_up_rounded,
-                        color: theme.colorScheme.primary.withAlpha(140),
-                        size: 24,
+                      // Close button to remove player
+                      GestureDetector(
+                        onTap: () => ref
+                            .read(podcastPlayerProvider.notifier)
+                            .reset(),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest
+                                .withAlpha(100),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: theme.colorScheme.primary.withAlpha(200),
+                            size: 18,
+                          ),
+                        ),
                       ),
                     ],
                   ),
