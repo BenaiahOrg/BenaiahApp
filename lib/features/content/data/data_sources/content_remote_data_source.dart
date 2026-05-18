@@ -1,18 +1,16 @@
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
-import 'package:injectable/injectable.dart';
-
 import 'package:benaiah_app/core/error/app_error.dart';
 import 'package:benaiah_app/core/error/result.dart';
-import 'package:benaiah_app/core/network/http_client.dart';
 import 'package:benaiah_app/features/content/domain/entities/author.dart';
 import 'package:benaiah_app/features/content/domain/entities/series.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic_content.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class ContentRemoteDataSource {
-  HttpClient get client;
   Future<Result<List<Series>>> getSeriesList();
   Future<Result<Series>> getSeriesById(String id);
   Future<Result<Topic>> getTopicById(String id);
@@ -20,180 +18,21 @@ abstract class ContentRemoteDataSource {
 
 @LazySingleton(as: ContentRemoteDataSource)
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
-  ContentRemoteDataSourceImpl(this.client);
+  ContentRemoteDataSourceImpl();
 
-  @override
-  final HttpClient client;
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
 
-  static const _biblicalImages = [
-    'https://picsum.photos/id/1011/800/600', // Bible/Old feeling
-    'https://picsum.photos/id/1015/800/600', // Nature
-    'https://picsum.photos/id/1016/800/600', // Mountains
-    'https://picsum.photos/id/1018/800/600', // World
-    'https://picsum.photos/id/1019/800/600', // Light
-    'https://picsum.photos/id/1020/800/600', // Ancient
-    'https://picsum.photos/id/1021/800/600', // People
-  ];
-
-  String _getImageUrl(int index) {
-    return _biblicalImages[index % _biblicalImages.length];
-  }
+  static const _defaultAuthor = Author(
+    id: 'benaiah-team',
+    name: 'Benaiah Team',
+  );
 
   @override
   Future<Result<List<Series>>> getSeriesList() async {
     try {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/benaiah_content.json',
-      );
-      final jsonList = json.decode(jsonString) as List<dynamic>;
-
-      final seriesList = <Series>[];
-      const defaultAuthor = Author(id: 'benaiah_team', name: 'Benaiah Team');
-
-      for (var i = 0; i < (jsonList?.length as num).toInt(); i++) {
-        final seriesJson = jsonList[i] as Map<String, dynamic>;
-        final topicsJson = seriesJson['topics'] as List<dynamic>;
-
-        final topics = <Topic>[];
-
-        List<Author> parseAuthors(Map<String, dynamic>? parentJson) {
-          if (parentJson == null) return const [defaultAuthor];
-          final list = parentJson['authors'] as List<dynamic>?;
-          if (list == null || list.isEmpty) return const [defaultAuthor];
-          return list.map((a) {
-            final map = a as Map<String, dynamic>;
-            final nameEn = map['name_en'] as String? ?? 'Benaiah Team';
-            final nameAm = map['name_am'] as String?;
-            return Author(
-              id: nameEn.toLowerCase().replaceAll(' ', '-'),
-              name: nameEn,
-              nameAm: nameAm,
-            );
-          }).toList();
-        }
-
-        for (var j = 0; j < topicsJson.length; j++) {
-          final topicJson = topicsJson[j] as Map<String, dynamic>;
-
-          final titleEn =
-              topicJson['title_en'] as String? ?? topicJson['title'] as String;
-          final titleAm =
-              topicJson['title_am'] as String? ?? topicJson['title'] as String;
-
-          final devEnJson = topicJson['devotional_en'] as Map<String, dynamic>? ??
-              topicJson['devotional'] as Map<String, dynamic>?;
-          final devAmJson = topicJson['devotional_am'] as Map<String, dynamic>? ??
-              topicJson['devotional'] as Map<String, dynamic>?;
-          final studyEnJson =
-              topicJson['study_material_en'] as Map<String, dynamic>? ??
-              topicJson['study_material'] as Map<String, dynamic>?;
-          final studyAmJson =
-              topicJson['study_material_am'] as Map<String, dynamic>? ??
-              topicJson['study_material'] as Map<String, dynamic>?;
-
-          final graphicsJson = topicJson['graphics'] as Map<String, dynamic>?;
-          final graphicsList = (graphicsJson?['data'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList();
-          final List<String> finalGraphics =
-              (graphicsList != null && graphicsList.isNotEmpty)
-              ? graphicsList
-              : const <String>[];
-
-          topics.add(
-            Topic(
-              id: topicJson['id'] as String,
-              title: topicJson['title'] as String,
-              titleEn: titleEn,
-              titleAm: titleAm,
-              devotional: TopicContent(
-                data: devEnJson != null
-                    ? devEnJson['content'] as String
-                    : 'Content coming soon...',
-                authors: parseAuthors(devEnJson),
-                youtubeUrl: devEnJson?['youtube_url'] as String?,
-              ),
-              devotionalEn: TopicContent(
-                data: devEnJson != null
-                    ? devEnJson['content'] as String
-                    : 'Content coming soon...',
-                authors: parseAuthors(devEnJson),
-                youtubeUrl: devEnJson?['youtube_url'] as String?,
-              ),
-              devotionalAm: TopicContent(
-                data: devAmJson != null
-                    ? devAmJson['content'] as String
-                    : 'ይዘቱ በቅርቡ ይቀርባል...',
-                authors: parseAuthors(devAmJson),
-                youtubeUrl: devAmJson?['youtube_url'] as String?,
-              ),
-              studyMaterial: TopicContent(
-                data: studyEnJson != null
-                    ? studyEnJson['content'] as String
-                    : 'Study material coming soon...',
-                authors: parseAuthors(studyEnJson),
-                youtubeUrl: studyEnJson?['youtube_url'] as String?,
-              ),
-              studyMaterialEn: TopicContent(
-                data: studyEnJson != null
-                    ? studyEnJson['content'] as String
-                    : 'Study material coming soon...',
-                authors: parseAuthors(studyEnJson),
-                youtubeUrl: studyEnJson?['youtube_url'] as String?,
-              ),
-              studyMaterialAm: TopicContent(
-                data: studyAmJson != null
-                    ? studyAmJson['content'] as String
-                    : 'የጥናት ቁሳቁስ በቅርቡ ይቀርባል...',
-                authors: parseAuthors(studyAmJson),
-                youtubeUrl: studyAmJson?['youtube_url'] as String?,
-              ),
-              graphics: TopicContent(
-                data: finalGraphics,
-                authors: parseAuthors(graphicsJson),
-              ),
-            ),
-          );
-        }
-
-        final seriesTitleEn =
-            seriesJson['series_en'] as String? ??
-            seriesJson['series'] as String;
-        final seriesTitleAm =
-            seriesJson['series_am'] as String? ??
-            seriesJson['series'] as String;
-
-        String? firstGraphic;
-        for (final topic in topics) {
-          if (topic.graphics.data.isNotEmpty) {
-            firstGraphic = topic.graphics.data.first;
-            break;
-          }
-        }
-        final seriesImageUrl = firstGraphic ?? '';
-
-        seriesList.add(
-          Series(
-            id: 's$i',
-            title: seriesJson['series'] as String,
-            titleEn: seriesTitleEn,
-            titleAm: seriesTitleAm,
-            description:
-                'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
-            descriptionEn:
-                'Exploring the $seriesTitleEn theme with depth and biblical insight.',
-            descriptionAm: seriesJson['series_am'] != null
-                ? 'የ$seriesTitleAmን ጭብጥ በጥልቀት እና በመጽሐፍ ቅዱሳዊ ግንዛቤ መመርመር።'
-                : 'Exploring the ${seriesJson['series']} theme with depth and biblical insight.',
-            imageUrl: seriesImageUrl,
-            topics: topics,
-          ),
-        );
-      }
-
-      return Success(seriesList);
-    } on Exception catch (e, st) {
-      return Failure(GenericError(stackTrace: st, cause: e.toString()));
+      return Success(await _getSeriesListFromFirestore());
+    } on Exception {
+      return _getSeriesListFromSeedJson();
     }
   }
 
@@ -215,5 +54,310 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       ),
       Failure(error: final e) => Failure(e),
     };
+  }
+
+  Future<List<Series>> _getSeriesListFromFirestore() async {
+    final contributors = await _getContributorsById();
+    final snapshot = await _firestore
+        .collection('series')
+        .where('isPublished', isEqualTo: true)
+        .orderBy('order')
+        .get();
+
+    return Future.wait(
+      snapshot.docs.map((doc) async {
+        final topicsSnapshot = await doc.reference
+            .collection('topics')
+            .where('isPublished', isEqualTo: true)
+            .orderBy('order')
+            .get();
+
+        final topics = topicsSnapshot.docs
+            .map((topicDoc) => _topicFromFirestore(topicDoc, contributors))
+            .toList();
+        final data = doc.data();
+
+        return Series(
+          id: doc.id,
+          title: _string(data, 'title'),
+          titleEn: _string(data, 'titleEn', fallback: _string(data, 'title')),
+          titleAm: _string(data, 'titleAm', fallback: _string(data, 'title')),
+          description: _string(data, 'description'),
+          descriptionEn: _string(
+            data,
+            'descriptionEn',
+            fallback: _string(data, 'description'),
+          ),
+          descriptionAm: _string(
+            data,
+            'descriptionAm',
+            fallback: _string(data, 'description'),
+          ),
+          imageUrl: _string(data, 'imageUrl'),
+          topics: topics,
+        );
+      }),
+    );
+  }
+
+  Future<Map<String, Author>> _getContributorsById() async {
+    final snapshot = await _firestore.collection('contributors').get();
+    if (snapshot.docs.isEmpty) {
+      final legacySnapshot = await _firestore.collection('authors').get();
+      return {
+        for (final doc in legacySnapshot.docs)
+          doc.id: Author(
+            id: doc.id,
+            name: _string(doc.data(), 'name'),
+            nameAm: doc.data()['nameAm'] as String?,
+            profileImageUrl: _nullableString(
+              doc.data(),
+              'profileImageUrl',
+              fallbackKey: 'imageUrl',
+            ),
+          ),
+      };
+    }
+
+    return {
+      for (final doc in snapshot.docs)
+        doc.id: Author(
+          id: doc.id,
+          name: _string(doc.data(), 'name'),
+          nameAm: doc.data()['nameAm'] as String?,
+          profileImageUrl: _nullableString(
+            doc.data(),
+            'profileImageUrl',
+            fallbackKey: 'imageUrl',
+          ),
+        ),
+    };
+  }
+
+  Topic _topicFromFirestore(
+    QueryDocumentSnapshot<Map<String, dynamic>> doc,
+    Map<String, Author> contributors,
+  ) {
+    final data = doc.data();
+    final devotionalEn = _textContent(data['devotionalEn'], contributors);
+    final devotionalAm = _textContent(data['devotionalAm'], contributors);
+    final studyMaterialEn = _textContent(data['studyMaterialEn'], contributors);
+    final studyMaterialAm = _textContent(data['studyMaterialAm'], contributors);
+    final graphics = _graphicsContent(data['graphics'], contributors);
+
+    return Topic(
+      id: doc.id,
+      title: _string(data, 'title'),
+      titleEn: _string(data, 'titleEn', fallback: _string(data, 'title')),
+      titleAm: _string(data, 'titleAm', fallback: _string(data, 'title')),
+      devotional: devotionalEn,
+      devotionalEn: devotionalEn,
+      devotionalAm: devotionalAm,
+      studyMaterial: studyMaterialEn,
+      studyMaterialEn: studyMaterialEn,
+      studyMaterialAm: studyMaterialAm,
+      graphics: graphics,
+    );
+  }
+
+  TopicContent<String> _textContent(
+    Object? value,
+    Map<String, Author> contributors,
+  ) {
+    final data = value is Map<String, dynamic> ? value : <String, dynamic>{};
+    return TopicContent<String>(
+      data: _string(data, 'content'),
+      authors: _authorsFromIds(
+        data['contributorIds'] ?? data['authorIds'],
+        contributors,
+      ),
+      youtubeUrl: data['youtubeUrl'] as String?,
+    );
+  }
+
+  TopicContent<List<String>> _graphicsContent(
+    Object? value,
+    Map<String, Author> contributors,
+  ) {
+    final data = value is Map<String, dynamic> ? value : <String, dynamic>{};
+    final urls = data['urls'] is List
+        ? (data['urls'] as List).whereType<String>().toList()
+        : const <String>[];
+
+    return TopicContent<List<String>>(
+      data: urls,
+      authors: _authorsFromIds(
+        data['contributorIds'] ?? data['authorIds'],
+        contributors,
+      ),
+    );
+  }
+
+  List<Author> _authorsFromIds(Object? value, Map<String, Author> authors) {
+    if (value is! List || value.isEmpty) {
+      return const [_defaultAuthor];
+    }
+
+    final resolved = value
+        .whereType<String>()
+        .map((id) => authors[id])
+        .whereType<Author>()
+        .toList();
+
+    return resolved.isEmpty ? const [_defaultAuthor] : resolved;
+  }
+
+  Future<Result<List<Series>>> _getSeriesListFromSeedJson() async {
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/data/benaiah_content.json',
+      );
+      final jsonList = json.decode(jsonString) as List<dynamic>;
+
+      return Success(
+        [
+          for (var i = 0; i < jsonList.length; i++)
+            _seriesFromSeedJson(i, jsonList[i] as Map<String, dynamic>),
+        ],
+      );
+    } on Exception catch (e, st) {
+      return Failure(GenericError(stackTrace: st, cause: e));
+    }
+  }
+
+  Series _seriesFromSeedJson(int index, Map<String, dynamic> json) {
+    final topicsJson = json['topics'] as List<dynamic>? ?? const [];
+    final topics = [
+      for (final topicJson in topicsJson)
+        _topicFromSeedJson(topicJson as Map<String, dynamic>),
+    ];
+    final titleEn = json['series_en'] as String? ?? json['series'] as String;
+    final titleAm = json['series_am'] as String? ?? json['series'] as String;
+    final imageUrl = topics
+        .expand((topic) => topic.graphics.data)
+        .cast<String?>()
+        .firstWhere((url) => url != null, orElse: () => null);
+
+    return Series(
+      id: 's$index',
+      title: json['series'] as String,
+      titleEn: titleEn,
+      titleAm: titleAm,
+      description:
+          'Exploring the ${json['series']} theme with depth and '
+          'biblical insight.',
+      descriptionEn:
+          'Exploring the $titleEn theme with depth and biblical '
+          'insight.',
+      descriptionAm: json['series_am'] != null
+          ? 'የ$titleAmን ጭብጥ በጥልቀት እና በመጽሐፍ ቅዱሳዊ ግንዛቤ መመርመር።'
+          : 'Exploring the ${json['series']} theme with depth and biblical '
+                'insight.',
+      imageUrl: imageUrl ?? '',
+      topics: topics,
+    );
+  }
+
+  Topic _topicFromSeedJson(Map<String, dynamic> json) {
+    final titleEn = json['title_en'] as String? ?? json['title'] as String;
+    final titleAm = json['title_am'] as String? ?? json['title'] as String;
+    final devotionalEn = _seedTextContent(
+      json['devotional_en'] as Map<String, dynamic>?,
+      fallback: 'Content coming soon...',
+    );
+    final devotionalAm = _seedTextContent(
+      json['devotional_am'] as Map<String, dynamic>?,
+      fallback: 'ይዘቱ በቅርቡ ይቀርባል...',
+    );
+    final studyMaterialEn = _seedTextContent(
+      json['study_material_en'] as Map<String, dynamic>?,
+      fallback: 'Study material coming soon...',
+    );
+    final studyMaterialAm = _seedTextContent(
+      json['study_material_am'] as Map<String, dynamic>?,
+      fallback: 'የጥናት ቁሳቁስ በቅርቡ ይቀርባል...',
+    );
+    final graphicsJson = json['graphics'] as Map<String, dynamic>?;
+
+    return Topic(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      titleEn: titleEn,
+      titleAm: titleAm,
+      devotional: devotionalEn,
+      devotionalEn: devotionalEn,
+      devotionalAm: devotionalAm,
+      studyMaterial: studyMaterialEn,
+      studyMaterialEn: studyMaterialEn,
+      studyMaterialAm: studyMaterialAm,
+      graphics: TopicContent<List<String>>(
+        data:
+            (graphicsJson?['data'] as List<dynamic>?)
+                ?.whereType<String>()
+                .toList() ??
+            const <String>[],
+        authors: _seedAuthors(graphicsJson),
+      ),
+    );
+  }
+
+  TopicContent<String> _seedTextContent(
+    Map<String, dynamic>? json, {
+    required String fallback,
+  }) {
+    return TopicContent<String>(
+      data: json?['content'] as String? ?? fallback,
+      authors: _seedAuthors(json),
+      youtubeUrl: json?['youtube_url'] as String?,
+    );
+  }
+
+  List<Author> _seedAuthors(Map<String, dynamic>? json) {
+    final authorsJson = json?['authors'] as List<dynamic>?;
+    if (authorsJson == null || authorsJson.isEmpty) {
+      return const [_defaultAuthor];
+    }
+
+    return authorsJson.map((authorJson) {
+      final map = authorJson as Map<String, dynamic>;
+      final name = map['name_en'] as String? ?? 'Benaiah Team';
+      return Author(
+        id: _slugify(name),
+        name: name,
+        nameAm: map['name_am'] as String?,
+      );
+    }).toList();
+  }
+
+  String _string(
+    Map<String, dynamic> data,
+    String key, {
+    String fallback = '',
+  }) {
+    return data[key] as String? ?? fallback;
+  }
+
+  String? _nullableString(
+    Map<String, dynamic> data,
+    String key, {
+    String? fallbackKey,
+  }) {
+    final direct = data[key] as String?;
+    if (direct != null && direct.isNotEmpty) {
+      return direct;
+    }
+    if (fallbackKey == null) {
+      return null;
+    }
+    final fallback = data[fallbackKey] as String?;
+    return fallback != null && fallback.isNotEmpty ? fallback : null;
+  }
+
+  String _slugify(String value) {
+    return value
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp('[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'^-|-$'), '');
   }
 }

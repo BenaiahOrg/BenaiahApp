@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:benaiah_app/core/firebase/firebase_module.dart' as _i324;
 import 'package:benaiah_app/core/network/bible_service.dart' as _i435;
 import 'package:benaiah_app/core/network/dio_http_client.dart' as _i608;
 import 'package:benaiah_app/core/network/dio_module.dart' as _i642;
@@ -64,7 +65,9 @@ import 'package:benaiah_app/features/settings/data/repositories/settings_reposit
     as _i713;
 import 'package:benaiah_app/features/settings/domain/repositories/settings_repository.dart'
     as _i292;
+import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_storage/firebase_storage.dart' as _i457;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -76,8 +79,11 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final firebaseModule = _$FirebaseModule();
     final secureStorageModule = _$SecureStorageModule();
     final dioModule = _$DioModule();
+    gh.lazySingleton<_i974.FirebaseFirestore>(() => firebaseModule.firestore);
+    gh.lazySingleton<_i457.FirebaseStorage>(() => firebaseModule.storage);
     gh.lazySingleton<_i435.BibleService>(() => _i435.BibleService());
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.secureStorage,
@@ -103,32 +109,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i206.PodcastLocalDataSource>(
       () => _i206.PodcastLocalDataSourceImpl(),
     );
-    gh.lazySingleton<_i361.Dio>(
-      () => dioModule.dio(gh<_i243.AuthInterceptor>()),
-    );
-    gh.lazySingleton<_i751.HttpClient>(
-      () => _i608.DioHttpClient(gh<_i361.Dio>()),
-    );
     gh.lazySingleton<_i167.PodcastRemoteDataSource>(
-      () => _i167.PodcastRemoteDataSourceImpl(gh<_i751.HttpClient>()),
-    );
-    gh.lazySingleton<_i949.AboutRemoteDataSource>(
-      () => _i949.AboutRemoteDataSourceImpl(gh<_i751.HttpClient>()),
-    );
-    gh.lazySingleton<_i65.SettingsRemoteDataSource>(
-      () => _i65.SettingsRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+      () => _i167.PodcastRemoteDataSourceImpl(),
     );
     gh.lazySingleton<_i660.ContentRemoteDataSource>(
-      () => _i660.ContentRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+      () => _i660.ContentRemoteDataSourceImpl(),
     );
-    gh.lazySingleton<_i402.HomeRemoteDataSource>(
-      () => _i402.HomeRemoteDataSourceImpl(gh<_i751.HttpClient>()),
-    );
-    gh.lazySingleton<_i870.HomeRepository>(
-      () => _i222.HomeRepositoryImpl(
-        gh<_i402.HomeRemoteDataSource>(),
-        gh<_i451.HomeLocalDataSource>(),
-      ),
+    gh.lazySingleton<_i361.Dio>(
+      () => dioModule.dio(gh<_i243.AuthInterceptor>()),
     );
     gh.lazySingleton<_i433.PodcastRepository>(
       () => _i341.PodcastRepositoryImpl(
@@ -140,6 +128,24 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i474.ContentRepositoryImpl(
         gh<_i660.ContentRemoteDataSource>(),
         gh<_i729.ContentLocalDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i751.HttpClient>(
+      () => _i608.DioHttpClient(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i949.AboutRemoteDataSource>(
+      () => _i949.AboutRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+    );
+    gh.lazySingleton<_i65.SettingsRemoteDataSource>(
+      () => _i65.SettingsRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+    );
+    gh.lazySingleton<_i402.HomeRemoteDataSource>(
+      () => _i402.HomeRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+    );
+    gh.lazySingleton<_i870.HomeRepository>(
+      () => _i222.HomeRepositoryImpl(
+        gh<_i402.HomeRemoteDataSource>(),
+        gh<_i451.HomeLocalDataSource>(),
       ),
     );
     gh.lazySingleton<_i292.SettingsRepository>(
@@ -166,6 +172,8 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$FirebaseModule extends _i324.FirebaseModule {}
 
 class _$SecureStorageModule extends _i1062.SecureStorageModule {}
 

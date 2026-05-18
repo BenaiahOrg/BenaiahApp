@@ -1,0 +1,11 @@
+{
+  "name": "benaiah-firebase-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node import_seed.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
+  }
+}

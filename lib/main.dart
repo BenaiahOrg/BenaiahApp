@@ -6,9 +6,11 @@ import 'package:benaiah_app/app.dart';
 import 'package:benaiah_app/core/config/env.dart';
 import 'package:benaiah_app/core/di/injection.dart';
 import 'package:benaiah_app/core/extensions/responsive_extension.dart';
+import 'package:benaiah_app/firebase_options.dart';
 import 'package:benaiah_app/flavors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -18,6 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await EasyLocalization.ensureInitialized();
+  await _initializeFirebase();
   configureDependencies();
 
   ResponsiveConfig.init(designWidth: 375, designHeight: 812);
@@ -54,4 +57,18 @@ void main() async {
       ),
     ),
   );
+}
+
+Future<void> _initializeFirebase() async {
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') {
+      debugPrint('Firebase initialization skipped: ${e.message}');
+    }
+  } on Exception catch (e) {
+    debugPrint('Firebase initialization skipped: $e');
+  }
 }
