@@ -9,12 +9,14 @@ class TopicContentModel<T> extends TopicContent<T> {
   const TopicContentModel({
     required super.data,
     required this.authors,
+    super.youtubeUrl,
   }) : super(authors: authors);
 
   factory TopicContentModel.fromEntity(TopicContent<T> entity) {
     return TopicContentModel<T>(
       data: entity.data,
       authors: entity.authors.map(AuthorModel.fromEntity).toList(),
+      youtubeUrl: entity.youtubeUrl,
     );
   }
 
@@ -29,3 +31,4 @@ class TopicContentModel<T> extends TopicContent<T> {
   Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
       _$TopicContentModelToJson(this, toJsonT);
 }
+

@@ -6,6 +6,9 @@ class _DevotionalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final devotional = topic.localizedDevotional(
+      context.locale.languageCode,
+    );
     return Stack(
       children: [
         Builder(
@@ -24,8 +27,28 @@ class _DevotionalTab extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (devotional.youtubeUrl != null &&
+                            devotional.youtubeUrl!.isNotEmpty) ...[
+                          Builder(
+                            builder: (context) {
+                              final videoId = StringUtils.tryGetYoutubeId(
+                                devotional.youtubeUrl!,
+                              );
+                              if (videoId != null) {
+                                return _EmbeddedYoutubePlayer(
+                                  url: devotional.youtubeUrl!,
+                                );
+                              } else {
+                                return _YouTubeLinkButton(
+                                  url: devotional.youtubeUrl!,
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                         BenaiahMarkdown(
-                          data: topic.localizedDevotional(context.locale.languageCode).data,
+                          data: devotional.data,
                         ),
                         const SizedBox(height: 48),
                         const Divider(),

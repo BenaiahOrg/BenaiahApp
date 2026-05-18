@@ -111,36 +111,42 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
                     ? devEnJson['content'] as String
                     : 'Content coming soon...',
                 authors: parseAuthors(devEnJson),
+                youtubeUrl: devEnJson?['youtube_url'] as String?,
               ),
               devotionalEn: TopicContent(
                 data: devEnJson != null
                     ? devEnJson['content'] as String
                     : 'Content coming soon...',
                 authors: parseAuthors(devEnJson),
+                youtubeUrl: devEnJson?['youtube_url'] as String?,
               ),
               devotionalAm: TopicContent(
                 data: devAmJson != null
                     ? devAmJson['content'] as String
                     : 'ይዘቱ በቅርቡ ይቀርባል...',
                 authors: parseAuthors(devAmJson),
+                youtubeUrl: devAmJson?['youtube_url'] as String?,
               ),
               studyMaterial: TopicContent(
                 data: studyEnJson != null
                     ? studyEnJson['content'] as String
                     : 'Study material coming soon...',
                 authors: parseAuthors(studyEnJson),
+                youtubeUrl: studyEnJson?['youtube_url'] as String?,
               ),
               studyMaterialEn: TopicContent(
                 data: studyEnJson != null
                     ? studyEnJson['content'] as String
                     : 'Study material coming soon...',
                 authors: parseAuthors(studyEnJson),
+                youtubeUrl: studyEnJson?['youtube_url'] as String?,
               ),
               studyMaterialAm: TopicContent(
                 data: studyAmJson != null
                     ? studyAmJson['content'] as String
                     : 'የጥናት ቁሳቁስ በቅርቡ ይቀርባል...',
                 authors: parseAuthors(studyAmJson),
+                youtubeUrl: studyAmJson?['youtube_url'] as String?,
               ),
               graphics: TopicContent(
                 data: finalGraphics,

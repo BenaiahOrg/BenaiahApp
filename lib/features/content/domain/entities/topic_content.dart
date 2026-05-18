@@ -5,10 +5,12 @@ class TopicContent<T> extends Equatable {
   const TopicContent({
     required this.data,
     required this.authors,
+    this.youtubeUrl,
   });
   final T data;
   final List<Author> authors;
+  final String? youtubeUrl;
 
   @override
-  List<Object?> get props => [data, authors];
+  List<Object?> get props => [data, authors, youtubeUrl];
 }

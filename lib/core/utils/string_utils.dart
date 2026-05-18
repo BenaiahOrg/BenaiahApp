@@ -57,4 +57,27 @@ abstract class StringUtils {
 
     return text.trim();
   }
+
+  /// Extracts the 11-character YouTube video ID from a given YouTube URL.
+  /// Returns null if the URL is not a valid YouTube link.
+  static String? tryGetYoutubeId(String url) {
+    if (url.contains('youtu.be/')) {
+      final parts = url.split('youtu.be/');
+      if (parts.length > 1) {
+        return parts[1].split('?').first.split('/').first;
+      }
+    }
+    final regExp = RegExp(
+      r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*',
+      caseSensitive: false,
+    );
+    final match = regExp.firstMatch(url);
+    if (match != null && match.groupCount >= 2) {
+      final id = match.group(2);
+      if (id != null && id.length == 11) {
+        return id;
+      }
+    }
+    return null;
+  }
 }

@@ -17,6 +17,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:pod_player/pod_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'screen/topic_detail_screen.dart';
 part 'sections/devotional_tab_section.dart';
@@ -24,8 +26,10 @@ part 'sections/graphics_tab_section.dart';
 part 'sections/study_tab_section.dart';
 part 'sections/topic_detail_body_section.dart';
 part 'widgets/author_info_row.dart';
+part 'widgets/embedded_youtube_player.dart';
 part 'widgets/floating_audio_player.dart';
 part 'widgets/graphic_item.dart';
+part 'widgets/youtube_link_button.dart';
 
 class TopicDetailPage extends ConsumerWidget {
   const TopicDetailPage({required this.topicId, super.key});

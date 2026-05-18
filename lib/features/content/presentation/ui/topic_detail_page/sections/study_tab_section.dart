@@ -6,6 +6,9 @@ class _StudyTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final studyMaterial = topic.localizedStudyMaterial(
+      context.locale.languageCode,
+    );
     return Stack(
       children: [
         Builder(
@@ -24,8 +27,28 @@ class _StudyTab extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (studyMaterial.youtubeUrl != null &&
+                            studyMaterial.youtubeUrl!.isNotEmpty) ...[
+                          Builder(
+                            builder: (context) {
+                              final videoId = StringUtils.tryGetYoutubeId(
+                                studyMaterial.youtubeUrl!,
+                              );
+                              if (videoId != null) {
+                                return _EmbeddedYoutubePlayer(
+                                  url: studyMaterial.youtubeUrl!,
+                                );
+                              } else {
+                                return _YouTubeLinkButton(
+                                  url: studyMaterial.youtubeUrl!,
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                         BenaiahMarkdown(
-                          data: topic.localizedStudyMaterial(context.locale.languageCode).data,
+                          data: studyMaterial.data,
                         ),
                         const SizedBox(height: 48),
                         const Divider(),
