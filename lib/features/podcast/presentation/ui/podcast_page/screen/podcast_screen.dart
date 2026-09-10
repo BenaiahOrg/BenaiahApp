@@ -55,25 +55,17 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
               if (filteredEpisodes.isEmpty)
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off_rounded,
-                          size: 64,
-                          color: Colors.grey.withAlpha(100),
+                  child: episodes.isEmpty
+                      ? BenaiahStateView.empty(
+                          icon: Icons.podcasts_outlined,
+                          title: 'No episodes yet'.tr(),
+                          message: 'New episodes will appear here.'.tr(),
+                          onRetry: () => ref.invalidate(podcastListProvider),
+                        )
+                      : BenaiahStateView.empty(
+                          icon: Icons.search_off_rounded,
+                          title: 'No results found.'.tr(),
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No results found.'.tr(),
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
 
               // Featured Episode Banner
@@ -127,8 +119,9 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
-        error: (error, stack) => Center(
-          child: Text('Error loading content.'.tr()),
+        error: (error, stack) => BenaiahStateView.error(
+          error: error,
+          onRetry: () => ref.invalidate(podcastListProvider),
         ),
       ),
     );

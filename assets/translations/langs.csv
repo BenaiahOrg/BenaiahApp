@@ -1,72 +1,92 @@
 key,en,am
 About,About,ስለ እኛ
 About this series,About this series,ስለዚህ ተከታታይ
+All,All,ሁሉም
+All Episodes,All Episodes,ሁሉም ክፍሎች
 All Series,All Series,ሁሉም ተከታታይ
 Amharic,Amharic,አማርኛ
 An unexpected error occurred.,An unexpected error occurred.,An unexpected error occurred.
 Appearance,Appearance,ገጽታ
-BENAIAH,BENAIAH,ቤናያህ
 Bad request.,Bad request.,Bad request.
+BENAIAH,BENAIAH,ቤናያህ
 Benaiah,Benaiah,ቤናያህ
 Benaiah is a digital mission initiative that extends a heartfelt invitation for all people to draw closer to God.,Benaiah is a digital mission initiative that extends a heartfelt invitation for all people to draw closer to God.,በናያስ ሰዎች ሁሉ ወደ እግዚአብሔር እንዲቀርቡ ልባዊ ጥሪ የሚያቀርብ ዲጂታል የወንጌል አገልግሎት ነው።
 "Benaiah, means God has Created or Built and we want that essence of God working and creating through us. It is also the name of a mighty, honorable and heroic warrior who was captain of King David's bodyguards.","Benaiah, means God has Created or Built and we want that essence of God working and creating through us. It is also the name of a mighty, honorable and heroic warrior who was captain of King David's bodyguards.",በናያስ ማለት 'እግዚአብሔር ፈጥሯል' ወይም 'እግዚአብሔር ሰርቷል/ገንብቷል' ማለት ሲሆን፣ የእግዚአብሔር የመፍጠርና የመገንባት ሥራ በእኛ በኩል እንዲገለጥ እንሻለን። በተጨማሪም ስሙ የንጉሥ ዳዊት የክብር ዘበኞች አለቃ የነበረው የኃያሉ፣ የክቡሩና የጀግናው ተዋጊ ስም ነው።
 Benaiah.org,Benaiah.org,Benaiah.org
+Close,Close,ዝጋ
 Content,Content,ይዘት
+Copy,Copy,ቅዳ
+Could not launch video link,Could not launch video link,የቪዲዮ አገናኙን መክፈት አልተቻለም
 Dark,Dark,ጨለማ
 Devotional,Devotional,መንፈሳዊ መልዕክት
+Devotional not available,Devotional not available,ጸሎተ ማለዳ አልተገኘም
 Download,Download,አውርድ
 English,English,English
+Episode Description,Episode Description,የክፍሉ መግለጫ
+Episodes,Episodes,ክፍሎች
 Error downloading image,Error downloading image,Error downloading image
 Error loading content.,Error loading content.,ይዘቱን ለመጫን ተስኗል
 Error: {},Error: {},Error: {}
 Explore this topic in depth.,Explore this topic in depth.,Explore this topic in depth.
+Failed to load scripture,Failed to load scripture,ጥቅሱን መጫን አልተቻለም
+Faith,Faith,እምነት
+FEATURED,FEATURED,ተለይቶ የቀረበ
 FEATURED TOPIC,FEATURED TOPIC,ተለይቶ የቀረበ ርዕስ
+Fetching scripture...,Fetching scripture...,ጥቅሱን በማምጣት ላይ...
 Graphics,Graphics,ግራፊክስ
+Graphics by,Graphics by,ግራፊክስ በ
 Home,Home,ቤት
+Host,Host,አቅራቢ
+Hosts,Hosts,አቅራቢዎች
 Image saved to gallery,Image saved to gallery,Image saved to gallery
 "It is our prayer, that this blessed you and comforts your soul in more ways than imaginable.","It is our prayer, that this blessed you and comforts your soul in more ways than imaginable.",ይህ አገልግሎት በረከት እንዲሆንላችሁና ነፍሳችሁን ከምትገምቱት በላይ እንዲያጽናና ጸሎታችን ነው።
 Language,Language,ቋንቋ
 Light,Light,ብርሃን
+New episodes will appear here.,New episodes will appear here.,አዲስ ክፍሎች እዚህ ይታያሉ።
+New series will appear here as they are published.,New series will appear here as they are published.,አዳዲስ ተከታታዮች ሲወጡ እዚህ ይታያሉ።
+No episodes yet,No episodes yet,እስካሁን ምንም ክፍል የለም
+No graphics available for this topic,No graphics available for this topic,ለዚህ ርዕስ ምንም ንድፍ አልተገኘም
 No internet connection.,No internet connection.,No internet connection.
 No results found.,No results found.,ምንም ውጤት አልተገኘም
+Nothing here yet,Nothing here yet,እስካሁን ምንም የለም
+Now Playing: {},Now Playing: {},በመጫወት ላይ፡ {}
+Open in YouTube,Open in YouTube,በዩቲዩብ ክፈት
 "Our team is composed of 20 gifted individuals from all over Ethiopia and the US involving authors, graphic designers, narrators, developers and more all united by a passion for Christ and His word.","Our team is composed of 20 gifted individuals from all over Ethiopia and the US involving authors, graphic designers, narrators, developers and more all united by a passion for Christ and His word.",ቡድናችን ከመላው ኢትዮጵያና አሜሪካ የተሰባሰቡ 20 ተሰጥኦ ያላቸውን ግለሰቦች ያቀፈ ሲሆን፣ ጸሐፊዎችን፣ ግራፊክስ ዲዛይነሮችን፣ ተራኪዎችን፣ ሶፍትዌር አበልጻጊዎችን እና ሌሎችንም ያካትታል። ሁላችንም ለክርስቶስና ለቃሉ ባለን ጥልቅ ፍቅር አንድ ሆነናል።
-Read Topic,Read Topic,ርዕሱን ያንብቡ
+Play Episode,Play Episode,ክፍሉን አጫውት
+Podcasts,Podcasts,ፖድካስቶች
+Published on {} • {},Published on {} • {},የተለቀቀበት ቀን {} • {}
 "Read devotional, study material & graphics","Read devotional, study material & graphics",መንፈሳዊ መልዕክቶች፣ የጥናት መርጃዎች እና ግራፊክሶች ያንብቡ
+Read Topic,Read Topic,ርዕሱን ያንብቡ
 Resource not found.,Resource not found.,Resource not found.
+Retry,Retry,እንደገና ሞክር
+Scripture copied to clipboard!,Scripture copied to clipboard!,ጥቅሱ ተቀድቷል!
+Season {} • Episode {},Season {} • Episode {},ምዕራፍ {} • ክፍል {}
 Series,Series,ተከታታይ
 Series List coming soon!,Series List coming soon!,Series List coming soon!
 Server error. Our team has been notified.,Server error. Our team has been notified.,Server error. Our team has been notified.
 Session expired. Please log in again.,Session expired. Please log in again.,Session expired. Please log in again.
 Settings,Settings,ቅንብሮች
 Share,Share,አጋራ
+Something went wrong,Something went wrong,የሆነ ችግር ተከስቷል
 Something went wrong. Please try again.,Something went wrong. Please try again.,Something went wrong. Please try again.
 Study,Study,ጥናት
 Study material by,Study material by,የጥናት ቁሳቁስ በ
+Study material not available,Study material not available,የጥናት ቁሳቁስ አልተገኘም
 System,System,የስርዓቱ (System)
 Theme,Theme,ገጽታ (Theme)
+This content is no longer available.,This content is no longer available.,ይህ ይዘት ከዚህ በኋላ አይገኝም።
+This devotional has not been published yet.,This devotional has not been published yet.,ይህ ጸሎተ ማለዳ እስካሁን አልታተመም።
+This study material has not been published yet.,This study material has not been published yet.,ይህ የጥናት ቁሳቁስ እስካሁን አልታተመም።
 Too many requests. Please slow down.,Too many requests. Please slow down.,Too many requests. Please slow down.
 Topics,Topics,ርዕሶች
+Try again,Try again,እንደገና ሞክር
 View All,View All,ሁሉንም ይመልከቱ
+Watch Video,Watch Video,ቪዲዮ ይመልከቱ
 "We aim to encourage believers and spread the good news of the gospels far and wide through Biblical insights and creative expressions like devotionals, study materials, graphics, narrations and more. So that everyone can come partake in God's endless love and mercy.","We aim to encourage believers and spread the good news of the gospels far and wide through Biblical insights and creative expressions like devotionals, study materials, graphics, narrations and more. So that everyone can come partake in God's endless love and mercy.",ዓላማችን አማኞችን ማበረታታትና የወንጌልን ምስራች በመጽሐፍ ቅዱሳዊ ግንዛቤዎችና እንደ አጫጭር መንፈሳዊ መልዕክቶች (Devotionals)፣ የጥናት መርጃዎች፣ ግራፊክሶች፣ የድምጽ ትረካዎች እና ሌሎችም የፈጠራ ሥራዎች አማካኝነት በስፋት ማዳረስ ነው። ይህም ሁሉም ሰው የእግዚአብሔርን ወሰን የሌለው ፍቅርና ምህረት መካፈል እንዲችል ነው።
 "We have been at work for 4 months and produced so much content that you are completely free to take, share and spread along with us. You can find us on all major platforms, in both English and Amharic.","We have been at work for 4 months and produced so much content that you are completely free to take, share and spread along with us. You can find us on all major platforms, in both English and Amharic.",ላለፉት 4 ወራት ስንሰራ ቆይተናል፤ እናንተም ከእኛ ጋር ሆናችሁ ለመውሰድ፣ ለማጋራትና ለማሰራጨት ሙሉ በሙሉ ነጻ የሆኑ እጅግ ብዙ ይዘቶችን አዘጋጅተናል። በዋና ዋና የማህበራዊ ሚዲያ መድረኮች ሁሉ በእንግሊዝኛም በአማርኛም ታገኙናላችሁ።
-Written by,Written by,የተጻፈው በ
-Graphics by,Graphics by,ግራፊክስ በ
-You do not have permission to do that.,You do not have permission to do that.,You do not have permission to do that.
-{} Topics,{} Topics,{} ርዕሶች
-All,All,ሁሉም
-Faith,Faith,እምነት
 Wisdom,Wisdom,ጥበብ
-All Episodes,All Episodes,ሁሉም ክፍሎች
-Episodes,Episodes,ክፍሎች
-FEATURED,FEATURED,ተለይቶ የቀረበ
-Now Playing: {},Now Playing: {},በመጫወት ላይ፡ {}
-Published on {} • {},Published on {} • {},የተለቀቀበት ቀን {} • {}
+Written by,Written by,የተጻፈው በ
+You are offline,You are offline,ከበይነመረብ ተቋርጠዋል
+You do not have permission to do that.,You do not have permission to do that.,You do not have permission to do that.
 {} minutes,{} minutes,{} ደቂቃ
-Play Episode,Play Episode,ክፍሉን አጫውት
-Episode Description,Episode Description,የክፍሉ መግለጫ
-Season {} • Episode {},Season {} • Episode {},ምዕራፍ {} • ክፍል {}
-Hosts,Hosts,አቅራቢዎች
-Host,Host,አቅራቢ
-Close,Close,ዝጋ
-Podcasts,Podcasts,ፖድካስቶች
-Watch Video,Watch Video,ቪዲዮ ይመልከቱ
+{} Topics,{} Topics,{} ርዕሶች

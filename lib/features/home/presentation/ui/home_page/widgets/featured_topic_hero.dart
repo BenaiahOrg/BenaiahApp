@@ -18,6 +18,20 @@ class FeaturedTopicHero extends StatelessWidget {
   final Topic topic;
   final double scrollOffset;
 
+  /// The catalog carries a subtopic description but no article text, so prefer
+  /// the description and fall back to the devotional only once it is loaded.
+  String _excerpt(BuildContext context, Topic topic) {
+    final lang = context.locale.languageCode;
+
+    final description = topic.localizedDescription(lang);
+    if (description.isNotEmpty) return description;
+
+    final devotional = topic.localizedDevotional(lang).data;
+    if (devotional.isNotEmpty) return StringUtils.stripMarkdown(devotional);
+
+    return 'Explore this topic in depth.'.tr();
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasImage = topic.graphics.data.isNotEmpty;
@@ -155,11 +169,7 @@ class FeaturedTopicHero extends StatelessWidget {
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            topic.localizedDevotional(context.locale.languageCode).data.isNotEmpty
-                                ? StringUtils.stripMarkdown(
-                                    topic.localizedDevotional(context.locale.languageCode).data,
-                                  )
-                                : 'Explore this topic in depth.'.tr(),
+                            _excerpt(context, topic),
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: Colors.white.withAlpha(200),

@@ -27,11 +27,26 @@ class BenaiahNetworkImage extends StatelessWidget {
       return errorWidget ?? _buildFallback(context);
     }
 
+    // Decode at roughly display resolution instead of the source's full
+    // size. Every caller renders these at a few hundred px at most, but
+    // without this the decoder was working at whatever resolution the CMS
+    // served, which is the main cause of jank on image-heavy screens (home,
+    // graphics grid) and on cold start.
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final cacheWidth = width != null && width!.isFinite
+        ? (width! * dpr).round()
+        : (MediaQuery.sizeOf(context).width * dpr).round();
+    final cacheHeight = height != null && height!.isFinite
+        ? (height! * dpr).round()
+        : null;
+
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: fit,
       width: width,
       height: height,
+      memCacheWidth: cacheWidth,
+      memCacheHeight: cacheHeight,
       fadeInDuration: const Duration(milliseconds: 150),
       fadeOutDuration: Duration.zero,
       placeholderFadeInDuration: Duration.zero,

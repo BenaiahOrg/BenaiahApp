@@ -24,17 +24,17 @@ abstract class Env {
   static final Map<Flavor, _FlavorEnv> _flavorDefaults = {
     Flavor.dev: const _FlavorEnv(
       sentryDsn: '',
-      apiUrl: 'https://dev-api.benaiah.org',
+      apiUrl: 'https://www.benaiah.org',
       youversionDeveloperToken: '',
     ),
     Flavor.qa: const _FlavorEnv(
       sentryDsn: '',
-      apiUrl: 'https://qa-api.benaiah.org',
+      apiUrl: 'https://www.benaiah.org',
       youversionDeveloperToken: '',
     ),
     Flavor.prod: const _FlavorEnv(
       sentryDsn: '',
-      apiUrl: 'https://api.benaiah.org',
+      apiUrl: 'https://www.benaiah.org',
       youversionDeveloperToken: '',
     ),
   };

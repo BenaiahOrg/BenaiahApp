@@ -18,27 +18,10 @@ class _GraphicsTab extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               sliver: topic.graphics.data.isEmpty
                   ? SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 48),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image_not_supported_outlined,
-                              size: 48,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No graphics available for this topic'.tr(),
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
+                      child: BenaiahStateView.empty(
+                        icon: Icons.image_not_supported_outlined,
+                        title: 'No graphics available for this topic'.tr(),
+                        compact: true,
                       ),
                     )
                   : SliverMasonryGrid.count(
@@ -66,21 +49,23 @@ class _GraphicsTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 48),
-                    const Divider(),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Graphics by'.tr(),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        letterSpacing: 1.2,
+                    if (topic.graphics.authors.isNotEmpty) ...[
+                      const SizedBox(height: 48),
+                      const Divider(),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Graphics by'.tr(),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    ...topic.graphics.authors.map(
-                      (author) => _AuthorInfoRow(author: author),
-                    ),
+                      const SizedBox(height: 16),
+                      ...topic.graphics.authors.map(
+                        (author) => _AuthorInfoRow(author: author),
+                      ),
+                    ],
                   ],
                 ),
               ),

@@ -1,18 +1,20 @@
 # Firebase backend
 
-The app reads content from Cloud Firestore and falls back to the bundled JSON
-files when Firebase is not configured yet.
+> **Scope note.** Article content (series, topics, devotionals, study material,
+> graphics) no longer comes from Firestore — it is served by the Benaiah
+> Articles REST API. See [docs/BACKEND_API_NOTES.md](docs/BACKEND_API_NOTES.md).
+> Firebase now backs **podcasts only**.
+
+The app reads podcast episodes from Cloud Firestore and falls back to the
+bundled JSON file when Firebase is not configured or unreachable.
 
 ## Collections
 
-- `series/{seriesId}`
-- `series/{seriesId}/topics/{topicId}`
-- `contributors/{contributorId}`
 - `podcastEpisodes/{episodeId}`
-- `appConfig/home`
+- `contributors/{contributorId}` — podcast hosts
 
-Large topic bodies live in topic documents instead of inside the parent series
-document so Firestore document size stays healthy.
+The `series`, `series/{id}/topics` and `appConfig/home` collections are no
+longer read by the app.
 
 ## Project setup
 

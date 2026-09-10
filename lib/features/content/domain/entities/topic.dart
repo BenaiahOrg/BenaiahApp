@@ -10,6 +10,8 @@ class Topic extends Equatable {
     required this.graphics,
     required this.titleEn,
     required this.titleAm,
+    required this.descriptionEn,
+    required this.descriptionAm,
     required this.devotionalEn,
     required this.devotionalAm,
     required this.studyMaterialEn,
@@ -22,27 +24,36 @@ class Topic extends Equatable {
   final TopicContent<List<String>> graphics;
   final String titleEn;
   final String titleAm;
+  final String descriptionEn;
+  final String descriptionAm;
   final TopicContent<String> devotionalEn;
   final TopicContent<String> devotionalAm;
   final TopicContent<String> studyMaterialEn;
   final TopicContent<String> studyMaterialAm;
 
-  String localizedTitle(String langCode) => langCode == 'am' ? titleAm : titleEn;
-  TopicContent<String> localizedDevotional(String langCode) => langCode == 'am' ? devotionalAm : devotionalEn;
-  TopicContent<String> localizedStudyMaterial(String langCode) => langCode == 'am' ? studyMaterialAm : studyMaterialEn;
+  String localizedTitle(String langCode) =>
+      langCode == 'am' ? titleAm : titleEn;
+  String localizedDescription(String langCode) =>
+      langCode == 'am' ? descriptionAm : descriptionEn;
+  TopicContent<String> localizedDevotional(String langCode) =>
+      langCode == 'am' ? devotionalAm : devotionalEn;
+  TopicContent<String> localizedStudyMaterial(String langCode) =>
+      langCode == 'am' ? studyMaterialAm : studyMaterialEn;
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        devotional,
-        studyMaterial,
-        graphics,
-        titleEn,
-        titleAm,
-        devotionalEn,
-        devotionalAm,
-        studyMaterialEn,
-        studyMaterialAm,
-      ];
+    id,
+    title,
+    devotional,
+    studyMaterial,
+    graphics,
+    titleEn,
+    titleAm,
+    descriptionEn,
+    descriptionAm,
+    devotionalEn,
+    devotionalAm,
+    studyMaterialEn,
+    studyMaterialAm,
+  ];
 }

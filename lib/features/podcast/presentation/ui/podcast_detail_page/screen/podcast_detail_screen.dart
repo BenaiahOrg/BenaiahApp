@@ -22,13 +22,9 @@ class _PodcastDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text(
-            error is AppError
-                ? error.userMessage
-                : 'Error: {}'.tr(args: [error.toString()]),
-            textAlign: TextAlign.center,
-          ),
+        error: (error, stack) => BenaiahStateView.error(
+          error: error,
+          onRetry: () => ref.invalidate(podcastDetailProvider(episodeId)),
         ),
       ),
     );

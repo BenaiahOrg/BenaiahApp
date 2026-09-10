@@ -11,6 +11,10 @@ class _SeriesDetailBodySection extends ConsumerWidget {
 
     return seriesAsync.when(
       data: (series) {
+        final description = series.localizedDescription(
+          context.locale.languageCode,
+        );
+
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -26,10 +30,13 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                   const maxHeight = 250.0;
                   final delta = maxHeight - minHeight;
                   final currentHeight = constraints.biggest.height;
-                  final t =
-                      ((currentHeight - minHeight) / delta).clamp(0.0, 1.0);
+                  final t = ((currentHeight - minHeight) / delta).clamp(
+                    0.0,
+                    1.0,
+                  );
 
-                  final titleColor = Color.lerp(
+                  final titleColor =
+                      Color.lerp(
                         Theme.of(context).colorScheme.onSurface,
                         Colors.white,
                         t,
@@ -75,21 +82,23 @@ class _SeriesDetailBodySection extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'About this series'.tr(),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                    if (description.isNotEmpty) ...[
+                      Text(
+                        'About this series'.tr(),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      series.localizedDescription(context.locale.languageCode),
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[700],
-                        height: 1.5,
+                      const SizedBox(height: 12),
+                      Text(
+                        description,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.grey[700],
+                          height: 1.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
+                    ],
                     Text(
                       'Topics'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -117,14 +126,11 @@ class _SeriesDetailBodySection extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text(
-          error is AppError
-              ? error.userMessage
-              : 'Error: {}'.tr(
-                  args: [error.toString()],
-                ),
-          textAlign: TextAlign.center,
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(),
+        body: BenaiahStateView.error(
+          error: error,
+          onRetry: () => ref.invalidate(seriesDetailProvider(seriesId)),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
+import 'package:benaiah_app/core/widgets/benaiah_state_view.dart';
 import 'package:benaiah_app/features/content/presentation/providers/series_list_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -50,27 +51,28 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
 
     return seriesListAsync.when(
       data: (seriesList) {
-        final queryLower = query.toLowerCase();
+        final lang = context.locale.languageCode;
+        final queryLower = query.trim().toLowerCase();
+
+        bool matches(List<String> fields) {
+          if (queryLower.isEmpty) return true;
+          return fields.any((f) => f.toLowerCase().contains(queryLower));
+        }
+
         final matchedSeries = seriesList
-            .where(
-              (s) =>
-                  s.title.toLowerCase().contains(queryLower) ||
-                  s.description.toLowerCase().contains(queryLower),
-            )
+            .where((s) => matches([s.titleEn, s.titleAm, s.description]))
             .toList();
 
         final matchedTopics = seriesList
             .expand((s) => s.topics)
-            .where(
-              (t) =>
-                  t.title.toLowerCase().contains(queryLower) ||
-                  t.devotional.data.toLowerCase().contains(queryLower) ||
-                  t.studyMaterial.data.toLowerCase().contains(queryLower),
-            )
+            .where((t) => matches([t.titleEn, t.titleAm]))
             .toList();
 
         if (matchedSeries.isEmpty && matchedTopics.isEmpty) {
-          return Center(child: Text('No results found.'.tr()));
+          return BenaiahStateView.empty(
+            icon: Icons.search_off_rounded,
+            title: 'No results found.'.tr(),
+          );
         }
 
         return ListView(
@@ -96,9 +98,9 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                       height: 50,
                     ),
                   ),
-                  title: Text(s.title),
+                  title: Text(s.localizedTitle(lang)),
                   subtitle: Text(
-                    s.description,
+                    '{} Topics'.tr(args: ['${s.topics.length}']),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -125,9 +127,7 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                 ),
               ),
               ...matchedTopics.map((t) {
-                final imageUrl = t.graphics.data.isNotEmpty
-                    ? t.graphics.data.first
-                    : 'https://picsum.photos/seed/${t.id}/200/200';
+                final imageUrl = t.graphics.data.firstOrNull ?? '';
                 return ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -137,7 +137,7 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                       height: 50,
                     ),
                   ),
-                  title: Text(t.title),
+                  title: Text(t.localizedTitle(lang)),
                   subtitle: Text(
                     'Read devotional, study material & graphics'.tr(),
                   ),
@@ -157,7 +157,10 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error loading content.'.tr())),
+      error: (e, st) => BenaiahStateView.error(
+        error: e,
+        onRetry: () => ref.invalidate(seriesListProvider),
+      ),
     );
   }
 }

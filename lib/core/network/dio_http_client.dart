@@ -92,7 +92,7 @@ class DioHttpClient implements HttpClient {
     try {
       final response = await request();
       return _toHttpResponse(response);
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     }
   }
