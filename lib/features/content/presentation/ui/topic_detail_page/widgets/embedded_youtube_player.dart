@@ -10,8 +10,7 @@ class _EmbeddedYoutubePlayer extends StatefulWidget {
 
 class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
   String? _videoId;
-  PodPlayerController? _controller;
-  bool _isInitialized = false;
+  YoutubePlayerController? _controller;
   bool _hasError = false;
 
   @override
@@ -19,40 +18,18 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
     super.initState();
     _videoId = StringUtils.tryGetYoutubeId(widget.url);
     if (_videoId != null) {
-      _controller = PodPlayerController(
-        playVideoFrom: PlayVideoFrom.youtube(widget.url),
-        podPlayerConfig: const PodPlayerConfig(
-          autoPlay: false,
-          videoQualityPriority: [720, 360],
-        ),
+      _controller = YoutubePlayerController.fromVideoId(
+        videoId: _videoId!,
+        params: const YoutubePlayerParams(showFullscreenButton: true),
       );
-      unawaited(_initPlayer());
     } else {
       _hasError = true;
     }
   }
 
-  Future<void> _initPlayer() async {
-    try {
-      await _controller?.initialise();
-      if (mounted) {
-        setState(() {
-          _isInitialized = true;
-        });
-      }
-    } on Exception catch (e) {
-      debugPrint('🚨 PodPlayer initialization error: $e');
-      if (mounted) {
-        setState(() {
-          _hasError = true;
-        });
-      }
-    }
-  }
-
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller?.close();
     super.dispose();
   }
 
@@ -61,11 +38,8 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Graceful premium fallback: If YouTube rate-limits our scrape API request
-    // (e.g. RequestLimitExceededException), we display a high-fidelity card
-    // with a play/external launch button. Clicking it launches the video
-    // externally in the official YouTube app/browser, guaranteeing 100%
-    // operational reliability!
+    // Graceful fallback for a URL we can't parse a video ID from: a
+    // thumbnail card that opens the video in the YouTube app/browser instead.
     if (_hasError || _videoId == null) {
       final validId = _videoId ?? 'RQMxFTXn1hU';
       final thumbnailUrl = 'https://img.youtube.com/vi/$validId/mqdefault.jpg';
@@ -99,7 +73,6 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Premium YouTube video thumbnail
                     Image.network(
                       thumbnailUrl,
                       fit: BoxFit.cover,
@@ -116,11 +89,9 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
                         );
                       },
                     ),
-                    // Premium dark overlay
                     const ColoredBox(
                       color: Colors.black45,
                     ),
-                    // Play & Open in YouTube Indicators
                     Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,27 +144,6 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
       );
     }
 
-    if (!_isInitialized) {
-      // Premium loading card while the video metadata is being fetched
-      return AspectRatio(
-        aspectRatio: 16 / 9,
-        child: Container(
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF0F0F0),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 3,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                theme.colorScheme.primary,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -209,9 +159,7 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
         borderRadius: BorderRadius.circular(16),
         child: AspectRatio(
           aspectRatio: 16 / 9,
-          child: PodVideoPlayer(
-            controller: _controller!,
-          ),
+          child: YoutubePlayer(controller: _controller!),
         ),
       ),
     );

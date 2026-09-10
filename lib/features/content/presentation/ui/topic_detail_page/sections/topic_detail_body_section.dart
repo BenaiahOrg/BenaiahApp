@@ -65,10 +65,9 @@ class _TopicDetailBodySection extends ConsumerWidget {
           _preFetchEverything(ref, context, topic);
         });
 
-        final hasImage = topic.graphics.data.isNotEmpty;
-        final imageUrl = hasImage
-            ? topic.graphics.data.first
-            : 'https://picsum.photos/seed/${topic.id}/800/600';
+        // Empty falls through to BenaiahNetworkImage's branded fallback
+        // rather than a random stock photo.
+        final imageUrl = topic.graphics.data.firstOrNull ?? '';
 
         return NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -256,22 +255,32 @@ class _TopicDetailBodySection extends ConsumerWidget {
               ),
             ];
           },
-          body: TabBarView(
-            children: [
-              _DevotionalTab(topic: topic),
-              _StudyTab(topic: topic),
-              _GraphicsTab(topic: topic),
+          // A local Overlay so the embedded YouTube player (which renders
+          // itself via OverlayPortal to survive scroll clipping) attaches
+          // here instead of to the app's root Overlay. Without this it
+          // paints above the pinned SliverAppBar instead of scrolling
+          // beneath it like the rest of the body.
+          body: Overlay(
+            initialEntries: [
+              OverlayEntry(
+                builder: (context) => TabBarView(
+                  children: [
+                    _DevotionalTab(topic: topic),
+                    _StudyTab(topic: topic),
+                    _GraphicsTab(topic: topic),
+                  ],
+                ),
+              ),
             ],
           ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text(
-          error is AppError
-              ? error.userMessage
-              : 'Error: {}'.tr(args: [error.toString()]),
-          textAlign: TextAlign.center,
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(),
+        body: BenaiahStateView.error(
+          error: error,
+          onRetry: () => ref.invalidate(topicDetailProvider(topicId)),
         ),
       ),
     );

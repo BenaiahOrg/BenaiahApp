@@ -25,6 +25,14 @@ final class ServerError extends AppError {
   String get userMessage => message.tr();
 }
 
+/// A theme or subtopic that is not in the catalog, e.g. a stale deep link.
+final class NotFoundError extends AppError {
+  const NotFoundError();
+
+  @override
+  String get userMessage => 'This content is no longer available.'.tr();
+}
+
 final class GenericError extends AppError {
   const GenericError({required this.stackTrace, this.cause});
 

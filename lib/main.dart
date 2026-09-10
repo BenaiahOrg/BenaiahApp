@@ -19,16 +19,16 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  F.appFlavor = Flavor.values.firstWhere(
+    (element) => element.name == appFlavor?.toLowerCase(),
+    orElse: () => Flavor.dev,
+  );
+
   await EasyLocalization.ensureInitialized();
   await _initializeFirebase();
   configureDependencies();
 
   ResponsiveConfig.init(designWidth: 375, designHeight: 812);
-
-  F.appFlavor = Flavor.values.firstWhere(
-    (element) => element.name == appFlavor?.toLowerCase(),
-    orElse: () => Flavor.dev,
-  );
 
   await SentryFlutter.init(
     (options) {
@@ -68,7 +68,10 @@ Future<void> _initializeFirebase() async {
     if (e.code != 'duplicate-app') {
       debugPrint('Firebase initialization skipped: ${e.message}');
     }
-  } on Exception catch (e) {
+  } on Object catch (e) {
+    // DefaultFirebaseOptions throws an UnsupportedError (an Error, not an
+    // Exception) for platforms it has no config for. Startup must survive
+    // that: article content comes from the REST API, not Firebase.
     debugPrint('Firebase initialization skipped: $e');
   }
 }

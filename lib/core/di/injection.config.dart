@@ -25,10 +25,10 @@ import 'package:benaiah_app/features/about/data/repositories/about_repository_im
     as _i122;
 import 'package:benaiah_app/features/about/domain/repositories/about_repository.dart'
     as _i53;
+import 'package:benaiah_app/features/content/data/data_sources/content_api_data_source.dart'
+    as _i642;
 import 'package:benaiah_app/features/content/data/data_sources/content_local_data_source.dart'
     as _i729;
-import 'package:benaiah_app/features/content/data/data_sources/content_remote_data_source.dart'
-    as _i660;
 import 'package:benaiah_app/features/content/data/repositories/content_repository_impl.dart'
     as _i474;
 import 'package:benaiah_app/features/content/domain/repositories/content_repository.dart'
@@ -112,9 +112,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i167.PodcastRemoteDataSource>(
       () => _i167.PodcastRemoteDataSourceImpl(),
     );
-    gh.lazySingleton<_i660.ContentRemoteDataSource>(
-      () => _i660.ContentRemoteDataSourceImpl(),
-    );
     gh.lazySingleton<_i361.Dio>(
       () => dioModule.dio(gh<_i243.AuthInterceptor>()),
     );
@@ -122,12 +119,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i341.PodcastRepositoryImpl(
         gh<_i167.PodcastRemoteDataSource>(),
         gh<_i206.PodcastLocalDataSource>(),
-      ),
-    );
-    gh.lazySingleton<_i426.ContentRepository>(
-      () => _i474.ContentRepositoryImpl(
-        gh<_i660.ContentRemoteDataSource>(),
-        gh<_i729.ContentLocalDataSource>(),
       ),
     );
     gh.lazySingleton<_i751.HttpClient>(
@@ -148,6 +139,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i451.HomeLocalDataSource>(),
       ),
     );
+    gh.lazySingleton<_i642.ContentApiDataSource>(
+      () => _i642.ContentApiDataSourceImpl(gh<_i751.HttpClient>()),
+    );
     gh.lazySingleton<_i292.SettingsRepository>(
       () => _i713.SettingsRepositoryImpl(
         gh<_i65.SettingsRemoteDataSource>(),
@@ -162,6 +156,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i399.MainRemoteDataSource>(
       () => _i399.MainRemoteDataSourceImpl(gh<_i751.HttpClient>()),
+    );
+    gh.lazySingleton<_i426.ContentRepository>(
+      () => _i474.ContentRepositoryImpl(
+        gh<_i642.ContentApiDataSource>(),
+        gh<_i729.ContentLocalDataSource>(),
+      ),
     );
     gh.lazySingleton<_i917.MainRepository>(
       () => _i1043.MainRepositoryImpl(

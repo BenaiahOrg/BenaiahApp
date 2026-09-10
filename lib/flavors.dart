@@ -1,7 +1,9 @@
 enum Flavor { dev, qa, prod }
 
 class F {
-  static late final Flavor appFlavor;
+  /// Defaults to [Flavor.dev] so configuration reads during start-up can never
+  /// throw; `main` overwrites it from the build-time flavor before any UI runs.
+  static Flavor appFlavor = Flavor.dev;
 
   static String get name => appFlavor.name;
 

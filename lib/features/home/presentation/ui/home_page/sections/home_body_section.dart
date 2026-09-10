@@ -9,7 +9,14 @@ class _HomeBodySection extends ConsumerWidget {
 
     return seriesListAsync.when(
       data: (seriesList) {
-        if (seriesList.isEmpty) return const SizedBox.shrink();
+        if (seriesList.isEmpty) {
+          return BenaiahStateView.empty(
+            icon: Icons.auto_stories_outlined,
+            title: 'Nothing here yet'.tr(),
+            message: 'New series will appear here as they are published.'.tr(),
+            onRetry: () => ref.invalidate(seriesListProvider),
+          );
+        }
 
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -24,13 +31,9 @@ class _HomeBodySection extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text(
-          error is AppError
-              ? error.userMessage
-              : 'Error: {}'.tr(args: [error.toString()]),
-          textAlign: TextAlign.center,
-        ),
+      error: (error, stack) => BenaiahStateView.error(
+        error: error,
+        onRetry: () => ref.invalidate(seriesListProvider),
       ),
     );
   }
