@@ -2,6 +2,7 @@ import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/router/router_redirect.dart';
 import 'package:benaiah_app/core/router/router_refresh_listenable.dart';
 import 'package:benaiah_app/features/about/presentation/ui/about_page/about_page.dart';
+import 'package:benaiah_app/features/content/presentation/ui/author_articles_page/author_articles_page.dart';
 import 'package:benaiah_app/features/content/presentation/ui/series_detail_page/series_detail_page.dart';
 import 'package:benaiah_app/features/content/presentation/ui/topic_detail_page/topic_detail_page.dart';
 import 'package:benaiah_app/features/home/presentation/ui/home_page/home_page.dart';
@@ -88,6 +89,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final seriesId = state.pathParameters['seriesId']!;
           return SeriesDetailPage(seriesId: seriesId);
+        },
+      ),
+      GoRoute(
+        path: RouteNames.authorArticles,
+        name: RouteNames.authorArticles,
+        builder: (context, state) {
+          final authorId = state.pathParameters['authorId']!;
+          return AuthorArticlesPage(authorId: authorId);
         },
       ),
       GoRoute(

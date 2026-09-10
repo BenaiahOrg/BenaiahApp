@@ -77,6 +77,7 @@ ios/Flutter/Generated.xcconfig
 !.env.example
 secrets.json
 scripts/firebase/service-account*.json
+scripts/firebase/node_modules/
 
 # FVM Version Cache
 .fvm/

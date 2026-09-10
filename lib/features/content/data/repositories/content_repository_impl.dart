@@ -5,6 +5,7 @@ import 'package:benaiah_app/core/network/api_endpoints.dart';
 import 'package:benaiah_app/features/content/data/data_sources/content_api_data_source.dart';
 import 'package:benaiah_app/features/content/data/data_sources/content_local_data_source.dart';
 import 'package:benaiah_app/features/content/domain/entities/author.dart';
+import 'package:benaiah_app/features/content/domain/entities/author_credit.dart';
 import 'package:benaiah_app/features/content/domain/entities/series.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic.dart';
 import 'package:benaiah_app/features/content/domain/entities/topic_content.dart';
@@ -23,6 +24,12 @@ class ContentRepositoryImpl implements ContentRepository {
   /// The catalog is one request for the whole app, so hold it for the session
   /// instead of re-fetching per screen.
   Future<List<Series>>? _catalog;
+
+  /// Subtopic detail (bylines) for every topic in the catalog, keyed by topic
+  /// id. Only Endpoint 3 carries bylines — the catalog doesn't — so building
+  /// an author's full credit list means fetching all of them once. Held for
+  /// the session like the catalog above.
+  Future<Map<String, SubtopicDetail>>? _allSubtopicDetails;
 
   @override
   Future<Result<List<Series>>> getSeriesList() async {
@@ -57,8 +64,86 @@ class ContentRepositoryImpl implements ContentRepository {
     }
   }
 
+  @override
+  Future<Result<AuthorProfile>> getCreditsForAuthor(String authorId) async {
+    try {
+      final catalog = await _loadCatalog();
+      final detailsByTopicId = await _loadAllSubtopicDetails(catalog);
+
+      Author? author;
+      final credits = <AuthorCredit>[];
+
+      for (final series in catalog) {
+        for (final topic in series.topics) {
+          final roles = <ArticleRole>{};
+
+          for (final artist in topic.graphics.authors) {
+            if (artist.id == authorId) {
+              roles.add(ArticleRole.graphics);
+              author = artist;
+            }
+          }
+
+          final detail = detailsByTopicId[topic.id];
+          if (detail != null) {
+            for (final slug in const ['devotional_en', 'devotional_am']) {
+              final match = detail.authorsFor(slug).where((a) => a.id == authorId);
+              if (match.isNotEmpty) {
+                roles.add(ArticleRole.devotional);
+                author = match.first;
+              }
+            }
+            for (final slug in const [
+              'study_material_en',
+              'study_material_am',
+            ]) {
+              final match = detail.authorsFor(slug).where((a) => a.id == authorId);
+              if (match.isNotEmpty) {
+                roles.add(ArticleRole.studyMaterial);
+                author = match.first;
+              }
+            }
+          }
+
+          if (roles.isNotEmpty) {
+            credits.add(AuthorCredit(topic: topic, roles: roles));
+          }
+        }
+      }
+
+      if (author == null) throw const NotFoundError();
+      return Success(AuthorProfile(author: author, credits: credits));
+    } on Object catch (e, st) {
+      return Failure(_toError(e, st));
+    }
+  }
+
   Future<List<Series>> _loadCatalog() {
     return _catalog ??= _api.getCatalog();
+  }
+
+  Future<Map<String, SubtopicDetail>> _loadAllSubtopicDetails(
+    List<Series> catalog,
+  ) {
+    return _allSubtopicDetails ??= _fetchAllSubtopicDetails(catalog);
+  }
+
+  Future<Map<String, SubtopicDetail>> _fetchAllSubtopicDetails(
+    List<Series> catalog,
+  ) async {
+    final ids = [
+      for (final series in catalog)
+        for (final topic in series.topics) TopicId.parse(topic.id),
+    ];
+
+    final details = await Future.wait([
+      for (final id in ids) _trySubtopicDetail(id),
+    ]);
+
+    return {
+      for (var i = 0; i < ids.length; i++)
+        if (details[i] != null) ids[i].value: details[i]!,
+    };
   }
 
   /// Builds a fully populated topic: catalog entry for artwork and titles,

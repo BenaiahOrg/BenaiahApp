@@ -55,6 +55,8 @@ class ContentLocalDataSourceImpl implements ContentLocalDataSource {
             id: _slugify(author['name_en'] as String),
             name: author['name_en'] as String,
             nameAm: author['name_am'] as String?,
+            role: author['role_en'] as String?,
+            roleAm: author['role_am'] as String?,
           ),
     ];
   }
