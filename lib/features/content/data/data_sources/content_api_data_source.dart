@@ -228,6 +228,8 @@ class ContentApiDataSourceImpl implements ContentApiDataSource {
       name: nameEn,
       nameAm: _nullableString(json['fullname_am']),
       profileImageUrl: photo == null ? null : _absoluteUrl(photo),
+      role: _nullableString(json['role_en']),
+      roleAm: _nullableString(json['role_am']),
     );
   }
 

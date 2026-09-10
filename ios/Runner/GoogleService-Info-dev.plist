@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBu9omv5Vj0GIn5gcn1abSsJQhHBcfXRQ0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>778811015976</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.benaiah.app.dev</string>
+	<key>PROJECT_ID</key>
+	<string>benaiah-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>benaiah-app.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:778811015976:ios:cd6d654b907fe3d4edc61d</string>
+</dict>
+</plist>

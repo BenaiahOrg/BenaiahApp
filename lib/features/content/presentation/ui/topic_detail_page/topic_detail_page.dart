@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:benaiah_app/core/network/bible_service.dart';
+import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/utils/image_utils.dart';
 import 'package:benaiah_app/core/utils/string_utils.dart';
 import 'package:benaiah_app/core/widgets/benaiah_markdown.dart';
@@ -15,6 +16,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
