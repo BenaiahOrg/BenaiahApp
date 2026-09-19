@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:benaiah_app/core/error/app_error.dart';
 import 'package:benaiah_app/core/error/result.dart';
+import 'package:benaiah_app/core/utils/string_utils.dart';
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_host.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 
 // Kept as an interface to match the feature data-source pattern.
@@ -24,8 +22,8 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
   Future<Result<List<PodcastEpisode>>> getEpisodes() async {
     try {
       return Success(await _getEpisodesFromFirestore());
-    } on Exception {
-      return _getEpisodesFromSeedJson();
+    } on Exception catch (e, st) {
+      return Failure(GenericError(stackTrace: st, cause: e));
     }
   }
 
@@ -42,7 +40,9 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
       return PodcastEpisode(
         id: doc.id,
         title: _string(data, 'title'),
-        description: _string(data, 'description'),
+        description: StringUtils.fixMissingWordBoundary(
+          _string(data, 'description'),
+        ),
         audioUrl: _string(data, 'audioUrl'),
         durationSeconds: data['durationSeconds'] as int? ?? 0,
         imageUrl: _string(data, 'imageUrl'),
@@ -107,24 +107,6 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
         .toList();
   }
 
-  Future<Result<List<PodcastEpisode>>> _getEpisodesFromSeedJson() async {
-    try {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/benaiah_podcasts.json',
-      );
-      final jsonList = json.decode(jsonString) as List<dynamic>;
-
-      return Success(
-        jsonList
-            .map(
-              (item) => PodcastEpisode.fromJson(item as Map<String, dynamic>),
-            )
-            .toList(),
-      );
-    } on Exception catch (e, st) {
-      return Failure(GenericError(stackTrace: st, cause: e));
-    }
-  }
 
   DateTime _dateTime(Object? value) {
     if (value is Timestamp) {

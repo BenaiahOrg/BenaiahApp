@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:benaiah_app/core/network/bible_service.dart';
+import 'package:benaiah_app/core/utils/scripture_linkifier.dart';
 import 'package:benaiah_app/features/content/presentation/widgets/scripture_overlay.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -199,7 +201,13 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
         child: Padding(
           padding: widget.padding,
           child: MarkdownBody(
-            data: widget.data,
+            // Bare references ("John 3:16", "ዮሐንስ 3፡16") become bible.com
+            // links here so the tap handler below can open them, pointed at
+            // the translation matching the language being read.
+            data: ScriptureLinkifier.linkify(
+              widget.data,
+              languageCode: context.locale.languageCode,
+            ),
             selectable: widget.selectable,
             styleSheet: styleSheet,
             onTapLink: (text, href, title) {

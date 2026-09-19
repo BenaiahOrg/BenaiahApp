@@ -5,52 +5,14 @@ class _TopicDetailBodySection extends ConsumerWidget {
 
   final String topicId;
 
-  void _preFetchEverything(
-    WidgetRef ref,
-    BuildContext context,
-    Topic topic,
-  ) {
-    _preFetchBiblePassages(ref, context, topic);
-    _preFetchImages(context, topic);
-  }
-
+  // Passages are no longer pre-fetched. Linkified articles carry up to ~20
+  // references, and firing them all at once got the app rate-limited, which
+  // left every popover — including the one actually tapped — waiting on a
+  // request that never came back. The overlay fetches on tap instead.
   void _preFetchImages(BuildContext context, Topic topic) {
     for (final imageUrl in topic.graphics.data) {
       if (imageUrl.isNotEmpty) {
         unawaited(precacheImage(CachedNetworkImageProvider(imageUrl), context));
-      }
-    }
-  }
-
-  void _preFetchBiblePassages(
-    WidgetRef ref,
-    BuildContext context,
-    Topic topic,
-  ) {
-    final lang = context.locale.languageCode;
-    final markdownContent =
-        '${topic.localizedDevotional(lang).data}\n${topic.localizedStudyMaterial(lang).data}';
-    final bibleLinkRegex = RegExp(
-      r'https?://(?:www\.)?bible\.com/bible/[^)\s"]+',
-    );
-    final matches = bibleLinkRegex.allMatches(markdownContent);
-
-    for (final match in matches) {
-      final href = match.group(0);
-      if (href != null) {
-        try {
-          final parsed = BibleService.parseBibleLink(href);
-          if (parsed != null) {
-            final (passageId, bibleId) = parsed;
-            final param = BiblePassageParam(
-              passageId: passageId,
-              bibleId: bibleId,
-            );
-            ref.read(biblePassageProvider(param));
-          }
-        } on Exception catch (e) {
-          debugPrint('🚨 BenaiahApp pre-fetching error for link $href: $e');
-        }
       }
     }
   }
@@ -62,7 +24,7 @@ class _TopicDetailBodySection extends ConsumerWidget {
     return topicAsync.when(
       data: (topic) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _preFetchEverything(ref, context, topic);
+          _preFetchImages(context, topic);
         });
 
         // Empty falls through to BenaiahNetworkImage's branded fallback
@@ -275,12 +237,53 @@ class _TopicDetailBodySection extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const _TopicDetailSkeleton(),
       error: (error, stack) => Scaffold(
         appBar: AppBar(),
         body: BenaiahStateView.error(
           error: error,
           onRetry: () => ref.invalidate(topicDetailProvider(topicId)),
+        ),
+      ),
+    );
+  }
+}
+
+class _TopicDetailSkeleton extends StatelessWidget {
+  const _TopicDetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Shimmer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: const [
+            ShimmerBox(height: 300, borderRadius: 0),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      ShimmerBox(width: 90, height: 32, borderRadius: 16),
+                      SizedBox(width: 12),
+                      ShimmerBox(width: 90, height: 32, borderRadius: 16),
+                      SizedBox(width: 12),
+                      ShimmerBox(width: 90, height: 32, borderRadius: 16),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  ShimmerBox(height: 14, borderRadius: 4),
+                  SizedBox(height: 8),
+                  ShimmerBox(height: 14, borderRadius: 4),
+                  SizedBox(height: 8),
+                  ShimmerBox(width: 200, height: 14, borderRadius: 4),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

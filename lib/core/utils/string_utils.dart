@@ -58,6 +58,17 @@ abstract class StringUtils {
     return text.trim();
   }
 
+  /// Inserts a space where a digit is immediately followed by a capitalized
+  /// word with no separator — a common CMS copy-paste artifact where two
+  /// fields (e.g. a title and a description) got concatenated with nothing
+  /// between them, like "...Episode 01This is an episode about...".
+  static String fixMissingWordBoundary(String text) {
+    return text.replaceAllMapped(
+      RegExp(r'(\d)([A-Z][a-z]{2,})'),
+      (match) => '${match.group(1)} ${match.group(2)}',
+    );
+  }
+
   /// Extracts the 11-character YouTube video ID from a given YouTube URL.
   /// Returns null if the URL is not a valid YouTube link.
   static String? tryGetYoutubeId(String url) {

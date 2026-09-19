@@ -47,7 +47,11 @@ class BenaiahNetworkImage extends StatelessWidget {
       height: height,
       memCacheWidth: cacheWidth,
       memCacheHeight: cacheHeight,
-      fadeInDuration: const Duration(milliseconds: 150),
+      // Zero, not a subtle crossfade: an already-cached image (true for
+      // every revisit, since content providers are keepAlive) still replays
+      // this fade on each widget rebuild, which reads as the whole page
+      // reloading even though nothing was re-fetched.
+      fadeInDuration: Duration.zero,
       fadeOutDuration: Duration.zero,
       placeholderFadeInDuration: Duration.zero,
       placeholder: (context, url) {

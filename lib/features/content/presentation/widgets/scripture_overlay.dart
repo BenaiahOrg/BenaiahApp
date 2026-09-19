@@ -79,6 +79,19 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
 
     final passageAsync = ref.watch(biblePassageProvider(param));
 
+    // Riverpod retries a failed provider up to ten times with backoff, and
+    // reports every one of those retries as *loading* while carrying the
+    // error. Going through `when` therefore spins for minutes before the
+    // failure ever reaches the screen, so check the error ourselves first.
+    final Widget body;
+    if (passageAsync.hasValue) {
+      body = _buildContent(context, passageAsync.requireValue);
+    } else if (passageAsync.hasError) {
+      body = _buildErrorState(context, param, passageAsync.error!);
+    } else {
+      body = _buildLoadingState(context);
+    }
+
     // Dynamic menu positioning configuration
     const double cardWidth = 320;
 
@@ -138,12 +151,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
                     ),
                   ),
                   padding: const EdgeInsets.all(16),
-                  child: passageAsync.when(
-                    data: (passage) => _buildContent(context, passage),
-                    loading: () => _buildLoadingState(context),
-                    error: (error, stack) =>
-                        _buildErrorState(context, param, error),
-                  ),
+                  child: body,
                 ),
               ),
             ),

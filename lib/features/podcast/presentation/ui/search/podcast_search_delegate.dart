@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
+import 'package:benaiah_app/core/widgets/shimmer.dart';
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_list_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -10,7 +11,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PodcastSearchDelegate extends SearchDelegate<String?> {
-  PodcastSearchDelegate(this.ref);
+  PodcastSearchDelegate(this.ref)
+      : super(searchFieldLabel: 'Search episodes, hosts, or categories'.tr());
 
   final WidgetRef ref;
 
@@ -104,7 +106,7 @@ class PodcastSearchDelegate extends SearchDelegate<String?> {
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const SkeletonPlainList(),
       error: (e, st) => Center(child: Text('Error loading content.'.tr())),
     );
   }

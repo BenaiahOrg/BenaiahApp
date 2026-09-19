@@ -7,5 +7,5 @@ abstract class RouteNames {
   static const authorArticles = '/author/:authorId';
   static const podcasts = '/podcasts';
   static const podcastDetail = '/podcast-detail/:episodeId';
+  static const podcastHostDetail = '/podcast-host/:hostId';
 }
-

@@ -13,7 +13,7 @@ class _AuthorArticlesBodySection extends ConsumerWidget {
       data: (profile) => _AuthorProfileView(profile: profile),
       loading: () => Scaffold(
         appBar: AppBar(),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const SkeletonList(imageSize: 56),
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(),
@@ -157,57 +157,19 @@ class _AuthorCreditItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final topic = credit.topic;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(12),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return ContentListTile(
+      imageUrl: topic.graphics.data.firstOrNull ?? '',
+      imageSize: 56,
+      title: topic.localizedTitle(lang),
+      subtitle: _roleLabel(context),
+      onTap: () {
+        unawaited(
+          context.pushNamed(
+            RouteNames.topicDetail,
+            pathParameters: {'topicId': topic.id},
           ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: topic.graphics.data.isNotEmpty
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: BenaiahNetworkImage(
-                  imageUrl: topic.graphics.data.first,
-                  width: 56,
-                  height: 56,
-                ),
-              )
-            : Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.article,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-        title: Text(
-          topic.localizedTitle(lang),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Text(_roleLabel(context)),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          unawaited(
-            context.pushNamed(
-              RouteNames.topicDetail,
-              pathParameters: {'topicId': topic.id},
-            ),
-          );
-        },
-      ),
+        );
+      },
     );
   }
 }

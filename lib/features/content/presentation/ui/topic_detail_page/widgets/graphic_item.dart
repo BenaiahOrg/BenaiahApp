@@ -39,6 +39,15 @@ class _GraphicItem extends StatelessWidget {
               child: BenaiahNetworkImage(
                 imageUrl: imageUrl,
                 width: double.infinity,
+                // The masonry tile takes its height from the decoded image,
+                // so the default placeholder has no height to fill and the
+                // grid stays blank until pictures pop in. Hold a square —
+                // most graphics are square — so the tab shows a skeleton
+                // while they load.
+                placeholder: const AspectRatio(
+                  aspectRatio: 1,
+                  child: Shimmer(child: ShimmerBox(borderRadius: 16)),
+                ),
               ),
             ),
           ),

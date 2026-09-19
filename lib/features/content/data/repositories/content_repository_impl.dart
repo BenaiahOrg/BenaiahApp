@@ -3,7 +3,6 @@ import 'package:benaiah_app/core/error/app_error_parser.dart';
 import 'package:benaiah_app/core/error/result.dart';
 import 'package:benaiah_app/core/network/api_endpoints.dart';
 import 'package:benaiah_app/features/content/data/data_sources/content_api_data_source.dart';
-import 'package:benaiah_app/features/content/data/data_sources/content_local_data_source.dart';
 import 'package:benaiah_app/features/content/domain/entities/author.dart';
 import 'package:benaiah_app/features/content/domain/entities/author_credit.dart';
 import 'package:benaiah_app/features/content/domain/entities/series.dart';
@@ -16,10 +15,9 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ContentRepository)
 class ContentRepositoryImpl implements ContentRepository {
-  ContentRepositoryImpl(this._api, this._local);
+  ContentRepositoryImpl(this._api);
 
   final ContentApiDataSource _api;
-  final ContentLocalDataSource _local;
 
   /// The catalog is one request for the whole app, so hold it for the session
   /// instead of re-fetching per screen.
@@ -221,9 +219,9 @@ class ContentRepositoryImpl implements ContentRepository {
     };
   }
 
-  /// Live body first; the bundled snapshot covers the gap when the live
-  /// article endpoint fails. Returns null when neither has the article, which
-  /// the UI renders as an explicit "not available" state.
+  /// Fetches one article body from the live endpoint. Returns null when the
+  /// server has no article, which the UI renders as an explicit
+  /// "not available" state — there is no bundled copy to fall back to.
   Future<MapEntry<String, TopicContent<String>>?> _loadBody(
     TopicId id,
     String slug,
@@ -233,7 +231,7 @@ class ContentRepositoryImpl implements ContentRepository {
     // concurrently with it, not queued behind it.
     final liveBodyFuture = _tryLiveBody(id, slug);
     final detail = await detailFuture;
-    var body = await liveBodyFuture;
+    final body = await liveBodyFuture;
 
     // Trust the server's own availability flags when we have them.
     if (detail != null &&
@@ -242,13 +240,9 @@ class ContentRepositoryImpl implements ContentRepository {
       return null;
     }
 
-    body ??= await _local.getArticle(id, slug);
     if (body == null) return null;
 
-    var authors = detail?.authorsFor(slug) ?? const <Author>[];
-    if (authors.isEmpty) {
-      authors = await _local.getAuthors(id, slug);
-    }
+    final authors = detail?.authorsFor(slug) ?? const <Author>[];
 
     return MapEntry(
       slug,
@@ -260,17 +254,7 @@ class ContentRepositoryImpl implements ContentRepository {
     );
   }
 
-  // ponytail: Endpoint 4 (article body) currently 404s for all 72 published
-  // articles — a server bug, see docs/BACKEND_API_NOTES.md. Until it's fixed
-  // every article view was eating a ~900ms guaranteed-failing round trip
-  // before falling back to the bundled snapshot it was going to show anyway.
-  // Flip this back on (or delete the check) once
-  // `flutter test test/live_api_smoke_test.dart --tags live` shows bodies
-  // being served.
-  static const _liveArticleBodyEnabled = false;
-
   Future<ArticleBody?> _tryLiveBody(TopicId id, String slug) async {
-    if (!_liveArticleBodyEnabled) return null;
     try {
       final body = await _api.getArticle(id, slug);
       return body.content.isEmpty ? null : body;

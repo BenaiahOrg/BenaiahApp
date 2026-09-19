@@ -1,6 +1,7 @@
 part of '../settings_page.dart';
 
-class _SettingsTopSection extends StatelessWidget implements PreferredSizeWidget {
+class _SettingsTopSection extends StatelessWidget
+    implements PreferredSizeWidget {
   const _SettingsTopSection();
 
   @override

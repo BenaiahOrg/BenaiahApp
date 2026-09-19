@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/widgets/benaiah_markdown.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/core/widgets/benaiah_state_view.dart';
+import 'package:benaiah_app/core/widgets/shimmer.dart';
 import 'package:benaiah_app/core/utils/date_time_utils.dart';
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_detail_notifier.dart';
@@ -9,6 +11,7 @@ import 'package:benaiah_app/features/podcast/presentation/providers/podcast_play
 import 'package:benaiah_app/features/podcast/presentation/ui/widgets/podcast_player_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'screen/podcast_detail_screen.dart';
