@@ -1,9 +1,20 @@
-part of '../podcast_page.dart';
+import 'dart:async';
 
-class _PodcastEpisodeListTile extends ConsumerWidget {
-  const _PodcastEpisodeListTile({
+import 'package:benaiah_app/core/utils/date_time_utils.dart';
+import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
+import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
+import 'package:benaiah_app/features/podcast/presentation/providers/podcast_player_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+/// The image-category-title-hosts row shared by every screen that lists
+/// podcast episodes (the Podcasts tab, a host's profile page).
+class PodcastEpisodeTile extends ConsumerWidget {
+  const PodcastEpisodeTile({
     required this.episode,
     required this.onTap,
+    super.key,
   });
 
   final PodcastEpisode episode;

@@ -27,8 +27,6 @@ import 'package:benaiah_app/features/about/domain/repositories/about_repository.
     as _i53;
 import 'package:benaiah_app/features/content/data/data_sources/content_api_data_source.dart'
     as _i642;
-import 'package:benaiah_app/features/content/data/data_sources/content_local_data_source.dart'
-    as _i729;
 import 'package:benaiah_app/features/content/data/repositories/content_repository_impl.dart'
     as _i474;
 import 'package:benaiah_app/features/content/domain/repositories/content_repository.dart'
@@ -88,9 +86,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.secureStorage,
     );
-    gh.lazySingleton<_i729.ContentLocalDataSource>(
-      () => _i729.ContentLocalDataSourceImpl(),
-    );
     gh.lazySingleton<_i451.HomeLocalDataSource>(
       () => _i451.HomeLocalDataSourceImpl(),
     );
@@ -148,6 +143,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i298.SettingsLocalDataSource>(),
       ),
     );
+    gh.lazySingleton<_i426.ContentRepository>(
+      () => _i474.ContentRepositoryImpl(gh<_i642.ContentApiDataSource>()),
+    );
     gh.lazySingleton<_i53.AboutRepository>(
       () => _i122.AboutRepositoryImpl(
         gh<_i949.AboutRemoteDataSource>(),
@@ -156,12 +154,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i399.MainRemoteDataSource>(
       () => _i399.MainRemoteDataSourceImpl(gh<_i751.HttpClient>()),
-    );
-    gh.lazySingleton<_i426.ContentRepository>(
-      () => _i474.ContentRepositoryImpl(
-        gh<_i642.ContentApiDataSource>(),
-        gh<_i729.ContentLocalDataSource>(),
-      ),
     );
     gh.lazySingleton<_i917.MainRepository>(
       () => _i1043.MainRepositoryImpl(

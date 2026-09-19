@@ -125,7 +125,10 @@ class _SeriesDetailBodySection extends ConsumerWidget {
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Scaffold(
+        appBar: AppBar(),
+        body: const SkeletonList(),
+      ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(),
         body: BenaiahStateView.error(
@@ -144,60 +147,18 @@ class _TopicItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(12),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return ContentListTile(
+      imageUrl: topic.graphics.data.firstOrNull ?? '',
+      title: topic.localizedTitle(context.locale.languageCode),
+      subtitle: 'Read devotional, study material & graphics'.tr(),
+      onTap: () {
+        unawaited(
+          context.pushNamed(
+            RouteNames.topicDetail,
+            pathParameters: {'topicId': topic.id},
           ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: topic.graphics.data.isNotEmpty
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: BenaiahNetworkImage(
-                  imageUrl: topic.graphics.data.first,
-                  width: 80,
-                  height: 80,
-                ),
-              )
-            : Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.article,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-        title: Text(
-          topic.localizedTitle(context.locale.languageCode),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        subtitle: Text('Read devotional, study material & graphics'.tr()),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          unawaited(
-            context.pushNamed(
-              RouteNames.topicDetail,
-              pathParameters: {'topicId': topic.id},
-            ),
-          );
-        },
-      ),
+        );
+      },
     );
   }
 }

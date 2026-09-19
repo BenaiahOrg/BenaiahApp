@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+
+import '../../../../core/utils/string_utils.dart';
 import 'podcast_host.dart';
 
 class PodcastEpisode extends Equatable {
@@ -32,7 +34,9 @@ class PodcastEpisode extends Equatable {
     return PodcastEpisode(
       id: json['id'] as String,
       title: json['title'] as String,
-      description: json['description'] as String,
+      description: StringUtils.fixMissingWordBoundary(
+        json['description'] as String,
+      ),
       audioUrl: json['audioUrl'] as String,
       durationSeconds: json['durationSeconds'] as int,
       imageUrl: json['imageUrl'] as String,

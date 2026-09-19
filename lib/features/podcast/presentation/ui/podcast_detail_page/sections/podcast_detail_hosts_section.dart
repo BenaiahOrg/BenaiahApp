@@ -30,61 +30,84 @@ class _PodcastDetailHostsSection extends StatelessWidget {
             ...episode.hosts.map((host) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white10 : Colors.black.withAlpha(5),
+                child: Material(
+                  color: isDark ? Colors.white10 : Colors.black.withAlpha(5),
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDark ? Colors.white10 : Colors.black.withAlpha(5),
+                    onTap: () {
+                      unawaited(
+                        context.push(
+                          RouteNames.podcastHostDetail.replaceAll(
+                            ':hostId',
+                            host.id,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white10
+                              : Colors.black.withAlpha(5),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Host Image circular
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withAlpha(50),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: BenaiahNetworkImage(
+                              imageUrl: host.imageUrl,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // Name and Bio details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  host.name,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  host.bio,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: Colors.grey[500],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Host Image circular
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.withAlpha(50),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: BenaiahNetworkImage(
-                          imageUrl: host.imageUrl,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Name and Bio details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              host.name,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              host.bio,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey,
-                                fontSize: 12,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               );
             }),
-            
+
             // Extra safe padding bottom
             const SizedBox(height: 80),
           ],

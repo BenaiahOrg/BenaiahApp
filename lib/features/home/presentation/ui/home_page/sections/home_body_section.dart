@@ -30,10 +30,52 @@ class _HomeBodySection extends ConsumerWidget {
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const _HomeSkeleton(),
       error: (error, stack) => BenaiahStateView.error(
         error: error,
         onRetry: () => ref.invalidate(seriesListProvider),
+      ),
+    );
+  }
+}
+
+class _HomeSkeleton extends StatelessWidget {
+  const _HomeSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const ShimmerBox(height: 320, borderRadius: 16),
+          const SizedBox(height: 24),
+          const ShimmerBox(width: 110, height: 20, borderRadius: 4),
+          const SizedBox(height: 16),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 24,
+            childAspectRatio: 0.75,
+            children: List.generate(
+              4,
+              (_) => const Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: ShimmerBox(borderRadius: 16),
+                  ),
+                  SizedBox(height: 12),
+                  ShimmerBox(height: 16, borderRadius: 4),
+                  SizedBox(height: 4),
+                  ShimmerBox(width: 60, height: 12, borderRadius: 4),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

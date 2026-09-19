@@ -8,6 +8,7 @@ import 'package:benaiah_app/features/content/presentation/ui/topic_detail_page/t
 import 'package:benaiah_app/features/home/presentation/ui/home_page/home_page.dart';
 import 'package:benaiah_app/features/main/presentation/ui/main_page/main_page.dart';
 import 'package:benaiah_app/features/podcast/presentation/ui/podcast_detail_page/podcast_detail_page.dart';
+import 'package:benaiah_app/features/podcast/presentation/ui/podcast_host_page/podcast_host_page.dart';
 import 'package:benaiah_app/features/podcast/presentation/ui/podcast_page/podcast_page.dart';
 import 'package:benaiah_app/features/settings/presentation/ui/settings_page/settings_page.dart';
 import 'package:go_router/go_router.dart';
@@ -105,6 +106,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final episodeId = state.pathParameters['episodeId']!;
           return PodcastDetailPage(episodeId: episodeId);
+        },
+      ),
+      GoRoute(
+        path: RouteNames.podcastHostDetail,
+        name: RouteNames.podcastHostDetail,
+        builder: (context, state) {
+          final hostId = state.pathParameters['hostId']!;
+          return PodcastHostPage(hostId: hostId);
         },
       ),
     ],

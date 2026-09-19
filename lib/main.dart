@@ -14,10 +14,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Flutter's default image cache is 100MB. This app's full-bleed topic
+  // heroes and 18-image graphics galleries can burn through that after just
+  // a couple of screens, evicting a list's thumbnails so they visibly
+  // re-decode (a "reload" flash) when you navigate back to it even though
+  // no network request happens (content providers are already keepAlive).
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 250 << 20;
 
   F.appFlavor = Flavor.values.firstWhere(
     (element) => element.name == appFlavor?.toLowerCase(),
@@ -27,6 +35,14 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await _initializeFirebase();
   configureDependencies();
+
+  // Lets podcast playback continue when the app is backgrounded and shows
+  // play/pause/seek controls in the system notification tray.
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'org.benaiah.app.audio',
+    androidNotificationChannelName: 'Benaiah Podcast Playback',
+    androidNotificationOngoing: true,
+  );
 
   ResponsiveConfig.init(designWidth: 375, designHeight: 812);
 

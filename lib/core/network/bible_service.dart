@@ -133,6 +133,20 @@ class BibleService {
 
   late final YouVersionClient _client;
 
+  /// The SDK builds its Dio client with no connect or receive timeout, so a
+  /// throttled or stalled request never completes and the overlay spins
+  /// forever. Bound it here instead of forking the package.
+  static const _requestTimeout = Duration(seconds: 15);
+
+  Future<Passage> _fetch(String bibleId, String passageId) => _client.bibles
+      .getPassage(
+        bibleId,
+        passageId,
+        includeHeadings: true,
+        includeNotes: false,
+      )
+      .timeout(_requestTimeout);
+
   /// Fetches a Bible passage using the `youversion_sdk`.
   ///
   /// [passageId] is the standard coordinate (e.g., 'JHN.3.16' or 'JHN.3.16,19').
@@ -146,27 +160,17 @@ class BibleService {
     if (subPassageIds.length <= 1) {
       final targetId = subPassageIds.firstOrNull ?? passageId;
       try {
-        return await _client.bibles.getPassage(
-          bibleId,
-          targetId,
-          includeHeadings: true,
-          includeNotes: false,
-        );
+        return await _fetch(bibleId, targetId);
       } catch (e) {
-        // If a non-English Bible version request fails (e.g. 403 Access Denied due to developer key limitations),
-        // gracefully fall back to the English ESV (ID: 12) version so the passage is still readable.
+        // If a non-default Bible version request fails (e.g. 403 Access
+        // Denied due to developer key limitations), gracefully fall back to
+        // English (ASV, ID 12) so the passage is still readable.
         if (bibleId != '12') {
           debugPrint(
-            '⚠️ BibleService: Failed to fetch passage for translation $bibleId ($e). '
-            'Gracefully falling back to English (ESV - 12)...',
+            '⚠️ BibleService: Failed to fetch passage for translation '
+            '$bibleId ($e). Falling back to English (ASV - 12)...',
           );
-          return _client.bibles.getPassage(
-            '12',
-            targetId,
-            format: 'text',
-            includeHeadings: true,
-            includeNotes: false,
-          );
+          return _fetch('12', targetId);
         }
         rethrow;
       }

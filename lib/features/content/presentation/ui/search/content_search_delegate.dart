@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/core/widgets/benaiah_state_view.dart';
+import 'package:benaiah_app/core/widgets/shimmer.dart';
 import 'package:benaiah_app/features/content/presentation/providers/series_list_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ContentSearchDelegate extends SearchDelegate<String?> {
-  ContentSearchDelegate(this.ref);
+  ContentSearchDelegate(this.ref)
+      : super(searchFieldLabel: 'Search series and topics'.tr());
 
   final WidgetRef ref;
 
@@ -156,7 +158,7 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const SkeletonPlainList(),
       error: (e, st) => BenaiahStateView.error(
         error: e,
         onRetry: () => ref.invalidate(seriesListProvider),
