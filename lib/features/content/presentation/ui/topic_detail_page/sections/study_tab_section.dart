@@ -16,8 +16,8 @@ class _StudyTab extends StatelessWidget {
   }
 }
 
-/// Shared body for the devotional and study tabs: optional video, markdown,
-/// then the byline for whichever language is on screen.
+/// Shared body for the devotional and study tabs: title and date, optional
+/// video, markdown, then the byline for whichever language is on screen.
 class _ArticleTab extends StatelessWidget {
   const _ArticleTab({
     required this.content,
@@ -37,6 +37,12 @@ class _ArticleTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final youtubeUrl = content.youtubeUrl;
     final hasVideo = youtubeUrl != null && youtubeUrl.isNotEmpty;
+    final title = content.title;
+    final header = content.header;
+    // Some articles repeat the title as their first header; showing both
+    // would stack the same line twice.
+    final showHeader =
+        header != null && header.isNotEmpty && header.trim() != title?.trim();
 
     return CustomScrollView(
       key: PageStorageKey<String>(storageKey),
@@ -60,6 +66,10 @@ class _ArticleTab extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (title != null) ...[
+                    _ArticleHeading(title: title, date: content.date),
+                    const SizedBox(height: 24),
+                  ],
                   if (hasVideo) ...[
                     if (StringUtils.tryGetYoutubeId(youtubeUrl) != null)
                       _EmbeddedYoutubePlayer(url: youtubeUrl)
@@ -67,9 +77,10 @@ class _ArticleTab extends StatelessWidget {
                       _YouTubeLinkButton(url: youtubeUrl),
                     const SizedBox(height: 24),
                   ],
-                  if (content.data.isNotEmpty)
-                    BenaiahMarkdown(data: content.data)
-                  else
+                  if (content.data.isNotEmpty) ...[
+                    if (showHeader) _ArticleSectionHeader(text: header),
+                    BenaiahMarkdown(data: content.data),
+                  ] else
                     BenaiahStateView.empty(
                       icon: Icons.menu_book_outlined,
                       title: emptyTitle,

@@ -103,7 +103,7 @@ class ContentApiDataSourceImpl implements ContentApiDataSource {
 
     final data = _asMap(response.data);
     return ArticleBody(
-      content: _string(data['content']),
+      content: _paragraphs(_string(data['content'])),
       title: _nullableString(data['title']),
       date: _nullableString(data['date']),
       header: _nullableString(data['header']),
@@ -247,6 +247,31 @@ class ContentApiDataSourceImpl implements ContentApiDataSource {
           if (lang.value == true) '${type.key}_${lang.key}',
     };
   }
+
+  /// The server drops every blank line when it cleans an article, so each
+  /// paragraph arrives on a single line and markdown would fold them all into
+  /// one. Put the paragraph breaks back, keeping list items together so a
+  /// numbered reference list still renders as one list.
+  static String _paragraphs(String content) {
+    final lines = [
+      for (final line in content.split('\n'))
+        if (line.trim().isNotEmpty) line.trim(),
+    ];
+
+    final buffer = StringBuffer();
+    for (var i = 0; i < lines.length; i++) {
+      if (i > 0) {
+        final sameList = _isListItem(lines[i - 1]) && _isListItem(lines[i]);
+        buffer.write(sameList ? '\n' : '\n\n');
+      }
+      buffer.write(lines[i]);
+    }
+    return buffer.toString();
+  }
+
+  static final _listItem = RegExp(r'^([-*+]|\d+[.)])\s');
+
+  static bool _isListItem(String line) => _listItem.hasMatch(line);
 
   /// Frontmatter gives `youtube/{id}`; the player wants a watchable URL.
   String? _youtubeUrl(String? audio) {

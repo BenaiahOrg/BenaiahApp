@@ -175,6 +175,56 @@ void main() {
   });
 
   group('getArticle', () {
+    test('maps a live article with its frontmatter', () async {
+      final source = ContentApiDataSourceImpl(
+        _FixtureHttpClient(_fixture('article_study_material.json')),
+      );
+
+      final article = await source.getArticle(
+        const TopicId(themeSlug: 'love-faith-and-hope', subtopicSlug: 'faith'),
+        'study_material_en',
+      );
+
+      expect(article.title, 'A CALL TO THE UNKNOWN');
+      expect(article.header, 'To Faith or to Trust?');
+      expect(article.date, 'December 30, 2025');
+      expect(article.youtubeUrl, isNull);
+    });
+
+    test('restores the paragraph breaks the server strips', () async {
+      final source = ContentApiDataSourceImpl(
+        _FixtureHttpClient(_fixture('article_study_material.json')),
+      );
+
+      final article = await source.getArticle(
+        const TopicId(themeSlug: 'love-faith-and-hope', subtopicSlug: 'faith'),
+        'study_material_en',
+      );
+
+      // The payload has 19 lines and no blank ones. Prose lines become their
+      // own paragraphs; the two-item reference list stays one tight list.
+      final blocks = article.content.split('\n\n');
+      expect(blocks, hasLength(18));
+      expect(blocks.last, startsWith('1. Joyce Meyer'));
+      expect(blocks.last, contains('\n2. Rabbi Jason Sobel'));
+      expect(article.content, isNot(contains('\n\n\n')));
+    });
+
+    test('drops blank and whitespace-only lines', () async {
+      final source = ContentApiDataSourceImpl(
+        _FixtureHttpClient({
+          'content': '  First  \n\n   \nSecond\n- a\n- b\nEnd',
+        }),
+      );
+
+      final article = await source.getArticle(
+        const TopicId(themeSlug: 't', subtopicSlug: 's'),
+        'devotional_en',
+      );
+
+      expect(article.content, 'First\n\nSecond\n\n- a\n- b\n\nEnd');
+    });
+
     test('turns a youtube frontmatter id into a watchable url', () async {
       final client = _FixtureHttpClient({
         'content': 'Body text',

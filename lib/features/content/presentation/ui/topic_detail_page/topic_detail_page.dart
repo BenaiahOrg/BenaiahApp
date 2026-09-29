@@ -25,6 +25,7 @@ part 'sections/devotional_tab_section.dart';
 part 'sections/graphics_tab_section.dart';
 part 'sections/study_tab_section.dart';
 part 'sections/topic_detail_body_section.dart';
+part 'widgets/article_heading.dart';
 part 'widgets/author_info_row.dart';
 part 'widgets/embedded_youtube_player.dart';
 part 'widgets/graphic_item.dart';

@@ -219,9 +219,9 @@ class ContentRepositoryImpl implements ContentRepository {
     };
   }
 
-  /// Fetches one article body from the live endpoint. Returns null when the
-  /// server has no article, which the UI renders as an explicit
-  /// "not available" state — there is no bundled copy to fall back to.
+  /// Fetches one article body from Endpoint 4. Returns null when the server
+  /// has no article, which the UI renders as an explicit "not available"
+  /// state — there is no bundled copy to fall back to.
   Future<MapEntry<String, TopicContent<String>>?> _loadBody(
     TopicId id,
     String slug,
@@ -229,9 +229,9 @@ class ContentRepositoryImpl implements ContentRepository {
   ) async {
     // Fired before awaiting detail so the body request is in flight
     // concurrently with it, not queued behind it.
-    final liveBodyFuture = _tryLiveBody(id, slug);
+    final bodyFuture = _tryBody(id, slug);
     final detail = await detailFuture;
-    final body = await liveBodyFuture;
+    final body = await bodyFuture;
 
     // Trust the server's own availability flags when we have them.
     if (detail != null &&
@@ -250,16 +250,19 @@ class ContentRepositoryImpl implements ContentRepository {
         data: body.content,
         authors: authors,
         youtubeUrl: body.youtubeUrl,
+        title: body.title,
+        header: body.header,
+        date: body.date,
       ),
     );
   }
 
-  Future<ArticleBody?> _tryLiveBody(TopicId id, String slug) async {
+  Future<ArticleBody?> _tryBody(TopicId id, String slug) async {
     try {
       final body = await _api.getArticle(id, slug);
       return body.content.isEmpty ? null : body;
     } on Object catch (e) {
-      debugPrint('Benaiah: live article $slug unavailable for $id ($e)');
+      debugPrint('Benaiah: article $slug unavailable for $id ($e)');
       return null;
     }
   }

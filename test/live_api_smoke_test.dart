@@ -68,7 +68,7 @@ void main() {
   });
 
   test(
-    'reports how many article bodies the live endpoint serves',
+    'serves a body for every article the server lists as available',
     timeout: const Timeout(Duration(minutes: 4)),
     () async {
       final series = await source.getCatalog();
@@ -77,29 +77,28 @@ void main() {
           .map((t) => TopicId.parse(t.id));
 
       var ok = 0;
-      var failed = 0;
+      final failed = <String>[];
       for (final id in ids) {
         final detail = await source.getSubtopicDetail(id);
         for (final slug in detail.availability) {
           try {
             final body = await source.getArticle(id, slug);
-            if (body.content.isNotEmpty) {
+            if (body.content.isNotEmpty && body.title != null) {
               ok++;
             } else {
-              failed++;
+              failed.add('$id/$slug');
             }
           } on Object {
-            failed++;
+            failed.add('$id/$slug');
           }
         }
       }
 
       // ignore: avoid_print
-      print('Endpoint 4 — bodies served: $ok, unavailable: $failed');
+      print('Endpoint 4 — bodies served: $ok, unavailable: ${failed.length}');
 
-      // Documents the current server state rather than asserting it, so this
-      // test starts passing meaningfully the moment Endpoint 4 is fixed.
-      expect(ok + failed, greaterThan(0));
+      expect(ok, greaterThan(0));
+      expect(failed, isEmpty);
     },
   );
 }
