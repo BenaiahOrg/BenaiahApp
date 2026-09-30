@@ -96,6 +96,10 @@ flutter_gen:
 
 flutter:
   uses-material-design: true
+  # Firebase is pinned through CocoaPods. Swift Package Manager floats the
+  # Firebase iOS SDK past the version cloud_firestore compiles against.
+  config:
+    enable-swift-package-manager: false
   assets:
     - assets/translations/
     - assets/images/
