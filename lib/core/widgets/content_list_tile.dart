@@ -10,31 +10,27 @@ class ContentListTile extends StatelessWidget {
   const ContentListTile({
     required this.imageUrl,
     required this.title,
-    required this.subtitle,
     required this.onTap,
+    this.subtitle,
     this.imageSize = 80,
     super.key,
   });
 
   final String imageUrl;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final VoidCallback onTap;
   final double imageSize;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final subtitle = this.subtitle;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        elevation: 1,
-        shadowColor: Colors.black.withAlpha(30),
+      child: Card(
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -51,10 +47,10 @@ class ContentListTile extends StatelessWidget {
                       : Container(
                           width: imageSize,
                           height: imageSize,
-                          color: theme.colorScheme.primaryContainer,
+                          color: theme.colorScheme.surfaceContainerHighest,
                           child: Icon(
-                            Icons.article,
-                            color: theme.colorScheme.primary,
+                            Icons.article_outlined,
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                 ),
@@ -66,30 +62,31 @@ class ContentListTile extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.6,
-                          ),
-                          fontSize: 13,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (subtitle != null && subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward_ios, size: 14),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ],
             ),
           ),

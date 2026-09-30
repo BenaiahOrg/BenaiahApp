@@ -47,7 +47,7 @@ class _AboutBodySection extends StatelessWidget {
                 .tr(),
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontStyle: FontStyle.italic,
-              color: Colors.grey[700],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 48),
@@ -58,13 +58,12 @@ class _AboutBodySection extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
-                  vertical: 8,
+                  vertical: 12,
                 ),
                 child: Text(
                   'Benaiah.org'.tr(),
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.w300,
+                    decoration: TextDecoration.underline,
                   ),
                 ),
               ),

@@ -42,9 +42,9 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
       vsync: this,
       duration: const Duration(milliseconds: 200),
     );
-    _scaleAnimation = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOutBack,
+    // Decelerates into place without overshooting.
+    _scaleAnimation = Tween<double>(begin: 0.92, end: 1).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeOutQuart),
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animController,
@@ -72,6 +72,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final mediaQuery = MediaQuery.of(context);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
 
@@ -109,12 +110,10 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          GestureDetector(
-            onTap: _handleDismiss,
-            behavior: HitTestBehavior.translucent,
-            child: Container(
-              color: Colors.transparent,
-            ),
+          // A real barrier, so screen readers can dismiss the popover too.
+          ModalBarrier(
+            onDismiss: _handleDismiss,
+            semanticsLabel: 'Close'.tr(),
           ),
 
           Positioned(
@@ -123,7 +122,8 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             bottom: bottom,
             width: cardWidth,
             child: ScaleTransition(
-              scale: _scaleAnimation,
+              // Reduce Motion keeps the fade and drops the zoom.
+              scale: reduceMotion ? kAlwaysCompleteAnimation : _scaleAnimation,
               alignment: isBelow ? Alignment.topCenter : Alignment.bottomCenter,
               child: FadeTransition(
                 opacity: _fadeAnimation,
@@ -131,21 +131,20 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
                   constraints: BoxConstraints(
                     maxHeight: screenHeight * 0.40,
                   ),
+                  // Elevation alone sets the card apart; a hairline border on
+                  // top of the shadow would say it twice.
                   decoration: BoxDecoration(
-                    color: isDark ? theme.colorScheme.surface : Colors.white,
+                    color: isDark
+                        ? theme.colorScheme.surfaceContainerHigh
+                        : theme.colorScheme.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha(isDark ? 160 : 30),
+                        color: Colors.black.withAlpha(isDark ? 160 : 40),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
                     ],
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withAlpha(20)
-                          : Colors.black.withAlpha(8),
-                    ),
                   ),
                   padding: const EdgeInsets.all(16),
                   child: body,
@@ -188,9 +187,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.close, size: 18),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.close, size: 20),
               onPressed: _handleDismiss,
               tooltip: 'Close'.tr(),
             ),
@@ -202,7 +199,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
 
         Flexible(
           child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Column(
@@ -234,15 +230,13 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             Expanded(
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(36),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  visualDensity: VisualDensity.compact,
+                  minimumSize: const Size.fromHeight(48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                icon: const Icon(Icons.copy_rounded, size: 16),
-                label: Text('Copy'.tr(), style: const TextStyle(fontSize: 13)),
+                icon: const Icon(Icons.copy_rounded, size: 18),
+                label: Text('Copy'.tr()),
                 onPressed: () => _copyToClipboard(context, scripture),
               ),
             ),
@@ -250,18 +244,10 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             Expanded(
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  minimumSize: const Size.fromHeight(36),
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  visualDensity: VisualDensity.compact,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  minimumSize: const Size.fromHeight(48),
                 ),
-                icon: const Icon(Icons.share_rounded, size: 16),
-                label: Text('Share'.tr(), style: const TextStyle(fontSize: 13)),
+                icon: const Icon(Icons.share_rounded, size: 18),
+                label: Text('Share'.tr()),
                 onPressed: () => _sharePassage(scripture),
               ),
             ),
@@ -273,7 +259,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
 
   Widget _buildLoadingState(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -288,9 +273,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
         Text(
           'Fetching scripture...'.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: isDark ? Colors.grey[400] : Colors.grey[600],
-            fontSize: 14,
-            letterSpacing: 0.3,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 16),
@@ -321,10 +304,9 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
-              icon: const Icon(Icons.close, size: 18),
+              icon: const Icon(Icons.close, size: 20),
               onPressed: _handleDismiss,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
+              tooltip: 'Close'.tr(),
             ),
           ],
         ),
@@ -338,21 +320,18 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
           'Failed to load scripture'.tr(),
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 15,
           ),
         ),
         const SizedBox(height: 8),
         Flexible(
           child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Text(
                 appError.userMessage,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                  fontSize: 13,
+                  color: theme.colorScheme.onSurfaceVariant,
                   height: 1.4,
                 ),
               ),
@@ -362,16 +341,11 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
         const SizedBox(height: 16),
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            visualDensity: VisualDensity.compact,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            minimumSize: const Size(0, 48),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
-          icon: const Icon(Icons.refresh_rounded, size: 16),
-          label: Text('Retry'.tr(), style: const TextStyle(fontSize: 13)),
+          icon: const Icon(Icons.refresh_rounded, size: 18),
+          label: Text('Retry'.tr()),
           onPressed: () => ref.invalidate(biblePassageProvider(param)),
         ),
       ],
@@ -393,7 +367,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
     String copyright,
   ) {
     final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurface.withAlpha(120);
+    final muted = theme.colorScheme.onSurfaceVariant;
     final label = scripture.versionLabel;
 
     return Tooltip(
@@ -404,21 +378,21 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
       margin: const EdgeInsets.symmetric(horizontal: 32),
       padding: const EdgeInsets.all(12),
       textStyle: theme.textTheme.bodySmall?.copyWith(
-        fontSize: 11,
         height: 1.4,
         color: theme.colorScheme.onInverseSurface,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        // Tall enough to hit without a stylus.
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               label == null ? '©' : '© $label',
-              style: theme.textTheme.labelSmall?.copyWith(color: muted),
+              style: theme.textTheme.labelMedium?.copyWith(color: muted),
             ),
-            const SizedBox(width: 3),
-            Icon(Icons.info_outline_rounded, size: 12, color: muted),
+            const SizedBox(width: 4),
+            Icon(Icons.info_outline_rounded, size: 14, color: muted),
           ],
         ),
       ),

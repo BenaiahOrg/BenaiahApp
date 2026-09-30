@@ -7,6 +7,9 @@ class _AboutTopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return SliverAppBar(
       expandedHeight: 350,
       pinned: true,
@@ -26,9 +29,7 @@ class _AboutTopSection extends StatelessWidget {
               child: Text(
                 'About'.tr(),
                 style: TextStyle(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
+                  color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -37,9 +38,7 @@ class _AboutTopSection extends StatelessWidget {
         ),
         centerTitle: true,
         background: ColoredBox(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.black
-              : Colors.white,
+          color: theme.scaffoldBackgroundColor,
           child: Center(
             child: FadeTransition(
               opacity: fadeAnimation,
@@ -48,7 +47,7 @@ class _AboutTopSection extends StatelessWidget {
                   fadeAnimation,
                 ),
                 child: Image.asset(
-                  Theme.of(context).brightness == Brightness.dark
+                  isDark
                       ? Assets.images.logoWhite.path
                       : Assets.images.logoBlack.path,
                   height: 180,

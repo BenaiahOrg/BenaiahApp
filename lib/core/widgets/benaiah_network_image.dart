@@ -66,15 +66,11 @@ class BenaiahNetworkImage extends StatelessWidget {
   Widget _buildLoadingPlaceholder(
     BuildContext context,
   ) {
+    final base = Theme.of(context).colorScheme.surfaceContainerHighest;
     return Shimmer.fromColors(
-      baseColor: Theme.of(context).colorScheme.surfaceContainerHighest
-          .withAlpha(
-            100,
-          ),
-      highlightColor: Theme.of(context).colorScheme.surfaceContainerHighest
-          .withAlpha(
-            200,
-          ),
+      baseColor: base.withAlpha(100),
+      highlightColor: base.withAlpha(200),
+      enabled: !MediaQuery.disableAnimationsOf(context),
       child: Container(
         width: width,
         height: height,

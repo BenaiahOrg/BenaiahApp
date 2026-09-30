@@ -39,6 +39,7 @@ class _MainTopSection extends ConsumerWidget implements PreferredSizeWidget {
               );
             },
             icon: const Icon(Icons.search),
+            tooltip: MaterialLocalizations.of(context).searchFieldLabel,
           )
         else if (location == RouteNames.podcasts)
           IconButton(
@@ -51,6 +52,7 @@ class _MainTopSection extends ConsumerWidget implements PreferredSizeWidget {
               );
             },
             icon: const Icon(Icons.search),
+            tooltip: MaterialLocalizations.of(context).searchFieldLabel,
           ),
       ],
     );

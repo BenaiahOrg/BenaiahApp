@@ -11,65 +11,22 @@ class _PodcastDetailBodySection extends ConsumerWidget {
     PodcastEpisode episode,
   ) {
     unawaited(ref.read(podcastPlayerProvider.notifier).play(episode));
-    unawaited(
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => const PodcastPlayerSheet(),
-      ),
-    );
+    unawaited(showPodcastPlayerSheet(context));
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
 
     return SliverPadding(
-      padding: const EdgeInsets.all(24),
+      padding: AppLayout.readingInsets(context).copyWith(top: 24, bottom: 24),
       sliver: SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withAlpha(25),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    episode.category.tr().toUpperCase(),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Season {} • Episode {}'
-                      .tr(
-                        args: [
-                          episode.seasonNumber.toString(),
-                          episode.episodeNumber.toString(),
-                        ],
-                      )
-                      .toUpperCase(),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            // The title leads; category and numbering follow as plain
+            // metadata rather than a badge above it.
             Text(
               episode.title,
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -78,6 +35,19 @@ class _PodcastDetailBodySection extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 12),
+            Text(
+              [
+                if (episode.category.isNotEmpty) episode.category.tr(),
+                'Season {} • Episode {}'.tr(
+                  args: [
+                    episode.seasonNumber.toString(),
+                    episode.episodeNumber.toString(),
+                  ],
+                ),
+              ].join(' • '),
+              style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+            ),
+            const SizedBox(height: 4),
             Text(
               'Published on {} • {}'.tr(
                 args: [
@@ -89,17 +59,18 @@ class _PodcastDetailBodySection extends ConsumerWidget {
                   ),
                 ],
               ),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-              ),
+              style: theme.textTheme.bodyMedium?.copyWith(color: muted),
             ),
             const SizedBox(height: 24),
             Builder(
               builder: (context) {
-                final playerState = ref.watch(podcastPlayerProvider);
-                final isCurrentEpisode =
-                    playerState.currentEpisode?.id == episode.id;
-                final isPlaying = isCurrentEpisode && playerState.isPlaying;
+                final (currentId, playing) = ref.watch(
+                  podcastPlayerProvider.select(
+                    (s) => (s.currentEpisode?.id, s.isPlaying),
+                  ),
+                );
+                final isCurrentEpisode = currentId == episode.id;
+                final isPlaying = isCurrentEpisode && playing;
 
                 return ElevatedButton.icon(
                   icon: Icon(
@@ -123,15 +94,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
                             .read(podcastPlayerProvider.notifier)
                             .togglePlayback()
                       : _playEpisode(context, ref, episode),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    minimumSize: const Size.fromHeight(56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    elevation: 0,
-                  ),
                 );
               },
             ),
@@ -142,7 +104,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
               'Episode Description'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
               ),
             ),
             const SizedBox(height: 12),

@@ -6,6 +6,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+/// Opens the full player as a modal bottom sheet (drag handle and colors come
+/// from the theme's bottom sheet style).
+Future<void> showPodcastPlayerSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (context) => const PodcastPlayerSheet(),
+  );
+}
+
 class PodcastPlayerSheet extends ConsumerStatefulWidget {
   const PodcastPlayerSheet({super.key});
 
@@ -15,24 +26,11 @@ class PodcastPlayerSheet extends ConsumerStatefulWidget {
 
 class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _rotationController;
+  late final AnimationController _rotationController = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 12),
+  );
   bool _showRemaining = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 12),
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final playerState = ref.read(podcastPlayerProvider);
-      if (playerState.isPlaying) {
-        _rotationController.repeat();
-      }
-    });
-  }
 
   @override
   void dispose() {
@@ -68,290 +66,233 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
       return const SizedBox.shrink();
     }
 
-    if (playerState.isPlaying) {
+    // The cover turns like a record while audio plays, and holds still when
+    // the system asks for reduced motion.
+    final spin =
+        playerState.isPlaying && !MediaQuery.disableAnimationsOf(context);
+    if (spin && !_rotationController.isAnimating) {
       _rotationController.repeat();
-    } else {
+    } else if (!spin && _rotationController.isAnimating) {
       _rotationController.stop();
     }
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final scheme = theme.colorScheme;
+    final muted = scheme.onSurfaceVariant;
+    final notifier = ref.read(podcastPlayerProvider.notifier);
+    // Tabular figures keep the timecodes from jittering as digits change.
+    final timeStyle = theme.textTheme.bodySmall?.copyWith(
+      color: muted,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+    final playLabel = (playerState.isPlaying ? 'Pause' : 'Play').tr();
+    final remainingSeconds =
+        episode.durationSeconds - playerState.currentSeconds;
+    final speed = playerState.playbackSpeed.toStringAsFixed(2);
+    final speedLabel = '${speed.replaceAll('.00', '')}x';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? theme.colorScheme.surfaceContainerHighest
-            : theme.colorScheme.surfaceContainerLowest,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 20,
-            offset: Offset(0, -5),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Drag handle
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white24 : Colors.black12,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Pulses once (grows 25% and fades out) when playback starts
-                // or the sheet opens during playback.
-                if (playerState.isPlaying)
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 1, end: 1.25),
-                    duration: const Duration(seconds: 2),
-                    curve: Curves.easeOut,
-                    builder: (context, value, child) {
-                      return Container(
-                        width: 160 * value,
-                        height: 160 * value,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: theme.colorScheme.primary.withAlpha(
-                            (15 * (1.25 - value) / 0.25)
-                                .round()
-                                .clamp(0, 255),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ExcludeSemantics(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  RotationTransition(
+                    turns: _rotationController,
+                    child: Container(
+                      width: 160,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black87,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(60),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: ClipOval(
+                            child: episode.imageUrl.isNotEmpty
+                                ? BenaiahNetworkImage(
+                                    imageUrl: episode.imageUrl,
+                                    width: 148,
+                                    height: 148,
+                                  )
+                                : ColoredBox(
+                                    color: scheme.surfaceContainerHighest,
+                                    child: Icon(
+                                      Icons.podcasts_rounded,
+                                      size: 64,
+                                      color: muted,
+                                    ),
+                                  ),
                           ),
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
-                RotationTransition(
-                  turns: _rotationController,
-                  child: Container(
-                    width: 160,
-                    height: 160,
+                  // Spindle hole, so the spinning cover reads as a record.
+                  Container(
+                    width: 24,
+                    height: 24,
                     decoration: BoxDecoration(
+                      color: scheme.surface,
                       shape: BoxShape.circle,
-                      color: Colors.black87,
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withAlpha(40),
-                          blurRadius: 16,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                      border: Border.all(color: scheme.outline, width: 2),
                     ),
-                    child: ClipOval(
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: ClipOval(
-                          child: episode.imageUrl.isNotEmpty
-                              ? BenaiahNetworkImage(
-                                  imageUrl: episode.imageUrl,
-                                )
-                              : ColoredBox(
-                                  color: theme.colorScheme.primary,
-                                  child: const Icon(
-                                    Icons.podcasts_rounded,
-                                    size: 64,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                    child: Center(
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: scheme.outline,
+                          shape: BoxShape.circle,
                         ),
                       ),
                     ),
                   ),
-                ),
-                // Spindle hole, so the spinning cover reads as a record.
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: theme.scaffoldBackgroundColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 2),
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withAlpha(20),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              'Season {} • Episode {}'
-                  .tr(
-                    args: [
-                      episode.seasonNumber.toString(),
-                      episode.episodeNumber.toString(),
-                    ],
-                  )
-                  .toUpperCase(),
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.primary,
+            const SizedBox(height: 24),
+            Text(
+              episode.title,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            episode.title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            episode.hosts.map((h) => h.name).join(', '),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          SliderTheme(
-            data: SliderThemeData(
-              trackHeight: 4,
-              activeTrackColor: theme.colorScheme.primary,
-              inactiveTrackColor: isDark ? Colors.white24 : Colors.black12,
-              thumbColor: theme.colorScheme.primary,
-              thumbShape: const RoundSliderThumbShape(
-                enabledThumbRadius: 8,
+            const SizedBox(height: 4),
+            Text(
+              episode.hosts.map((h) => h.name).join(', '),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: muted,
+                fontWeight: FontWeight.w500,
               ),
-              overlayShape: const RoundSliderOverlayShape(
-                overlayRadius: 16,
-              ),
+              textAlign: TextAlign.center,
             ),
-            child: Slider(
-              value: playerState.progress,
-              onChanged: (val) => unawaited(
-                ref.read(podcastPlayerProvider.notifier).seek(val),
+            const SizedBox(height: 2),
+            Text(
+              'Season {} • Episode {}'.tr(
+                args: [
+                  episode.seasonNumber.toString(),
+                  episode.episodeNumber.toString(),
+                ],
               ),
+              style: theme.textTheme.bodySmall?.copyWith(color: muted),
+              textAlign: TextAlign.center,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _formatDuration(playerState.currentSeconds),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
-                  ),
+            const SizedBox(height: 20),
+            SliderTheme(
+              data: SliderThemeData(
+                trackHeight: 4,
+                activeTrackColor: scheme.primary,
+                inactiveTrackColor: scheme.outlineVariant,
+                thumbColor: scheme.primary,
+                thumbShape: const RoundSliderThumbShape(
+                  enabledThumbRadius: 8,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showRemaining = !_showRemaining;
-                    });
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: Text(
-                    _showRemaining
-                        ? '-${_formatDuration(
-                            episode.durationSeconds -
-                                playerState.currentSeconds,
-                          )}'
-                        : _formatDuration(episode.durationSeconds),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
+                overlayShape: const RoundSliderOverlayShape(
+                  overlayRadius: 16,
+                ),
+              ),
+              child: Slider(
+                value: playerState.progress,
+                // Screen readers hear the position ("12:04"), not a percent.
+                semanticFormatterCallback: (value) => _formatDuration(
+                  (value * episode.durationSeconds).round(),
+                ),
+                onChanged: (val) => unawaited(notifier.seek(val)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      _formatDuration(playerState.currentSeconds),
+                      style: timeStyle,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
-                onPressed: () =>
-                    _cyclePlaybackSpeed(playerState.playbackSpeed),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: isDark ? Colors.white24 : Colors.black12,
-                    ),
-                  ),
-                ),
-                child: Text(
-                  '${playerState.playbackSpeed
-                      .toStringAsFixed(2)
-                      .replaceAll('.00', '')}x',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.replay_10_rounded, size: 36),
-                color: theme.colorScheme.onSurface,
-                onPressed: () => unawaited(
-                  ref.read(podcastPlayerProvider.notifier).skip(-10),
-                ),
-              ),
-              GestureDetector(
-                onTap: () => unawaited(
-                  ref
-                      .read(podcastPlayerProvider.notifier)
-                      .togglePlayback(),
-                ),
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.colorScheme.primary.withAlpha(80),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                  // Tapping the total flips it to the time remaining.
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () {
+                      setState(() {
+                        _showRemaining = !_showRemaining;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        _showRemaining
+                            ? '-${_formatDuration(remainingSeconds)}'
+                            : _formatDuration(episode.durationSeconds),
+                        style: timeStyle,
                       ),
-                    ],
+                    ),
                   ),
-                  child: playerState.isBuffering
-                      ? const SizedBox(
-                          width: 32,
-                          height: 32,
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Tooltip(
+                  message: 'Playback speed'.tr(),
+                  child: TextButton(
+                    onPressed: () =>
+                        _cyclePlaybackSpeed(playerState.playbackSpeed),
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(48, 48),
+                      shape: StadiumBorder(
+                        side: BorderSide(color: scheme.outlineVariant),
+                      ),
+                    ),
+                    child: Text(
+                      speedLabel,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.replay_10_rounded),
+                  iconSize: 36,
+                  color: scheme.onSurface,
+                  tooltip: 'Back 10 seconds'.tr(),
+                  onPressed: () => unawaited(notifier.skip(-10)),
+                ),
+                IconButton.filled(
+                  onPressed: () => unawaited(notifier.togglePlayback()),
+                  tooltip: playLabel,
+                  iconSize: 36,
+                  style: IconButton.styleFrom(
+                    fixedSize: const Size.square(64),
+                  ),
+                  icon: playerState.isBuffering
+                      ? SizedBox.square(
+                          dimension: 28,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: scheme.onPrimary,
                             strokeWidth: 3,
                           ),
                         )
@@ -359,50 +300,49 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                           playerState.isPlaying
                               ? Icons.pause_rounded
                               : Icons.play_arrow_rounded,
-                          color: theme.colorScheme.onPrimary,
-                          size: 36,
                         ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.forward_10_rounded, size: 36),
-                color: theme.colorScheme.onSurface,
-                onPressed: () => unawaited(
-                  ref.read(podcastPlayerProvider.notifier).skip(10),
+                IconButton(
+                  icon: const Icon(Icons.forward_10_rounded),
+                  iconSize: 36,
+                  color: scheme.onSurface,
+                  tooltip: 'Forward 10 seconds'.tr(),
+                  onPressed: () => unawaited(notifier.skip(10)),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.info_outline_rounded, size: 28),
-                color: Colors.grey,
-                onPressed: () {
-                  unawaited(
-                    showDialog<void>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(episode.title),
-                        content: Scrollbar(
-                          child: SingleChildScrollView(
-                            child: Text(
-                              episode.description,
-                              style: theme.textTheme.bodyMedium,
+                IconButton(
+                  icon: const Icon(Icons.info_outline_rounded),
+                  iconSize: 28,
+                  color: muted,
+                  tooltip: 'Episode Description'.tr(),
+                  onPressed: () {
+                    unawaited(
+                      showDialog<void>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(episode.title),
+                          content: Scrollbar(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                episode.description,
+                                style: theme.textTheme.bodyMedium,
+                              ),
                             ),
                           ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('Close'.tr()),
+                            ),
+                          ],
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('Close'.tr()),
-                          ),
-                        ],
                       ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-        ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

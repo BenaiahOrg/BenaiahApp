@@ -1,5 +1,8 @@
 part of '../home_page.dart';
 
+/// Two columns on a phone, more as the window widens.
+const _seriesTileMaxWidth = 240.0;
+
 class _HomeAllSeriesSection extends StatelessWidget {
   const _HomeAllSeriesSection({required this.seriesList});
 
@@ -23,8 +26,8 @@ class _HomeAllSeriesSection extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: _seriesTileMaxWidth,
               crossAxisSpacing: 16,
               mainAxisSpacing: 24,
               childAspectRatio: 0.75,

@@ -24,8 +24,8 @@ class _GraphicsTab extends StatelessWidget {
                         compact: true,
                       ),
                     )
-                  : SliverMasonryGrid.count(
-                      crossAxisCount: 2,
+                  : SliverMasonryGrid.extent(
+                      maxCrossAxisExtent: 280,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
                       childCount: topic.graphics.data.length,
@@ -57,8 +57,7 @@ class _GraphicsTab extends StatelessWidget {
                         'Graphics by'.tr(),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                          letterSpacing: 1.2,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 16),

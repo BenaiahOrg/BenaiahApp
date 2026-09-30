@@ -48,7 +48,7 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final scheme = theme.colorScheme;
 
     final baseFontFamily = theme.textTheme.bodyLarge?.fontFamily;
 
@@ -72,7 +72,7 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
 
       h1: theme.textTheme.headlineMedium?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.onSurface,
+        color: scheme.onSurface,
         height: 1.4,
         fontFamily: baseFontFamily,
       ),
@@ -80,7 +80,7 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
 
       h2: theme.textTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.onSurface,
+        color: scheme.onSurface,
         height: 1.4,
         fontFamily: baseFontFamily,
       ),
@@ -88,7 +88,7 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
 
       h3: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.onSurface,
+        color: scheme.onSurface,
         height: 1.4,
         fontFamily: baseFontFamily,
       ),
@@ -96,11 +96,21 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
 
       h4: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.onSurface,
+        color: scheme.onSurface,
         height: 1.4,
         fontFamily: baseFontFamily,
       ),
       h4Padding: const EdgeInsets.only(top: 12, bottom: 6),
+
+      // Scripture references and other links: the text color plus an
+      // underline, which holds contrast in both themes (the package's blue
+      // does not on white).
+      a: baseBodyStyle.copyWith(
+        color: scheme.primary,
+        fontWeight: FontWeight.w600,
+        decoration: TextDecoration.underline,
+        decorationColor: scheme.outline,
+      ),
 
       strong: baseBodyStyle.copyWith(
         fontWeight: FontWeight.bold,
@@ -110,15 +120,10 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
         fontStyle: FontStyle.italic,
       ),
 
+      // A quiet tinted block, not a colored stripe down one side.
       blockquoteDecoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.grey[100],
+        color: scheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
-        border: Border(
-          left: BorderSide(
-            color: theme.colorScheme.primary,
-            width: 4,
-          ),
-        ),
       ),
       blockquotePadding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -126,7 +131,7 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       ),
       blockquote: baseBodyStyle.copyWith(
         fontStyle: FontStyle.italic,
-        color: isDark ? Colors.grey[300] : Colors.grey[700],
+        color: scheme.onSurfaceVariant,
       ),
 
       listBullet: baseBodyStyle.copyWith(
@@ -138,23 +143,18 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       code: TextStyle(
         fontFamily: 'monospace',
         fontSize: 14,
-        color: theme.colorScheme.primary,
-        backgroundColor: isDark ? Colors.grey[950] : Colors.grey[200],
+        color: scheme.primary,
+        backgroundColor: scheme.surfaceContainerHigh,
       ),
       codeblockDecoration: BoxDecoration(
-        color: isDark ? Colors.grey[950] : Colors.grey[100],
+        color: scheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Colors.grey[850]! : Colors.grey[300]!,
-        ),
       ),
       codeblockPadding: const EdgeInsets.all(12),
 
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
-          top: BorderSide(
-            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-          ),
+          top: BorderSide(color: scheme.outlineVariant),
         ),
       ),
     );

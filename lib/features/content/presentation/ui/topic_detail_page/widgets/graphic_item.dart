@@ -19,32 +19,36 @@ class _GraphicItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 32),
       child: Column(
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                PageRouteBuilder<void>(
-                  barrierColor: Colors.black,
-                  pageBuilder: (context, _, _) => _FullscreenGalleryDialog(
-                    allImages: allImages,
-                    initialIndex: initialIndex,
-                    topicTitle: topicTitle,
+          Semantics(
+            button: true,
+            label: '$topicTitle, ${_position(initialIndex, allImages.length)}',
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder<void>(
+                    barrierColor: Colors.black,
+                    pageBuilder: (context, _, _) => _FullscreenGalleryDialog(
+                      allImages: allImages,
+                      initialIndex: initialIndex,
+                      topicTitle: topicTitle,
+                    ),
                   ),
-                ),
-              );
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: BenaiahNetworkImage(
-                imageUrl: imageUrl,
-                width: double.infinity,
-                // The masonry tile takes its height from the decoded image,
-                // so the default placeholder has no height to fill and the
-                // grid stays blank until pictures pop in. Hold a square —
-                // most graphics are square — so the tab shows a skeleton
-                // while they load.
-                placeholder: const AspectRatio(
-                  aspectRatio: 1,
-                  child: Shimmer(child: ShimmerBox(borderRadius: 16)),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: BenaiahNetworkImage(
+                  imageUrl: imageUrl,
+                  width: double.infinity,
+                  // The masonry tile takes its height from the decoded image,
+                  // so the default placeholder has no height to fill and the
+                  // grid stays blank until pictures pop in. Hold a square —
+                  // most graphics are square — so the tab shows a skeleton
+                  // while they load.
+                  placeholder: const AspectRatio(
+                    aspectRatio: 1,
+                    child: Shimmer(child: ShimmerBox(borderRadius: 16)),
+                  ),
                 ),
               ),
             ),
@@ -54,6 +58,10 @@ class _GraphicItem extends StatelessWidget {
     );
   }
 }
+
+/// "2 of 18", for the gallery counter and each thumbnail's spoken label.
+String _position(int index, int count) =>
+    '{} of {}'.tr(args: ['${index + 1}', '$count']);
 
 class _FullscreenGalleryDialog extends StatefulWidget {
   const _FullscreenGalleryDialog({
@@ -135,6 +143,7 @@ class _FullscreenGalleryDialogState extends State<_FullscreenGalleryDialog> {
                         size: 28,
                       ),
                       onPressed: () => Navigator.of(context).pop(),
+                      tooltip: 'Close'.tr(),
                     ),
                     const SizedBox(width: 8),
                     Column(
@@ -150,7 +159,7 @@ class _FullscreenGalleryDialogState extends State<_FullscreenGalleryDialog> {
                           ),
                         ),
                         Text(
-                          '${_currentIndex + 1} of ${widget.allImages.length}',
+                          _position(_currentIndex, widget.allImages.length),
                           style: TextStyle(
                             color: Colors.white.withAlpha(180),
                             fontSize: 12,
@@ -185,7 +194,7 @@ class _FullscreenGalleryDialogState extends State<_FullscreenGalleryDialog> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  'Error downloading image'.tr(),
+                                  'Could not save the image. Try again.'.tr(),
                                 ),
                               ),
                             );

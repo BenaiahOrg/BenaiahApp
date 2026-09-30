@@ -19,7 +19,6 @@ class _HomeBodySection extends ConsumerWidget {
         }
 
         return CustomScrollView(
-          physics: const BouncingScrollPhysics(),
           slivers: [
             if (seriesList.isNotEmpty)
               SliverToBoxAdapter(
@@ -52,10 +51,10 @@ class _HomeSkeleton extends StatelessWidget {
           const SizedBox(height: 24),
           const ShimmerBox(width: 110, height: 20, borderRadius: 4),
           const SizedBox(height: 16),
-          GridView.count(
+          GridView.extent(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
+            maxCrossAxisExtent: _seriesTileMaxWidth,
             crossAxisSpacing: 16,
             mainAxisSpacing: 24,
             childAspectRatio: 0.75,

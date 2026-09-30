@@ -9,7 +9,8 @@ class _SettingsBodySection extends ConsumerWidget {
     final languageCode = context.locale.languageCode;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+      // The bottom inset keeps the footer clear of the floating mini player.
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
       children: [
         _SettingsGroup(
           label: 'Appearance'.tr(),
@@ -80,13 +81,15 @@ class _SettingsGroup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 10),
-          child: Text(
-            label.toUpperCase(),
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Semantics(
+            header: true,
+            child: Text(
+              label,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -98,13 +101,7 @@ class _SettingsGroup extends StatelessWidget {
           child: Column(
             children: [
               for (var i = 0; i < children.length; i++) ...[
-                if (i > 0)
-                  Divider(
-                    height: 1,
-                    thickness: 1,
-                    indent: 56,
-                    color: theme.colorScheme.onSurface.withAlpha(14),
-                  ),
+                if (i > 0) const Divider(height: 1, thickness: 1, indent: 56),
                 children[i],
               ],
             ],
@@ -138,41 +135,51 @@ class _SettingsOption extends StatelessWidget {
         ? theme.colorScheme.primary
         : theme.colorScheme.onSurface;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 22,
-              color: foreground.withAlpha(isSelected ? 255 : 160),
-            ),
-            const SizedBox(width: 18),
-            Expanded(
-              child: Text(
-                label,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: foreground,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    // Value rows announce as radio buttons in their group; navigation rows as
+    // plain buttons.
+    return Semantics(
+      inMutuallyExclusiveGroup: selected != null,
+      checked: selected,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 22,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: foreground,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
                 ),
               ),
-            ),
-            if (selected == null)
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 22,
-                color: theme.colorScheme.onSurface.withAlpha(100),
-              )
-            else if (isSelected)
-              Icon(
-                Icons.check_rounded,
-                size: 20,
-                color: theme.colorScheme.primary,
-              ),
-          ],
+              if (selected == null)
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 22,
+                  color: theme.colorScheme.onSurfaceVariant,
+                )
+              else if (isSelected)
+                Icon(
+                  Icons.check_rounded,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -197,24 +204,27 @@ class _SettingsFooter extends StatelessWidget {
         ? ''
         : ' · ${F.name.toUpperCase()}';
 
-    return Opacity(
-      opacity: 0.45,
-      child: Column(
-        children: [
-          Image.asset(
+    // Only the logo is faded; the build line stays at readable contrast.
+    return Column(
+      children: [
+        Opacity(
+          opacity: 0.45,
+          child: Image.asset(
             isDark
                 ? Assets.images.logoWhite.path
                 : Assets.images.logoBlack.path,
             height: 28,
           ),
-          const SizedBox(height: 10),
-          if (_version.isNotEmpty)
-            Text(
-              '$_version${_build.isEmpty ? '' : ' ($_build)'}$flavor',
-              style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: 10),
+        if (_version.isNotEmpty)
+          Text(
+            '$_version${_build.isEmpty ? '' : ' ($_build)'}$flavor',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }

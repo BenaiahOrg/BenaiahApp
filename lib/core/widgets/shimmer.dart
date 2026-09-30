@@ -3,7 +3,8 @@ import 'package:shimmer/shimmer.dart' as shimmer_pkg;
 
 /// Wraps skeleton placeholder content in the app's one shimmer effect (the
 /// `shimmer` package, already used by `BenaiahNetworkImage`'s own loading
-/// placeholder) so a screen full of `ShimmerBox`es sweeps together.
+/// placeholder) so a screen full of `ShimmerBox`es sweeps together. The sweep
+/// holds still when the system asks for reduced motion.
 class Shimmer extends StatelessWidget {
   const Shimmer({required this.child, super.key});
 
@@ -15,6 +16,7 @@ class Shimmer extends StatelessWidget {
     return shimmer_pkg.Shimmer.fromColors(
       baseColor: isDark ? Colors.white10 : Colors.black12,
       highlightColor: isDark ? Colors.white24 : Colors.black26,
+      enabled: !MediaQuery.disableAnimationsOf(context),
       child: child,
     );
   }
@@ -83,7 +85,8 @@ class SkeletonListTile extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 22),
+            // The chevron and its gap.
+            const SizedBox(width: 32),
           ],
         ),
       ),
@@ -110,7 +113,7 @@ class SkeletonList extends StatelessWidget {
   }
 }
 
-/// Mirrors `_PodcastEpisodeListTile`'s geometry: a fixed-height card with a
+/// Mirrors `PodcastEpisodeTile`'s geometry: a fixed-height card with a
 /// square image flush against the card edge (no inner padding around it),
 /// unlike `ContentListTile`'s padded layout.
 class SkeletonPodcastTile extends StatelessWidget {
@@ -118,13 +121,12 @@ class SkeletonPodcastTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         height: 100,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withAlpha(12) : Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Row(

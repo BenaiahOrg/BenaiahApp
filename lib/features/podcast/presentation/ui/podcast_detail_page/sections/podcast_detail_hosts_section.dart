@@ -8,10 +8,10 @@ class _PodcastDetailHostsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final muted = theme.colorScheme.onSurfaceVariant;
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: AppLayout.readingInsets(context),
       sliver: SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,18 +21,14 @@ class _PodcastDetailHostsSection extends StatelessWidget {
               episode.hosts.length > 1 ? 'Hosts'.tr() : 'Host'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
               ),
             ),
             const SizedBox(height: 16),
             ...episode.hosts.map((host) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: Material(
-                  color: isDark ? Colors.white10 : Colors.black.withAlpha(5),
-                  borderRadius: BorderRadius.circular(16),
+                child: Card(
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
                     onTap: () {
                       unawaited(
                         context.push(
@@ -43,16 +39,8 @@ class _PodcastDetailHostsSection extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Container(
+                    child: Padding(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white10
-                              : Colors.black.withAlpha(5),
-                        ),
-                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -61,11 +49,13 @@ class _PodcastDetailHostsSection extends StatelessWidget {
                             height: 50,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.grey.withAlpha(50),
+                              color: theme.colorScheme.surfaceContainerHighest,
                             ),
                             clipBehavior: Clip.antiAlias,
                             child: BenaiahNetworkImage(
                               imageUrl: host.imageUrl,
+                              width: 50,
+                              height: 50,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -82,20 +72,15 @@ class _PodcastDetailHostsSection extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   host.bio,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey,
-                                    fontSize: 12,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: muted,
                                     height: 1.4,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
-                            color: Colors.grey[500],
-                          ),
+                          Icon(Icons.chevron_right_rounded, color: muted),
                         ],
                       ),
                     ),

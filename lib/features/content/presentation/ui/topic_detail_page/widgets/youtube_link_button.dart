@@ -7,19 +7,11 @@ class _YouTubeLinkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    final backgroundColor = isDark
-        ? const Color(0xFF1E1E1E)
-        : const Color(0xFFF9F9F9);
-    final borderColor = isDark
-        ? const Color(0xFF2C2C2C)
-        : const Color(0xFFE5E5E5);
-    final textColor = isDark ? Colors.white : Colors.black;
+    final scheme = theme.colorScheme;
 
     return Center(
       child: Material(
-        color: backgroundColor,
+        color: scheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () async {
@@ -35,7 +27,7 @@ class _YouTubeLinkButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor),
+              border: Border.all(color: scheme.outlineVariant),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -58,9 +50,8 @@ class _YouTubeLinkButton extends StatelessWidget {
                 Text(
                   'Watch Video'.tr(),
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: textColor,
+                    color: scheme.onSurface,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
                   ),
                 ),
               ],

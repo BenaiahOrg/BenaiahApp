@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:benaiah_app/core/router/route_names.dart';
+import 'package:benaiah_app/core/widgets/app_search_delegate.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/core/widgets/benaiah_state_view.dart';
 import 'package:benaiah_app/core/widgets/shimmer.dart';
@@ -10,33 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ContentSearchDelegate extends SearchDelegate<String?> {
+class ContentSearchDelegate extends AppSearchDelegate {
   ContentSearchDelegate(this.ref)
     : super(searchFieldLabel: 'Search series and topics'.tr());
 
   final WidgetRef ref;
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      if (query.isNotEmpty)
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            query = '';
-            showSuggestions(context);
-          },
-        ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () => close(context, null),
-    );
-  }
 
   @override
   Widget buildResults(BuildContext context) {
@@ -130,6 +109,7 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
               ),
               ...matchedTopics.map((t) {
                 final imageUrl = t.graphics.data.firstOrNull ?? '';
+                final description = t.localizedDescription(lang);
                 return ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -140,9 +120,13 @@ class ContentSearchDelegate extends SearchDelegate<String?> {
                     ),
                   ),
                   title: Text(t.localizedTitle(lang)),
-                  subtitle: Text(
-                    'Read devotional, study material & graphics'.tr(),
-                  ),
+                  subtitle: description.isEmpty
+                      ? null
+                      : Text(
+                          description,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                   onTap: () {
                     close(context, null);
                     unawaited(

@@ -38,11 +38,13 @@ class _AboutBottomSection extends StatelessWidget {
     _SocialLink(
       icon: Assets.icons.social.email,
       label: 'Email',
+      translate: true,
       url: 'mailto:BenaiahTeamOrg@gmail.com',
     ),
     _SocialLink(
       icon: Assets.icons.social.contact,
       label: 'Contact us on Telegram',
+      translate: true,
       url: 'https://t.me/Benaiah_Contact',
     ),
   ];
@@ -79,6 +81,7 @@ class _SocialLink {
     required this.icon,
     required this.label,
     required this.url,
+    this.translate = false,
   });
 
   final SvgGenImage icon;
@@ -86,6 +89,9 @@ class _SocialLink {
   /// Read out by screen readers and shown on long press.
   final String label;
   final String url;
+
+  /// Whether [label] is a translation key. Brand names stay as they are.
+  final bool translate;
 }
 
 /// A round button showing a social/contact icon that opens its link
@@ -97,12 +103,12 @@ class _SocialLinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor = isDark ? Colors.white24 : Colors.black12;
-    final fgColor = isDark ? Colors.white : Colors.black;
+    final scheme = Theme.of(context).colorScheme;
+    final borderColor = scheme.outlineVariant;
+    final fgColor = scheme.onSurface;
 
     return Tooltip(
-      message: link.label,
+      message: link.translate ? link.label.tr() : link.label,
       child: Material(
         color: Colors.transparent,
         shape: CircleBorder(side: BorderSide(color: borderColor)),

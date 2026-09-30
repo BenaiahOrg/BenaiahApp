@@ -7,7 +7,10 @@ class _SeriesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final theme = Theme.of(context);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
       onTap: () {
         unawaited(
           context.pushNamed(
@@ -40,7 +43,7 @@ class _SeriesCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             series.localizedTitle(context.locale.languageCode),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
@@ -49,8 +52,8 @@ class _SeriesCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             '{} Topics'.tr(args: [series.topics.length.toString()]),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],

@@ -35,9 +35,9 @@ class _AuthorProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final lang = context.locale.languageCode;
     final author = profile.author;
+    final contentInsets = AppLayout.readingInsets(context);
 
     return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
       slivers: [
         SliverAppBar(
           pinned: true,
@@ -45,11 +45,14 @@ class _AuthorProfileView extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.surface,
           surfaceTintColor: Colors.transparent,
         ),
-        SliverToBoxAdapter(
-          child: _AuthorHeader(author: author, lang: lang),
+        SliverPadding(
+          padding: contentInsets.copyWith(bottom: 32),
+          sliver: SliverToBoxAdapter(
+            child: _AuthorHeader(author: author, lang: lang),
+          ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+          padding: contentInsets.copyWith(bottom: 8),
           sliver: SliverToBoxAdapter(
             child: Text(
               'Topics'.tr(),
@@ -70,7 +73,7 @@ class _AuthorProfileView extends StatelessWidget {
           )
         else
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: contentInsets,
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -102,38 +105,34 @@ class _AuthorHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final role = author.localizedRole(lang);
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: BenaiahNetworkImage(
-              imageUrl: author.profileImageUrl ?? '',
-              width: 120,
-              height: 120,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: BenaiahNetworkImage(
+            imageUrl: author.profileImageUrl ?? '',
+            width: 120,
+            height: 120,
           ),
-          const SizedBox(height: 16),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          author.localizedName(lang),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (role != null && role.isNotEmpty) ...[
+          const SizedBox(height: 4),
           Text(
-            author.localizedName(lang),
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            role,
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          if (role != null && role.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              role,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: Colors.grey,
-                letterSpacing: 1.2,
-              ),
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 }

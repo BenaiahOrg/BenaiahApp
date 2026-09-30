@@ -25,103 +25,116 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
 
     return Scaffold(
       body: episodesAsync.when(
-        data: (episodes) {
-          final categories = {
-            for (final ep in episodes)
-              if (ep.category.isNotEmpty) ep.category,
-          }.toList()..sort();
+        data: (episodes) => LayoutBuilder(
+          builder: (context, constraints) {
+            final insets = AppLayout.readingInsetsForWidth(
+              constraints.maxWidth,
+              min: 16,
+            );
 
-          final filteredEpisodes = episodes.where((ep) {
-            return _selectedCategory == 'All' ||
-                ep.category == _selectedCategory;
-          }).toList();
+            final categories = {
+              for (final ep in episodes)
+                if (ep.category.isNotEmpty) ep.category,
+            }.toList()..sort();
 
-          // Episodes arrive newest first; under "All" the newest one is
-          // featured in the banner instead of repeated in the list.
-          PodcastEpisode? featuredEpisode;
-          var listEpisodes = filteredEpisodes;
-          if (_selectedCategory == 'All' && filteredEpisodes.isNotEmpty) {
-            featuredEpisode = filteredEpisodes.first;
-            listEpisodes = filteredEpisodes.skip(1).toList();
-          }
+            final filteredEpisodes = episodes.where((ep) {
+              return _selectedCategory == 'All' ||
+                  ep.category == _selectedCategory;
+            }).toList();
 
-          return CustomScrollView(
-            slivers: [
-              // With one category the chips would only repeat "All", so
-              // show them once there is a choice.
-              if (categories.length > 1)
-                _PodcastCategoryChips(
-                  categories: categories,
-                  selectedCategory: _selectedCategory,
-                  onCategorySelected: (category) {
-                    setState(() {
-                      _selectedCategory = category;
-                    });
-                  },
-                ),
+            // Episodes arrive newest first; under "All" the newest one is
+            // featured in the banner instead of repeated in the list.
+            PodcastEpisode? featuredEpisode;
+            var listEpisodes = filteredEpisodes;
+            if (_selectedCategory == 'All' && filteredEpisodes.isNotEmpty) {
+              featuredEpisode = filteredEpisodes.first;
+              listEpisodes = filteredEpisodes.skip(1).toList();
+            }
 
-              if (filteredEpisodes.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: episodes.isEmpty
-                      ? BenaiahStateView.empty(
-                          icon: Icons.podcasts_outlined,
-                          title: 'No episodes yet'.tr(),
-                          message: 'New episodes will appear here.'.tr(),
-                          onRetry: () => ref.invalidate(podcastListProvider),
-                        )
-                      : BenaiahStateView.empty(
-                          icon: Icons.search_off_rounded,
-                          title: 'No results found.'.tr(),
+            return CustomScrollView(
+              slivers: [
+                // With one category the chips would only repeat "All", so
+                // show them once there is a choice.
+                if (categories.length > 1)
+                  _PodcastCategoryChips(
+                    categories: categories,
+                    selectedCategory: _selectedCategory,
+                    insets: insets,
+                    onCategorySelected: (category) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                  ),
+
+                if (filteredEpisodes.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: episodes.isEmpty
+                        ? BenaiahStateView.empty(
+                            icon: Icons.podcasts_outlined,
+                            title: 'No episodes yet'.tr(),
+                            message: 'New episodes will appear here.'.tr(),
+                            onRetry: () => ref.invalidate(podcastListProvider),
+                          )
+                        : BenaiahStateView.empty(
+                            icon: Icons.search_off_rounded,
+                            title: 'No results found.'.tr(),
+                          ),
+                  ),
+
+                if (featuredEpisode != null)
+                  _FeaturedEpisodeBanner(
+                    episode: featuredEpisode,
+                    insets: insets,
+                    onTap: () => _navigateToDetail(featuredEpisode!),
+                  ),
+
+                if (listEpisodes.isNotEmpty)
+                  SliverPadding(
+                    // Without the banner above, the heading needs its own
+                    // space below the chips.
+                    padding: insets.copyWith(
+                      top: featuredEpisode == null ? 24 : 0,
+                      bottom: 16,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        _selectedCategory == 'All'
+                            ? 'All Episodes'.tr()
+                            : 'Episodes'.tr(),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                ),
-
-              if (featuredEpisode != null)
-                _FeaturedEpisodeBanner(
-                  episode: featuredEpisode,
-                  onTap: () => _navigateToDetail(featuredEpisode!),
-                ),
-
-              if (listEpisodes.isNotEmpty)
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      _selectedCategory == 'All'
-                          ? 'All Episodes'.tr()
-                          : 'Episodes'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
-                ),
 
-              if (listEpisodes.isNotEmpty)
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final ep = listEpisodes[index];
-                        return PodcastEpisodeTile(
-                          episode: ep,
-                          onTap: () => _navigateToDetail(ep),
-                        );
-                      },
-                      childCount: listEpisodes.length,
+                if (listEpisodes.isNotEmpty)
+                  SliverPadding(
+                    padding: insets,
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final ep = listEpisodes[index];
+                          return PodcastEpisodeTile(
+                            episode: ep,
+                            onTap: () => _navigateToDetail(ep),
+                          );
+                        },
+                        childCount: listEpisodes.length,
+                      ),
                     ),
                   ),
-                ),
 
-              // Keeps the last tile clear of the floating mini player.
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 84),
-              ),
-            ],
-          );
-        },
+                // Keeps the last tile clear of the floating mini player.
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 84),
+                ),
+              ],
+            );
+          },
+        ),
         loading: () => const _PodcastSkeleton(),
         error: (error, stack) => BenaiahStateView.error(
           error: error,

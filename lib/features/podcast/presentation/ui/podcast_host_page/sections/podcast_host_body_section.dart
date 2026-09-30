@@ -19,8 +19,9 @@ class _PodcastHostBodySection extends ConsumerWidget {
             .expand((ep) => ep.hosts)
             .firstWhere((h) => h.id == hostId, orElse: _unknownHost);
 
+        final contentInsets = AppLayout.readingInsets(context);
+
         return CustomScrollView(
-          physics: const BouncingScrollPhysics(),
           slivers: [
             SliverAppBar(
               pinned: true,
@@ -28,17 +29,20 @@ class _PodcastHostBodySection extends ConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
             ),
-            SliverToBoxAdapter(
-              child: _PodcastHostHeader(host: host),
+            SliverPadding(
+              padding: contentInsets.copyWith(bottom: 32),
+              sliver: SliverToBoxAdapter(
+                child: _PodcastHostHeader(host: host),
+              ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              padding: contentInsets.copyWith(bottom: 8),
               sliver: SliverToBoxAdapter(
                 child: Text(
                   'Episodes'.tr(),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -53,7 +57,7 @@ class _PodcastHostBodySection extends ConsumerWidget {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: contentInsets,
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -109,38 +113,35 @@ class _PodcastHostHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: BenaiahNetworkImage(
-              imageUrl: host.imageUrl,
-              width: 120,
-              height: 120,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: BenaiahNetworkImage(
+            imageUrl: host.imageUrl,
+            width: 120,
+            height: 120,
           ),
-          const SizedBox(height: 16),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          host.name,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (host.bio.isNotEmpty) ...[
+          const SizedBox(height: 8),
           Text(
-            host.name,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            host.bio,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              height: 1.4,
             ),
           ),
-          if (host.bio.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              host.bio,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-                height: 1.4,
-              ),
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 }

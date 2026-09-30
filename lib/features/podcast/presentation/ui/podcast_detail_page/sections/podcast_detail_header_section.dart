@@ -7,47 +7,31 @@ class _PodcastDetailHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return SliverAppBar(
       expandedHeight: 280,
       pinned: true,
       elevation: 0,
-      backgroundColor: theme.colorScheme.surfaceContainer,
-      leading: Container(
-        margin: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.black54 : Colors.white70,
-          shape: BoxShape.circle,
-        ),
-        child: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, size: 20),
-          color: theme.colorScheme.onSurface,
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            BenaiahNetworkImage(
-              imageUrl: episode.imageUrl,
-            ),
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black87,
-                  ],
-                ),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      leading: const ImageHeaderBackButton(),
+      flexibleSpace: LayoutBuilder(
+        builder: (context, constraints) {
+          final collapsedHeight =
+              kToolbarHeight + MediaQuery.paddingOf(context).top;
+          return ImageHeaderStatusBar(
+            overArtwork: constraints.maxHeight > collapsedHeight + 24,
+            child: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  BenaiahNetworkImage(
+                    imageUrl: episode.imageUrl,
+                  ),
+                  const ImageHeaderScrim(),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

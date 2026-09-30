@@ -6,6 +6,7 @@ All Episodes,All Episodes,ሁሉም ክፍሎች
 All Series,All Series,ሁሉም ተከታታይ
 An unexpected error occurred.,An unexpected error occurred.,An unexpected error occurred.
 Appearance,Appearance,ገጽታ
+Back 10 seconds,Back 10 seconds,10 ሰከንድ ወደኋላ
 Bad request.,Bad request.,Bad request.
 BENAIAH,BENAIAH,ቤናያህ
 Benaiah,Benaiah,ቤናያህ
@@ -14,24 +15,24 @@ Benaiah is a digital mission initiative that extends a heartfelt invitation for 
 Benaiah.org,Benaiah.org,Benaiah.org
 Close,Close,ዝጋ
 Connect With Us,Connect With Us,ከእኛ ጋር ይገናኙ
+Contact us on Telegram,Contact us on Telegram,በቴሌግራም ያግኙን
 Copy,Copy,ቅዳ
 Could not launch video link,Could not launch video link,የቪዲዮ አገናኙን መክፈት አልተቻለም
 Could not open link,Could not open link,አገናኙን መክፈት አልተቻለም
+Could not save the image. Try again.,Could not save the image. Try again.,ምስሉን ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።
 Dark,Dark,ጨለማ
 Devotional,Devotional,መንፈሳዊ መልዕክት
 Devotional not available,Devotional not available,ጸሎተ ማለዳ አልተገኘም
 Download,Download,አውርድ
+Email,Email,ኢሜይል
 English,English,English
 Episode Description,Episode Description,የክፍሉ መግለጫ
 Episodes,Episodes,ክፍሎች
-Error downloading image,Error downloading image,Error downloading image
-Error loading content.,Error loading content.,ይዘቱን ለመጫን ተስኗል
 Explore this topic in depth.,Explore this topic in depth.,Explore this topic in depth.
 Failed to load scripture,Failed to load scripture,ጥቅሱን መጫን አልተቻለም
 Faith,Faith,እምነት
-FEATURED,FEATURED,ተለይቶ የቀረበ
-FEATURED TOPIC,FEATURED TOPIC,ተለይቶ የቀረበ ርዕስ
 Fetching scripture...,Fetching scripture...,ጥቅሱን በማምጣት ላይ...
+Forward 10 seconds,Forward 10 seconds,10 ሰከንድ ወደፊት
 Graphics,Graphics,ግራፊክስ
 Graphics by,Graphics by,ግራፊክስ በ
 Home,Home,ቤት
@@ -44,18 +45,22 @@ Light,Light,ብርሃን
 New episodes will appear here.,New episodes will appear here.,አዲስ ክፍሎች እዚህ ይታያሉ።
 New series will appear here as they are published.,New series will appear here as they are published.,አዳዲስ ተከታታዮች ሲወጡ እዚህ ይታያሉ።
 No articles found for this author,No articles found for this author,ለዚህ ደራሲ ምንም ጽሑፍ አልተገኘም
+No episodes found for this host,No episodes found for this host,ለዚህ አቅራቢ ምንም ክፍል አልተገኘም
 No episodes yet,No episodes yet,እስካሁን ምንም ክፍል የለም
 No graphics available for this topic,No graphics available for this topic,ለዚህ ርዕስ ምንም ንድፍ አልተገኘም
 No internet connection.,No internet connection.,No internet connection.
 No results found.,No results found.,ምንም ውጤት አልተገኘም
 Nothing here yet,Nothing here yet,እስካሁን ምንም የለም
 "Our team is composed of 20 gifted individuals from all over Ethiopia and the US involving authors, graphic designers, narrators, developers and more all united by a passion for Christ and His word.","Our team is composed of 20 gifted individuals from all over Ethiopia and the US involving authors, graphic designers, narrators, developers and more all united by a passion for Christ and His word.",ቡድናችን ከመላው ኢትዮጵያና አሜሪካ የተሰባሰቡ 20 ተሰጥኦ ያላቸውን ግለሰቦች ያቀፈ ሲሆን፣ ጸሐፊዎችን፣ ግራፊክስ ዲዛይነሮችን፣ ተራኪዎችን፣ ሶፍትዌር አበልጻጊዎችን እና ሌሎችንም ያካትታል። ሁላችንም ለክርስቶስና ለቃሉ ባለን ጥልቅ ፍቅር አንድ ሆነናል።
+Pause,Pause,ለአፍታ አቁም
+Pause Episode,Pause Episode,ክፍሉን ለአፍታ አቁም
+Play,Play,አጫውት
 Play Episode,Play Episode,ክፍሉን አጫውት
+Playback speed,Playback speed,የማጫወቻ ፍጥነት
 Podcasts,Podcasts,ፖድካስቶች
-Press back again to exit,Press back again to exit,ለመውጣት ዳግም ይመለሱ
 Published on {} • {},Published on {} • {},የተለቀቀበት ቀን {} • {}
-"Read devotional, study material & graphics","Read devotional, study material & graphics",መንፈሳዊ መልዕክቶች፣ የጥናት መርጃዎች እና ግራፊክሶች ያንብቡ
 Resource not found.,Resource not found.,Resource not found.
+Resume Episode,Resume Episode,ክፍሉን ቀጥል
 Retry,Retry,እንደገና ሞክር
 Scripture copied to clipboard!,Scripture copied to clipboard!,ጥቅሱ ተቀድቷል!
 "Search episodes, hosts, or categories","Search episodes, hosts, or categories",ክፍሎችን ወይም አቅራቢዎችን ይፈልጉ
@@ -86,4 +91,5 @@ Written by,Written by,የተጻፈው በ
 You are offline,You are offline,ከበይነመረብ ተቋርጠዋል
 You do not have permission to do that.,You do not have permission to do that.,You do not have permission to do that.
 {} minutes,{} minutes,{} ደቂቃ
+{} of {},{} of {},{} / {}
 {} Topics,{} Topics,{} ርዕሶች

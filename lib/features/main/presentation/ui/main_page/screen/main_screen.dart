@@ -1,79 +1,55 @@
 part of '../main_page.dart';
 
-class _MainScreen extends ConsumerStatefulWidget {
+class _MainScreen extends StatelessWidget {
   const _MainScreen({required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
-
-  @override
-  ConsumerState<_MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends ConsumerState<_MainScreen> {
-  DateTime? _lastBackPressTime;
-
-  /// Home is the app's effective root: back from Podcasts or Settings
-  /// returns to Home instead of exiting, and a second back press within
-  /// [_exitPressWindow] of the first is required to actually exit from Home.
-  static const _exitPressWindow = Duration(seconds: 2);
-
-  void _handleBack(bool didPop) {
-    if (didPop) return;
-
-    if (widget.navigationShell.currentIndex != 0) {
-      widget.navigationShell.goBranch(0);
-      return;
-    }
-
-    final now = DateTime.now();
-    final isSecondPress =
-        _lastBackPressTime != null &&
-        now.difference(_lastBackPressTime!) < _exitPressWindow;
-
-    if (isSecondPress) {
-      unawaited(SystemNavigator.pop());
-      return;
-    }
-
-    _lastBackPressTime = now;
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('Press back again to exit'.tr()),
-          duration: _exitPressWindow,
-        ),
-      );
-  }
 
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
 
     final isAboutPage = location == RouteNames.about;
+    final useRail = MediaQuery.sizeOf(context).width >= AppLayout.mediumWidth;
 
+    final content = Stack(
+      children: [
+        if (isAboutPage)
+          navigationShell
+        else
+          // The rail already keeps clear of the left inset.
+          SafeArea(left: !useRail, child: navigationShell),
+        const Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: FloatingPodcastPlayer(),
+        ),
+      ],
+    );
+
+    // Home is the start destination: Back from Podcasts or Settings returns
+    // there, and Back on Home leaves the app normally, so the system's
+    // predictive back-to-home gesture keeps working.
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) => _handleBack(didPop),
+      canPop: navigationShell.currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) navigationShell.goBranch(0);
+      },
       child: Scaffold(
         appBar: isAboutPage ? null : _MainTopSection(location: location),
-        body: Stack(
-          children: [
-            if (isAboutPage)
-              widget.navigationShell
-            else
-              SafeArea(child: widget.navigationShell),
-            const Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: FloatingPodcastPlayer(),
-            ),
-          ],
-        ),
-        bottomNavigationBar: _MainBottomSection(
-          navigationShell: widget.navigationShell,
-        ),
+        body: useRail
+            ? Row(
+                children: [
+                  _MainNavigationRail(navigationShell: navigationShell),
+                  const VerticalDivider(width: 1, thickness: 1),
+                  Expanded(child: content),
+                ],
+              )
+            : content,
+        bottomNavigationBar: useRail
+            ? null
+            : _MainBottomSection(navigationShell: navigationShell),
       ),
     );
   }

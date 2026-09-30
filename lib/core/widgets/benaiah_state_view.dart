@@ -68,7 +68,7 @@ class BenaiahStateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final muted = theme.colorScheme.onSurfaceVariant;
 
     return Center(
       child: Padding(

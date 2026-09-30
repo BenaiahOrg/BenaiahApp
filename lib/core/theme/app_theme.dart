@@ -20,101 +20,99 @@ abstract class AppTheme {
     );
   }
 
-  static ThemeData light(String fontFamily) => ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.light,
-    fontFamily: GoogleFonts.lexend().fontFamily,
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.lightPrimary,
-      error: AppColors.lightError,
-    ),
-    scaffoldBackgroundColor: AppColors.lightBackground,
-    textTheme: _buildTextTheme(fontFamily).apply(
-      bodyColor: AppColors.lightOnBackground,
-      displayColor: AppColors.lightOnBackground,
-    ),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.lightBackground,
-      foregroundColor: AppColors.lightOnBackground,
-      elevation: 0,
-      centerTitle: true,
-      surfaceTintColor: Colors.transparent,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.lightPrimary,
-        foregroundColor: AppColors.lightOnPrimary,
-        minimumSize: const Size.fromHeight(56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        elevation: 0,
-      ),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: AppColors.lightGrey,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-    ),
-  );
+  /// The monochrome variant fills every Material role (containers, outlines,
+  /// onSurfaceVariant for secondary text) from a neutral palette, so screens
+  /// never need a raw grey. The brand's pure black and white are then pinned
+  /// on top.
+  static ColorScheme _colorScheme(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    return ColorScheme.fromSeed(
+      seedColor: AppColors.black,
+      brightness: brightness,
+      dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
+    ).copyWith(
+      primary: isDark ? AppColors.darkPrimary : AppColors.lightPrimary,
+      onPrimary: isDark ? AppColors.darkOnPrimary : AppColors.lightOnPrimary,
+      surface: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+      onSurface: isDark ? AppColors.darkOnSurface : AppColors.lightOnSurface,
+      error: isDark ? AppColors.darkError : AppColors.lightError,
+    );
+  }
 
-  static ThemeData dark(String fontFamily) => ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.dark,
-    fontFamily: GoogleFonts.lexend().fontFamily,
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.darkPrimary,
-      surface: AppColors.darkSurface,
-      error: AppColors.darkError,
-    ),
-    scaffoldBackgroundColor: AppColors.darkBackground,
-    textTheme: _buildTextTheme(fontFamily).apply(
-      bodyColor: AppColors.darkOnBackground,
-      displayColor: AppColors.darkOnBackground,
-    ),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.darkBackground,
-      foregroundColor: AppColors.darkOnSurface,
-      elevation: 0,
-      centerTitle: true,
-      surfaceTintColor: Colors.transparent,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.darkPrimary,
-        foregroundColor: AppColors.darkOnPrimary,
-        minimumSize: const Size.fromHeight(56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+  static ThemeData light(String fontFamily) =>
+      _build(Brightness.light, fontFamily);
+
+  static ThemeData dark(String fontFamily) =>
+      _build(Brightness.dark, fontFamily);
+
+  static ThemeData _build(Brightness brightness, String fontFamily) {
+    final isDark = brightness == Brightness.dark;
+    final scheme = _colorScheme(brightness);
+    final background = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightBackground;
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      fontFamily: GoogleFonts.lexend().fontFamily,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: background,
+      textTheme: _buildTextTheme(fontFamily).apply(
+        bodyColor: scheme.onSurface,
+        displayColor: scheme.onSurface,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: background,
+        foregroundColor: scheme.onSurface,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
       ),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: AppColors.darkSurface,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide.none,
+      // One elevation system for every tappable card: a soft offset shadow
+      // and no hairline border.
+      cardTheme: CardThemeData(
+        color: scheme.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 1,
+        shadowColor: Colors.black.withAlpha(isDark ? 90 : 40),
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide.none,
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.surface,
+        surfaceTintColor: Colors.transparent,
+        showDragHandle: true,
+        dragHandleColor: scheme.outlineVariant,
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: AppColors.darkPrimary),
+      dividerTheme: DividerThemeData(color: scheme.outlineVariant),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          minimumSize: const Size.fromHeight(56),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          elevation: 0,
+        ),
       ),
-    ),
-  );
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: isDark ? AppColors.darkSurface : AppColors.lightGrey,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: scheme.primary),
+        ),
+      ),
+    );
+  }
 }

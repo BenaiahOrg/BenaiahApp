@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:benaiah_app/core/router/route_names.dart';
+import 'package:benaiah_app/core/widgets/app_search_delegate.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
+import 'package:benaiah_app/core/widgets/benaiah_state_view.dart';
 import 'package:benaiah_app/core/widgets/shimmer.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_list_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -9,33 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PodcastSearchDelegate extends SearchDelegate<String?> {
+class PodcastSearchDelegate extends AppSearchDelegate {
   PodcastSearchDelegate(this.ref)
-      : super(searchFieldLabel: 'Search episodes, hosts, or categories'.tr());
+    : super(searchFieldLabel: 'Search episodes, hosts, or categories'.tr());
 
   final WidgetRef ref;
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      if (query.isNotEmpty)
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            query = '';
-            showSuggestions(context);
-          },
-        ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () => close(context, null),
-    );
-  }
 
   @override
   Widget buildResults(BuildContext context) {
@@ -61,7 +41,10 @@ class PodcastSearchDelegate extends SearchDelegate<String?> {
         }).toList();
 
         if (matchedEpisodes.isEmpty) {
-          return Center(child: Text('No results found.'.tr()));
+          return BenaiahStateView.empty(
+            icon: Icons.search_off_rounded,
+            title: 'No results found.'.tr(),
+          );
         }
 
         return ListView(
@@ -106,7 +89,10 @@ class PodcastSearchDelegate extends SearchDelegate<String?> {
         );
       },
       loading: () => const SkeletonPlainList(),
-      error: (e, st) => Center(child: Text('Error loading content.'.tr())),
+      error: (e, st) => BenaiahStateView.error(
+        error: e,
+        onRetry: () => ref.invalidate(podcastListProvider),
+      ),
     );
   }
 }

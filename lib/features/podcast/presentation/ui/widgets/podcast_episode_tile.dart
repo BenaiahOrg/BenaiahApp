@@ -8,8 +8,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// The image-category-title-hosts row shared by every screen that lists
-/// podcast episodes (the Podcasts tab, a host's profile page).
+/// Category, publish date and length on one line: "Faith • Jan 12, 2026 •
+/// 32m". Shared by the episode rows and the Podcasts tab's banner.
+String podcastEpisodeMeta(PodcastEpisode episode) => [
+  if (episode.category.isNotEmpty) episode.category.tr(),
+  DateTimeUtils.formatDate(episode.publishDate),
+  DateTimeUtils.formatDuration(episode.durationSeconds),
+].join(' • ');
+
+/// The image-title-hosts-meta row shared by every screen that lists podcast
+/// episodes (the Podcasts tab, a host's profile page).
 class PodcastEpisodeTile extends ConsumerWidget {
   const PodcastEpisodeTile({
     required this.episode,
@@ -17,176 +25,145 @@ class PodcastEpisodeTile extends ConsumerWidget {
     super.key,
   });
 
+  static const _imageSize = 100.0;
+
   final PodcastEpisode episode;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final hosts = episode.hosts.map((h) => h.name).join(', ');
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 100,
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white.withAlpha(12) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(isDark ? 30 : 10),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-            border: Border.all(
-              color: isDark ? Colors.white10 : Colors.black.withAlpha(5),
-            ),
-          ),
-          child: Row(
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          // The text sets the row's height, so it grows with the reader's
+          // font size instead of clipping; the artwork fills whatever height
+          // that is, flush against the card's leading edge.
+          child: Stack(
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                clipBehavior: Clip.antiAlias,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
-                  ),
-                ),
+              PositionedDirectional(
+                start: 0,
+                top: 0,
+                bottom: 0,
+                width: _imageSize,
                 child: BenaiahNetworkImage(
                   imageUrl: episode.imageUrl,
+                  width: _imageSize,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 4,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: _imageSize),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: _imageSize),
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withAlpha(20),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              episode.category.tr().toUpperCase(),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                            12,
+                            10,
+                            4,
+                            10,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                episode.title,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
+                              if (hosts.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  hosts,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: muted,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                              const SizedBox(height: 4),
+                              Text(
+                                podcastEpisodeMeta(episode),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: muted,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${DateTimeUtils.formatDate(episode.publishDate)}'
-                            ' • ${DateTimeUtils.formatDuration(
-                              episode.durationSeconds,
-                            )}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.grey,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        episode.title,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        episode.hosts.map((h) => h.name).join(', '),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                          fontSize: 11,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 4),
+                        child: _PlayButton(episode: episode),
                       ),
                     ],
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Builder(
-                  builder: (context) {
-                    final playerState = ref.watch(podcastPlayerProvider);
-                    final isCurrentEpisode =
-                        playerState.currentEpisode?.id == episode.id;
-                    final isPlaying = isCurrentEpisode && playerState.isPlaying;
-
-                    return Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isCurrentEpisode
-                            ? theme.colorScheme.primary
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: isCurrentEpisode
-                              ? theme.colorScheme.primary
-                              : isDark
-                                  ? Colors.white24
-                                  : Colors.black12,
-                        ),
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          isPlaying
-                              ? Icons.pause_rounded
-                              : Icons.play_arrow_rounded,
-                          size: 16,
-                          color: isCurrentEpisode
-                              ? theme.colorScheme.onPrimary
-                              : theme.colorScheme.primary,
-                        ),
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          if (isPlaying) {
-                            unawaited(
-                              ref
-                                  .read(podcastPlayerProvider.notifier)
-                                  .togglePlayback(),
-                            );
-                          } else {
-                            unawaited(
-                              ref
-                                  .read(podcastPlayerProvider.notifier)
-                                  .play(episode),
-                            );
-                          }
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Plays this episode, or pauses it when it is the one playing. Filled while
+/// the episode is loaded in the player.
+class _PlayButton extends ConsumerWidget {
+  const _PlayButton({required this.episode});
+
+  final PodcastEpisode episode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Only the current episode and play state matter here, not every
+    // position tick.
+    final (currentId, playing) = ref.watch(
+      podcastPlayerProvider.select(
+        (s) => (s.currentEpisode?.id, s.isPlaying),
+      ),
+    );
+    final isCurrentEpisode = currentId == episode.id;
+    final isPlaying = isCurrentEpisode && playing;
+
+    void onPressed() {
+      final notifier = ref.read(podcastPlayerProvider.notifier);
+      unawaited(isPlaying ? notifier.togglePlayback() : notifier.play(episode));
+    }
+
+    final icon = Icon(
+      isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+    );
+    final tooltip = (isPlaying ? 'Pause' : 'Play').tr();
+
+    if (isCurrentEpisode) {
+      return IconButton.filled(
+        onPressed: onPressed,
+        icon: icon,
+        tooltip: tooltip,
+      );
+    }
+    return IconButton.outlined(
+      onPressed: onPressed,
+      icon: icon,
+      tooltip: tooltip,
+      style: IconButton.styleFrom(
+        side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
       ),
     );
   }

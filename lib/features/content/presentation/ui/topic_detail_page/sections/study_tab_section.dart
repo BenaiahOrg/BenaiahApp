@@ -61,7 +61,9 @@ class _ArticleTab extends StatelessWidget {
           )
         else
           SliverPadding(
-            padding: const EdgeInsets.all(24),
+            padding: AppLayout.readingInsets(
+              context,
+            ).copyWith(top: 24, bottom: 24),
             sliver: SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,8 +98,7 @@ class _ArticleTab extends StatelessWidget {
                       bylineLabel,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        letterSpacing: 1.2,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 16),

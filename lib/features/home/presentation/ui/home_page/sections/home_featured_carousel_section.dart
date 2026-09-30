@@ -61,6 +61,8 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   Widget build(BuildContext context) {
     if (_featuredTopics.isEmpty) return const SizedBox.shrink();
 
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+
     return Column(
       children: [
         SizedBox(
@@ -68,7 +70,6 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
           child: PageView.builder(
             controller: _pageController,
             itemCount: _featuredTopics.length,
-            physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               final topic = _featuredTopics[index];
               final pageOffset = index - _scrollPosition;
@@ -76,6 +77,16 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
               // Per page away from the center, a card shrinks 8% (to no less
               // than 85%), turns 0.15 rad about the Y axis (at most 0.25),
               // and drops 6 px, so the row looks like a curved surface.
+              // Reduce Motion keeps the cards flat.
+              final card = Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: FeaturedTopicHero(
+                  topic: topic,
+                  scrollOffset: pageOffset,
+                ),
+              );
+              if (reduceMotion) return card;
+
               final scale = (1 - (pageOffset.abs() * 0.08)).clamp(0.85, 1.0);
               final rotationAngle = (pageOffset * -0.15).clamp(-0.25, 0.25);
               final translateY = pageOffset.abs() * 6;
@@ -89,13 +100,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
               return Transform(
                 transform: transform,
                 alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: FeaturedTopicHero(
-                    topic: topic,
-                    scrollOffset: pageOffset,
-                  ),
-                ),
+                child: card,
               );
             },
           ),
@@ -105,6 +110,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
           count: _featuredTopics.length,
           scrollPosition: _scrollPosition,
           activeColor: Theme.of(context).colorScheme.primary,
+          inactiveColor: Theme.of(context).colorScheme.outlineVariant,
         ),
       ],
     );

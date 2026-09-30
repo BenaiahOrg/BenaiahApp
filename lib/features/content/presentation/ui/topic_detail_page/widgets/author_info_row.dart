@@ -19,7 +19,7 @@ class _AuthorInfoRow extends StatelessWidget {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
             children: [
               ClipRRect(
@@ -40,9 +40,8 @@ class _AuthorInfoRow extends StatelessWidget {
                 ),
               ),
               Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: Colors.grey[500],
+                Icons.chevron_right_rounded,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ],
           ),
