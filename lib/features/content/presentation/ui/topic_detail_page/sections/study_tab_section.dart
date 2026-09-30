@@ -71,8 +71,9 @@ class _ArticleTab extends StatelessWidget {
                     const SizedBox(height: 24),
                   ],
                   if (hasVideo) ...[
-                    if (StringUtils.tryGetYoutubeId(youtubeUrl) != null)
-                      _EmbeddedYoutubePlayer(url: youtubeUrl)
+                    if (StringUtils.tryGetYoutubeId(youtubeUrl)
+                        case final videoId?)
+                      _EmbeddedYoutubePlayer(videoId: videoId)
                     else
                       _YouTubeLinkButton(url: youtubeUrl),
                     const SizedBox(height: 24),
