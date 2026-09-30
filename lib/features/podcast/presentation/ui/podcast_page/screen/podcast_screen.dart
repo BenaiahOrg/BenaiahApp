@@ -26,6 +26,11 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
     return Scaffold(
       body: episodesAsync.when(
         data: (episodes) {
+          final categories = {
+            for (final ep in episodes)
+              if (ep.category.isNotEmpty) ep.category,
+          }.toList()..sort();
+
           // Apply category filters
           final filteredEpisodes = episodes.where((ep) {
             return _selectedCategory == 'All' ||
@@ -42,15 +47,18 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
 
           return CustomScrollView(
             slivers: [
-              // Horizontal Category Chips
-              _PodcastCategoryChips(
-                selectedCategory: _selectedCategory,
-                onCategorySelected: (category) {
-                  setState(() {
-                    _selectedCategory = category;
-                  });
-                },
-              ),
+              // Horizontal Category Chips. A single category would only
+              // repeat "All", so the row appears once there is a choice.
+              if (categories.length > 1)
+                _PodcastCategoryChips(
+                  categories: categories,
+                  selectedCategory: _selectedCategory,
+                  onCategorySelected: (category) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                  },
+                ),
 
               if (filteredEpisodes.isEmpty)
                 SliverFillRemaining(
