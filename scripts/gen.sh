@@ -13,10 +13,7 @@ else
   exit 1
 fi
 
-echo "Running build_runner..."
+echo "Running build_runner (injectable, riverpod, assets)..."
 "${FVM_BIN}" dart run build_runner build --delete-conflicting-outputs
-
-echo "Running fluttergen..."
-"${FVM_BIN}" dart pub global run flutter_gen:flutter_gen_command
 
 echo "Done."

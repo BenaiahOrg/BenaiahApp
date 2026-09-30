@@ -7,13 +7,7 @@ setlocal enabledelayedexpansion
 set "ROOT_DIR=%~dp0.."
 cd /d "%ROOT_DIR%"
 
-echo =====================================================
-echo ^^|^^|                                                 ^^|^^|
-echo ^^|^^|          Welcome to Benaiah App                 ^^|^^|
-echo ^^|^^|                                                 ^^|^^|
-echo ^^|^^|  Please wait while we setup everything for you  ^^|^^|
-echo ^^|^^|                                                 ^^|^^|
-echo =====================================================
+echo [..] Setting up the Benaiah development environment...
 echo.
 
 REM --- Check for FVM ---
@@ -83,6 +77,20 @@ if %errorlevel% neq 0 (
 echo [OK] pub get complete.
 
 echo.
+echo [..] Generating code (injectable, riverpod, assets)...
+fvm dart run build_runner build --delete-conflicting-outputs
+if %errorlevel% neq 0 (
+    echo [ERROR] Code generation failed.
+    exit /b 1
+)
+echo [OK] Code generation complete.
+
+if not exist "secrets.json" (
+    copy /Y "secrets.json.example" "secrets.json" >nul
+    echo [WARN] Created secrets.json from secrets.json.example; add your YouVersion developer token.
+)
+
+echo.
 echo [..] Activating Mason CLI (project bricks)...
 fvm dart pub global activate mason_cli
 
@@ -96,27 +104,7 @@ if %errorlevel% equ 0 (
 )
 
 echo.
-echo [..] Optional: FlutterGen CLI...
-fvm dart pub global run flutter_gen:flutter_gen_command --version >nul 2>&1
-if %errorlevel% equ 0 (
-    echo [OK] FlutterGen CLI already available.
-) else (
-    fvm dart pub global activate flutter_gen
-)
-
-echo.
-echo =====================================================
-echo ^^|^^|                                                 ^^|^^|
-echo ^^|^^|       Everything is set up and ready to go!     ^^|^^|
-echo ^^|^^|                                                 ^^|^^|
-echo ^^|^^|  Use FVM for all Flutter/Dart commands, e.g.:   ^^|^^|
-echo ^^|^^|    fvm flutter run --flavor dev -t lib/main.dart^^|^^|
-echo ^^|^^|    make -f scripts/Makefile run-dev             ^^|^^|
-echo ^^|^^|                                                 ^^|^^|
-echo ^^|^^|       Read 'How to run' on README.md to run     ^^|^^|
-echo ^^|^^|                                                 ^^|^^|
-echo ^^|^^|                ~Happy Coding~                   ^^|^^|
-echo ^^|^^|                                                 ^^|^^|
-echo =====================================================
+echo [OK] Setup complete. Run the dev flavor with:
+echo      fvm flutter run --flavor dev -t lib/main.dart --dart-define-from-file=secrets.json
 
 endlocal

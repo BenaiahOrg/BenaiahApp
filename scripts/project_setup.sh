@@ -91,17 +91,11 @@ require_fvm_config() {
 }
 
 main() {
-  echo "====================================================="
-  echo "||                                                 ||"
-  echo "||          Welcome to Benaiah App                 ||"
-  echo "||                                                 ||"
-  echo "||  Please wait while we setup everything for you  ||"
-  echo "||                                                 ||"
-  echo "====================================================="
+  info "Setting up the Benaiah development environment..."
   echo ""
 
   SDK_MANAGER=$(detect_sdk_manager)
-  
+
   if [[ "$SDK_MANAGER" == "puro" ]]; then
     info "Puro detected. Using puro for Flutter/Dart commands."
     FLUTTER_CMD=(puro flutter)
@@ -134,6 +128,15 @@ main() {
   "${FLUTTER_CMD[@]}" pub get
   ok "pub get complete"
 
+  info "Generating code (injectable, riverpod, assets)..."
+  "${DART_CMD[@]}" run build_runner build --delete-conflicting-outputs
+  ok "Code generation complete"
+
+  if [[ ! -f secrets.json ]]; then
+    cp secrets.json.example secrets.json
+    warn "Created secrets.json from secrets.json.example; add your YouVersion developer token."
+  fi
+
   if [[ "$(uname -s)" == "Darwin" ]] && [[ -f ios/Podfile ]]; then
     if command -v pod &>/dev/null; then
       info "Precaching iOS artifacts..."
@@ -161,59 +164,7 @@ main() {
   fi
 
   echo ""
-  info "Optional: FlutterGen CLI (used by scripts/Makefile gen target)..."
-  if "${DART_CMD[@]}" pub global run flutter_gen:flutter_gen_command --version &>/dev/null; then
-    ok "FlutterGen CLI already available"
-  else
-    "${DART_CMD[@]}" pub global activate flutter_gen || warn "Could not activate flutter_gen globally (gen may still work if already installed)."
-  fi
-
-  echo ""
-  info "Configuring VS Code launch configurations..."
-  mkdir -p .vscode
-  cat > .vscode/launch.json <<EOF
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Benaiah [DEV]",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "args": ["--flavor", "dev"]
-    },
-    {
-      "name": "Benaiah [QA]",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "args": ["--flavor", "qa"]
-    },
-    {
-      "name": "Benaiah [PROD]",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "args": ["--flavor", "prod"]
-    }
-  ]
-}
-EOF
-  ok "VS Code launch configurations generated (default: DEV)"
-
-  echo ""
-  echo "====================================================="
-  echo "||                                                 ||"
-  echo "||       Everything is set up and ready to go!     ||"
-  echo "||                                                 ||"
-  echo "||  Use your preferred SDK manager (FVM/Puro) or:  ||"
-  echo "||    make run-dev                                 ||"
-  echo "||                                                 ||"
-  echo "||  VS Code: Select 'Benaiah [DEV]' from Run/Debug ||"
-  echo "||                                                 ||"
-  echo "||                ~Happy Coding~                   ||"
-  echo "||                                                 ||"
-  echo "====================================================="
+  ok "Setup complete. Run the dev flavor with: make -f scripts/Makefile run-dev"
 }
 
 main "$@"

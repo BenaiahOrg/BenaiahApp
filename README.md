@@ -1,121 +1,130 @@
-# Benaiah App
+# Benaiah
 
-A modern Flutter application built with performance, scalability, and maintainability in mind.
+The Flutter app for [Benaiah](https://www.benaiah.org): devotionals, study
+material, graphics and podcasts in English and Amharic, for Android and iOS.
 
-## 🚀 Getting Started
+## Where the content comes from
 
-### Prerequisites
+Nothing is bundled with the app; everything below is fetched at runtime.
 
-- [FVM](https://fvm.app/docs/getting_started/installation) OR [Puro](https://puro.dev/) (recommended for version management)
-- [Mason CLI](https://docs.brickhub.dev/mason-cli/installation)
-- [CocoaPods](https://cocoapods.org/) (for iOS development)
+| Content | Source |
+|---|---|
+| Series, topics, articles, authors, graphics | Benaiah Articles REST API (`/api/v1/articles` on www.benaiah.org), see `lib/core/network/api_endpoints.dart` |
+| Podcast episodes and hosts | Cloud Firestore in the `benaiah-app` project, see [FIREBASE_BACKEND.md](FIREBASE_BACKEND.md) |
+| Scripture pop-ups | [YouVersion Platform](https://platform.youversion.com) API |
+| Artwork | Cloudinary, requested at the size it is drawn |
 
-### Setup
+## Getting started
 
-Run the following command to set up the project environment. This script detects your SDK manager (Puro or FVM), installs the correct Flutter version, fetches dependencies, installs pods, activates necessary CLIs, and **configures VS Code launch settings for all flavors**.
-
-```bash
-bash scripts/project_setup.sh
-```
-
-For non-interactive environments (CI):
-
-```bash
-FVM_SETUP_NONINTERACTIVE=1 bash scripts/project_setup.sh
-```
-
-### Running the App
-
-The project uses flavors for different environments (`dev`, `qa`, `prod`). 
-
-#### 1. VS Code (Recommended)
-The setup script generates a `.vscode/launch.json` file. You can simply go to the **Run and Debug** tab and select:
-- `Benaiah [DEV]` (Default)
-- `Benaiah [QA]`
-- `Benaiah [PROD]`
-
-#### 2. Makefile Commands
-You can also run the app using the provided `Makefile`:
-- **Development:** `make run-dev`
-- **QA:** `make run-qa`
-- **Production:** `make run-prod`
-
-#### 3. CLI
-Alternatively, using the Flutter CLI (prefixed with your manager):
+Prerequisites: [FVM](https://fvm.app) (or [Puro](https://puro.dev)), the
+Android SDK, and Xcode with CocoaPods for iOS.
 
 ```bash
-fvm flutter run --flavor dev -t lib/main.dart
-# OR
-puro flutter run --flavor dev -t lib/main.dart
+bash scripts/project_setup.sh      # Windows: scripts\project_setup.bat
 ```
 
-### Code Generation
+This installs the Flutter version pinned in `.fvmrc`, fetches packages,
+generates code, installs pods, and creates `secrets.json` from
+`secrets.json.example`. Put your YouVersion developer token in it:
 
-This project uses `build_runner` for generating code (Freezed, Injectable, Riverpod, etc.) and `flutter_gen` for assets.
+```json
+{ "YOUVERSION_DEVELOPER_TOKEN": "..." }
+```
 
-To run all code generation:
+`secrets.json` is gitignored. Without a token the app still runs, but
+scripture pop-ups cannot load.
+
+## Running
+
+There are three flavors, `dev`, `qa` and `prod`, each with its own
+application id and Firebase app.
+
+- VS Code: pick **Benaiah [DEV]**, **[QA]** or **[PROD]** in Run and Debug.
+- Make: `make -f scripts/Makefile run-dev` (see `make -f scripts/Makefile help`).
+- CLI:
+
+  ```bash
+  fvm flutter run --flavor dev -t lib/main.dart --dart-define-from-file=secrets.json
+  ```
+
+All three pass `secrets.json` to the build.
+
+## Code generation
+
+Generated code (injectable, Riverpod, asset constants) is not committed.
+Regenerate it after changing annotated code or assets:
 
 ```bash
-make gen
+make -f scripts/Makefile gen
 ```
 
-## 🏗 Scaffolding
+## Tests
 
-We use [Mason](https://docs.brickhub.dev/) to quickly scaffold new features and pages according to our project's architecture.
+```bash
+make -f scripts/Makefile test        # unit tests, no network
+make -f scripts/Makefile test-live   # checks every published article is served
+```
 
-### Create a New Feature
+## Building
 
-To generate a full feature module (data, domain, and presentation layers):
+```bash
+make -f scripts/Makefile build-prod    # APK
+make -f scripts/Makefile bundle-prod   # App Bundle for Play
+```
+
+Release builds are signed with the key described in a `key.properties` file
+at the repository root (`storeFile`, `storePassword`, `keyAlias`,
+`keyPassword`); it is gitignored. Without it they fall back to the shared
+debug key, which is fine for testers but not for the store.
+
+iOS builds use CocoaPods: Swift Package Manager is disabled in `pubspec.yaml`
+because it resolves a newer Firebase SDK than `cloud_firestore` supports.
+
+## Project structure
+
+```
+lib/
+  core/           shared infrastructure
+    config/       per-flavor environment values
+    di/           get_it + injectable setup
+    error/        AppError types and the Result wrapper
+    network/      Dio client, API endpoints, YouVersion service
+    router/       GoRouter configuration
+    theme/        colors, typography, light/dark themes
+    utils/        scripture linking, Cloudinary sizing, external links
+    widgets/      shared widgets (markdown, network image, state views)
+  features/
+    content/      series, topics, articles, authors, scripture pop-ups
+    podcast/      episodes, hosts and the audio player
+    home/         home screen
+    main/         bottom-navigation shell
+    settings/     theme and language settings
+    about/        about page
+  main.dart       startup: flavor, Firebase, Sentry, dependency injection
+assets/
+  translations/   langs.csv with key, en and am columns
+scripts/          Makefile, setup scripts, Firestore rules and indexes
+bricks/           Mason templates for new features and pages
+```
+
+Repositories return a `Result<T>` (`Success` or `Failure` carrying an
+`AppError`); providers throw the error so screens can render it with
+`BenaiahStateView.error`.
+
+## Scaffolding
+
+[Mason](https://docs.brickhub.dev) bricks generate new features and pages in
+the project's layout:
 
 ```bash
 mason make feature --name <feature_name>
-```
-
-### Create a New Page
-
-To add a new page (screen, sections, widgets) to an existing feature:
-
-```bash
 mason make page --feature <feature_name> --name <page_name>
 ```
 
-> [!TIP]
-> Always run `make gen` after creating a new feature to generate the necessary `injectable`, `riverpod`, and `json_serializable` code.
+Run `make -f scripts/Makefile gen` afterwards, and delete any generated layer
+the feature does not need.
 
-## 📂 Project Structure
+## Tech stack
 
-Navigate through the project using this guide:
-
-- **`lib/`**: Source code of the application.
-  - **`core/`**: Shared infrastructure and utilities.
-    - `config/`: Environment configurations and constants.
-    - `di/`: Dependency injection setup (Injectable).
-    - `error/`: Error handling logic and sealed classes.
-    - `network/`: Dio networking module and interceptors.
-    - `router/`: Navigation setup using GoRouter.
-    - `theme/`: Design system, colors, and typography.
-  - **`features/`**: Feature-based modules (to be added).
-  - `app.dart`: Root widget of the application.
-  - `main.dart`: Entry point of the app.
-  - `flavors.dart`: Flavor-specific configuration.
-- **`assets/`**: Static assets.
-  - `translations/`: Localization files (CSV format).
-  - `images/`: Image assets.
-  - `icons/`: Icon assets.
-- **`scripts/`**: Automation scripts and Makefiles.
-- **`bricks/`**: Mason bricks for rapid feature and component scaffolding.
-- **`test/`**: Unit and widget tests.
-
-## 🛠 Tech Stack
-
-- **State Management:** [Hooks Riverpod](https://riverpod.dev/)
-- **Navigation:** [GoRouter](https://pub.dev/packages/go_router)
-- **Networking:** [Dio](https://pub.dev/packages/dio)
-- **Dependency Injection:** [Get It](https://pub.dev/packages/get_it) & [Injectable](https://pub.dev/packages/injectable)
-- **Code Generation:** [Freezed](https://pub.dev/packages/freezed), [Riverpod Generator](https://pub.dev/packages/riverpod_generator)
-- **Localization:** [Easy Localization](https://pub.dev/packages/easy_localization)
-- **Observability:** [Sentry](https://sentry.io/)
-
-## 🎨 Design System
-
-The design system is located in `lib/core/theme`. It uses a primary color palette of black and white, ensuring a clean and minimalist aesthetic. Responsive design is handled via `ResponsiveConfig` initialized in `main.dart`.
+Riverpod (hooks_riverpod with code generation), GoRouter, Dio, get_it with
+injectable, easy_localization, Firebase (Firestore), just_audio, and Sentry.
