@@ -65,10 +65,7 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
         publishDate: _dateTime(data['publishDate']),
         episodeNumber: data['episodeNumber'] as int? ?? 0,
         seasonNumber: data['seasonNumber'] as int? ?? 0,
-        hosts: _hostsFromIds(
-          data['contributorIds'] ?? data['hostIds'],
-          contributorsById,
-        ),
+        hosts: _hostsFromIds(data['contributorIds'], contributorsById),
         category: _string(data, 'category', fallback: 'General'),
       );
     }).toList();
@@ -76,19 +73,6 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
 
   Future<Map<String, PodcastHost>> _getContributorsById() async {
     final snapshot = await _firestore.collection('contributors').get();
-    if (snapshot.docs.isEmpty) {
-      final legacySnapshot = await _firestore.collection('podcastHosts').get();
-      return {
-        for (final doc in legacySnapshot.docs)
-          doc.id: PodcastHost(
-            id: doc.id,
-            name: _string(doc.data(), 'name'),
-            bio: _string(doc.data(), 'bio'),
-            imageUrl: _string(doc.data(), 'imageUrl'),
-          ),
-      };
-    }
-
     return {
       for (final doc in snapshot.docs)
         doc.id: PodcastHost(
