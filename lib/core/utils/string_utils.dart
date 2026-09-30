@@ -1,16 +1,14 @@
 abstract class StringUtils {
-  /// Strips common markdown formatting structures to produce clean plain-text.
-  ///
-  /// This is extremely useful for short teasers, previews, and list card snippets.
+  /// Strips common markdown and HTML formatting to plain text, for teasers,
+  /// previews and list card snippets.
   static String stripMarkdown(String? markdown) {
     if (markdown == null || markdown.isEmpty) return '';
 
     var text = markdown;
 
-    // Strip HTML tags (e.g. <p>, <br>, <strong>, <em>, etc.)
-    text = text.replaceAll(RegExp(r'<[^>]*>'), '');
+    // HTML tags: <p>, <br>, <strong>, ...
+    text = text.replaceAll(RegExp('<[^>]*>'), '');
 
-    // Decode common HTML entities
     text = text
         .replaceAll('&amp;', '&')
         .replaceAll('&nbsp;', ' ')
@@ -21,18 +19,17 @@ abstract class StringUtils {
         .replaceAll('&#x27;', "'")
         .replaceAll('&#x2F;', '/');
 
-    // Remove blockquote signs (e.g. "> Quote" -> "Quote")
+    // Blockquotes: "> Quote" -> "Quote".
     text = text.replaceAll(RegExp(r'^\s*>\s*', multiLine: true), '');
 
-    // Remove Header tags (e.g. "# Heading" -> "Heading")
+    // Headings: "# Heading" -> "Heading".
     text = text.replaceAll(RegExp(r'^\s*#+\s+', multiLine: true), '');
 
-    // Remove list markers (e.g. "* Item", "- Item", "1. Item")
+    // List markers: "* Item", "- Item", "1. Item".
     text = text.replaceAll(RegExp(r'^\s*[*+-]\s+', multiLine: true), '');
     text = text.replaceAll(RegExp(r'^\s*\d+\.\s+', multiLine: true), '');
 
-    // Remove images and links markdown style: ![alt](url) or [link](url)
-    // and keep only the display text.
+    // Images and links keep only their text: ![alt](url), [text](url).
     text = text.replaceAllMapped(
       RegExp(r'!\[([^\]]*)\]\([^\)]*\)'),
       (match) => match.group(1) ?? '',
@@ -42,17 +39,16 @@ abstract class StringUtils {
       (match) => match.group(1) ?? '',
     );
 
-    // Remove code block backticks `code` -> code
+    // Inline code: `code` -> code.
     text = text.replaceAll(RegExp('`([^`]+)`'), r'$1');
 
-    // Remove Bold/Italics asterisks or underscores (**bold**, *italic*, __bold__, _italic_)
+    // Bold and italics: **bold**, __bold__, *italic*, _italic_.
     text = text.replaceAll(RegExp(r'(\*\*|__)(.*?)\1'), r'$2');
     text = text.replaceAll(RegExp(r'(\*|_)(.*?)\1'), r'$2');
 
-    // Remove horizontal rule markers (---, ***, ___)
+    // Horizontal rules: ---, ***, ___.
     text = text.replaceAll(RegExp(r'^\s*[-*_]{3,}\s*$', multiLine: true), '');
 
-    // Normalize multiple consecutive spaces/tabs and newlines to a single space
     text = text.replaceAll(RegExp(r'\s+'), ' ');
 
     return text.trim();

@@ -13,11 +13,12 @@ class _AboutTopSection extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         title: LayoutBuilder(
           builder: (context, constraints) {
-            final settings = context.dependOnInheritedWidgetOfExactType<
-                FlexibleSpaceBarSettings>();
-            final isCollapsed = settings != null &&
+            final settings = context
+                .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+            final isCollapsed =
+                settings != null &&
                 settings.currentExtent <=
-                    settings.minExtent + (MediaQuery.of(context).padding.top);
+                    settings.minExtent + MediaQuery.of(context).padding.top;
 
             return AnimatedOpacity(
               duration: const Duration(milliseconds: 200),

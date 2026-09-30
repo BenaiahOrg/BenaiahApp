@@ -9,7 +9,6 @@ class _YouTubeLinkButton extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Sleek premium YouTube color palette
     final backgroundColor = isDark
         ? const Color(0xFF1E1E1E)
         : const Color(0xFFF9F9F9);
@@ -41,7 +40,6 @@ class _YouTubeLinkButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Custom beautifully-designed YouTube brand icon
                 Container(
                   width: 32,
                   height: 22,

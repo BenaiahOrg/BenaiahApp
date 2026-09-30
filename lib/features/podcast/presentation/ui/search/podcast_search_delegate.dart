@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/core/widgets/shimmer.dart';
-import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_list_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

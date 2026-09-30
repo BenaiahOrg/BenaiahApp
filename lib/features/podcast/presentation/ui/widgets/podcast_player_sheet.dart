@@ -1,6 +1,6 @@
 import 'dart:async';
+
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
-import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_player_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
       duration: const Duration(seconds: 12),
     );
 
-    // Run rotation if playing initially
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final playerState = ref.read(podcastPlayerProvider);
       if (playerState.isPlaying) {
@@ -54,9 +53,9 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
     } else if (currentSpeed == 1.25) {
       unawaited(notifier.setPlaybackSpeed(1.5));
     } else if (currentSpeed == 1.5) {
-      unawaited(notifier.setPlaybackSpeed(2.0));
+      unawaited(notifier.setPlaybackSpeed(2));
     } else {
-      unawaited(notifier.setPlaybackSpeed(1.0));
+      unawaited(notifier.setPlaybackSpeed(1));
     }
   }
 
@@ -69,7 +68,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
       return const SizedBox.shrink();
     }
 
-    // Control animation based on playback state
     if (playerState.isPlaying) {
       _rotationController.repeat();
     } else {
@@ -110,15 +108,15 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             ),
           ),
           const SizedBox(height: 24),
-          // Spinning Cover & Rings
           Center(
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Pulse concentric ring on play
+                // Pulses once (grows 25% and fades out) when playback starts
+                // or the sheet opens during playback.
                 if (playerState.isPlaying)
                   TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 1.0, end: 1.25),
+                    tween: Tween<double>(begin: 1, end: 1.25),
                     duration: const Duration(seconds: 2),
                     curve: Curves.easeOut,
                     builder: (context, value, child) {
@@ -136,7 +134,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                       );
                     },
                   ),
-                // Cover Artwork Container
                 RotationTransition(
                   turns: _rotationController,
                   child: Container(
@@ -174,7 +171,7 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                     ),
                   ),
                 ),
-                // Center pin hole representing vinyl disc look
+                // Spindle hole, so the spinning cover reads as a record.
                 Container(
                   width: 24,
                   height: 24,
@@ -198,7 +195,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             ),
           ),
           const SizedBox(height: 24),
-          // Category and Episode Info
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
@@ -241,7 +237,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          // Progress Seek Bar
           SliderTheme(
             data: SliderThemeData(
               trackHeight: 4,
@@ -282,7 +277,10 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                   behavior: HitTestBehavior.opaque,
                   child: Text(
                     _showRemaining
-                        ? '-${_formatDuration(episode.durationSeconds - playerState.currentSeconds)}'
+                        ? '-${_formatDuration(
+                            episode.durationSeconds -
+                                playerState.currentSeconds,
+                          )}'
                         : _formatDuration(episode.durationSeconds),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.grey,
@@ -293,11 +291,9 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
             ),
           ),
           const SizedBox(height: 16),
-          // Media Controls & Speed Switcher
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Speed control button
               TextButton(
                 onPressed: () =>
                     _cyclePlaybackSpeed(playerState.playbackSpeed),
@@ -314,14 +310,15 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                   ),
                 ),
                 child: Text(
-                  '${playerState.playbackSpeed.toStringAsFixed(2).replaceAll('.00', '')}x',
+                  '${playerState.playbackSpeed
+                      .toStringAsFixed(2)
+                      .replaceAll('.00', '')}x',
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
                   ),
                 ),
               ),
-              // Skip 10s back
               IconButton(
                 icon: const Icon(Icons.replay_10_rounded, size: 36),
                 color: theme.colorScheme.onSurface,
@@ -329,7 +326,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                   ref.read(podcastPlayerProvider.notifier).skip(-10),
                 ),
               ),
-              // Play/Pause circular button
               GestureDetector(
                 onTap: () => unawaited(
                   ref
@@ -368,7 +364,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                         ),
                 ),
               ),
-              // Skip 10s forward
               IconButton(
                 icon: const Icon(Icons.forward_10_rounded, size: 36),
                 color: theme.colorScheme.onSurface,
@@ -376,7 +371,6 @@ class _PodcastPlayerSheetState extends ConsumerState<PodcastPlayerSheet>
                   ref.read(podcastPlayerProvider.notifier).skip(10),
                 ),
               ),
-              // Quick description popup or small icon indicator
               IconButton(
                 icon: const Icon(Icons.info_outline_rounded, size: 28),
                 color: Colors.grey,

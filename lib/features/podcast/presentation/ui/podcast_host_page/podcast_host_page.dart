@@ -15,9 +15,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 part 'screen/podcast_host_screen.dart';
 part 'sections/podcast_host_body_section.dart';
 
-/// Every episode a narrator/host worked on, and their bio — the podcast
-/// equivalent of `AuthorArticlesPage`, which authors and graphic designers
-/// already had.
+/// Every episode a narrator/host worked on, and their bio: the podcast
+/// counterpart of `AuthorArticlesPage` for authors and graphic designers.
 class PodcastHostPage extends ConsumerWidget {
   const PodcastHostPage({required this.hostId, super.key});
 

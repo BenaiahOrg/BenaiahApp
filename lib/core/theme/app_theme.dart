@@ -11,7 +11,9 @@ abstract class AppTheme {
       displayMedium: base.displayMedium?.copyWith(fontFamily: titleFontFamily),
       displaySmall: base.displaySmall?.copyWith(fontFamily: titleFontFamily),
       headlineLarge: base.headlineLarge?.copyWith(fontFamily: titleFontFamily),
-      headlineMedium: base.headlineMedium?.copyWith(fontFamily: titleFontFamily),
+      headlineMedium: base.headlineMedium?.copyWith(
+        fontFamily: titleFontFamily,
+      ),
       headlineSmall: base.headlineSmall?.copyWith(fontFamily: titleFontFamily),
       titleLarge: base.titleLarge?.copyWith(fontFamily: titleFontFamily),
       titleMedium: base.titleMedium?.copyWith(fontFamily: titleFontFamily),

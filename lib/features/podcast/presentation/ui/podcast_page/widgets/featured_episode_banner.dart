@@ -38,7 +38,6 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Banner image with badge
                 Stack(
                   children: [
                     SizedBox(
@@ -66,7 +65,7 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
                             color: theme.colorScheme.onPrimary,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
+                            letterSpacing: 1,
                           ),
                         ),
                       ),
@@ -90,7 +89,8 @@ class _FeaturedEpisodeBanner extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${DateTimeUtils.formatDate(episode.publishDate)} • ${DateTimeUtils.formatDuration(
+                            '${DateTimeUtils.formatDate(episode.publishDate)}'
+                            ' • ${DateTimeUtils.formatDuration(
                               episode.durationSeconds,
                             )}',
                             style: theme.textTheme.labelSmall?.copyWith(

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:benaiah_app/core/router/route_names.dart';
 import 'package:benaiah_app/core/utils/string_utils.dart';
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
@@ -36,7 +37,7 @@ class FeaturedTopicHero extends StatelessWidget {
     final hasImage = topic.graphics.data.isNotEmpty;
     final imageUrl = hasImage ? topic.graphics.data.first : '';
 
-    // Calculate text content transition fading and shifting
+    // The text is fully faded out by 2/3 of a page from the center.
     final contentFade = (1 - scrollOffset.abs() * 1.5).clamp(0.0, 1.0);
 
     return Container(
@@ -68,11 +69,11 @@ class FeaturedTopicHero extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Background Color / Placeholder
                 Container(
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
-                // Hero Image with stunning parallax slide
+                // Parallax: the image, scaled up 1.2x, shifts 30 px per page
+                // of scroll.
                 if (hasImage)
                   Hero(
                     tag: 'topic_image_${topic.id}',
@@ -89,7 +90,7 @@ class FeaturedTopicHero extends StatelessWidget {
                       ),
                     ),
                   ),
-                // High-contrast Gradient Overlay (adaptive for theme brightness)
+                // Darkens the image so the white text stays legible.
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -110,7 +111,8 @@ class FeaturedTopicHero extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Layered Parallax Content with dynamic fading
+                // The badge, title and excerpt shift at different speeds so
+                // the text layers move apart as the card scrolls.
                 Opacity(
                   opacity: contentFade,
                   child: Padding(
@@ -119,11 +121,10 @@ class FeaturedTopicHero extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Frosted-look FEATURED TOPIC badge. A real
-                        // BackdropFilter blur here would re-sample the image
-                        // behind it on every scroll frame (this whole card
-                        // rebuilds as the carousel drags); a flat translucent
-                        // fill reads the same without the per-frame cost.
+                        // A flat translucent fill instead of a BackdropFilter
+                        // blur: this card rebuilds on every carousel scroll
+                        // frame, and a blur would re-sample the image behind
+                        // it each time.
                         Transform.translate(
                           offset: Offset(scrollOffset * -15, 0),
                           child: Container(
@@ -150,7 +151,6 @@ class FeaturedTopicHero extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        // Title with sub-parallax shift
                         Hero(
                           tag: 'topic_title_${topic.id}',
                           child: Transform.translate(
@@ -173,7 +173,6 @@ class FeaturedTopicHero extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        // Excerpt with separate shift speed
                         Hero(
                           tag: 'topic_excerpt_${topic.id}',
                           child: Transform.translate(

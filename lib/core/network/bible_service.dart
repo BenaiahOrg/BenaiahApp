@@ -9,38 +9,31 @@ import 'package:youversion_sdk/youversion_sdk.dart';
 class BibleService {
   BibleService() {
     final token = Env.youversionDeveloperToken;
-    if (token.isEmpty || token == 'mock_dev_token') {
-      debugPrint(
-        '⚠️ BibleService: No developer token provided or using fallback ($token)!',
-      );
-    } else {
-      final safePreview = token.length > 8
-          ? '${token.substring(0, 4)}...${token.substring(token.length - 4)}'
-          : token;
-      debugPrint(
-        '✅ BibleService: Initialized successfully with token: $safePreview',
-      );
-    }
+    debugPrint(
+      token.isEmpty
+          ? 'BibleService: no YouVersion developer token configured'
+          : 'BibleService: YouVersion developer token configured',
+    );
 
     _client = YouVersionClient(
       developerToken: token,
     );
   }
 
-  /// Parses a Bible link from standard bible.com URLs: https://www.bible.com/bible/[version]/[passage]
+  /// Parses a bible.com link of the form
+  /// `https://www.bible.com/bible/{version}/{passage}`.
   ///
   /// Returns a record `(passageId, bibleId)` if valid, otherwise `null`.
   static (String, String)? parseBibleLink(String href) {
     try {
       final uri = Uri.parse(href);
 
-      // Handle standard bible.com URLs: https://www.bible.com/bible/[version]/[passage]
       if ((uri.host == 'bible.com' || uri.host == 'www.bible.com') &&
           uri.pathSegments.isNotEmpty &&
           uri.pathSegments[0] == 'bible') {
         if (uri.pathSegments.length >= 3) {
           final bibleId = uri.pathSegments[1];
-          // Check if the second segment is numeric (valid version ID on bible.com)
+          // bible.com version IDs are numeric.
           if (RegExp(r'^\d+$').hasMatch(bibleId)) {
             final passageId = uri.pathSegments
                 .sublist(2)
@@ -50,24 +43,23 @@ class BibleService {
           }
         }
       }
-    } catch (e) {
-      debugPrint('Error parsing Bible link: $e');
+    } on Object catch (e) {
+      debugPrint('BibleService: could not parse Bible link: $e');
     }
     return null;
   }
 
-  /// Parses a comma-separated passage ID into individual fully qualified passage IDs.
-  /// Handles both "JHN.3.16,19" and "JHN.3.16,JHN.3.19" patterns.
+  /// Splits a comma-separated passage ID into fully qualified passage IDs.
+  /// Handles both "JHN.3.16,19" and "JHN.3.16,JHN.3.19".
   @visibleForTesting
   static List<String> parsePassageIds(String passageId) {
     if (!passageId.contains(',')) {
       return [passageId];
     }
 
-    // Pattern 1: Check if the string is already fully qualified IDs separated by commas,
-    // e.g. "JHN.3.16,JHN.3.19"
+    // Already fully qualified IDs, e.g. "JHN.3.16,JHN.3.19".
     final commaParts = passageId.split(',');
-    bool allFullyQualified = true;
+    var allFullyQualified = true;
     for (final part in commaParts) {
       final dotParts = part.trim().split('.');
       if (dotParts.length < 3) {
@@ -80,8 +72,7 @@ class BibleService {
       return commaParts.map((part) => part.trim().toUpperCase()).toList();
     }
 
-    // Pattern 2: Single book/chapter with comma-separated verses,
-    // e.g. "JHN.3.16,19"
+    // One book and chapter with comma-separated verses, e.g. "JHN.3.16,19".
     final dotParts = passageId.split('.');
     if (dotParts.length == 3 && dotParts[2].contains(',')) {
       final book = dotParts[0].trim().toUpperCase();
@@ -94,12 +85,11 @@ class BibleService {
           .toList();
     }
 
-    // Fallback: return the original passageId in a list
     return [passageId];
   }
 
-  /// Combines multiple passage references into a single clean reference.
-  /// E.g. "John 3:16" and "John 3:19" becomes "John 3: 16, 19"
+  /// Combines multiple passage references into a single reference, e.g.
+  /// "John 3:16" and "John 3:19" become "John 3: 16, 19".
   @visibleForTesting
   String combineReferences(List<Passage> passages) {
     if (passages.isEmpty) return '';
@@ -113,7 +103,7 @@ class BibleService {
 
     final prefix = firstRef.substring(0, colonIndex + 1); // e.g. "John 3:"
 
-    bool allSharePrefix = true;
+    var allSharePrefix = true;
     final verses = <String>[];
 
     for (final p in passages) {
@@ -165,7 +155,7 @@ class BibleService {
         .then<Bible?>((bible) => bible)
         .catchError((Object e) {
           // The verse still shows; retry the details on the next popover.
-          debugPrint('⚠️ BibleService: No details for Bible $bibleId ($e)');
+          debugPrint('BibleService: no details for Bible $bibleId ($e)');
           unawaited(_bibles.remove(bibleId));
           return null;
         });
@@ -173,8 +163,8 @@ class BibleService {
 
   /// Fetches a Bible passage using the `youversion_sdk`.
   ///
-  /// [passageId] is the standard coordinate (e.g., 'JHN.3.16' or 'JHN.3.16,19').
-  /// [bibleId] is the specific translation version ID.
+  /// [passageId] is the standard coordinate, e.g. 'JHN.3.16' or
+  /// 'JHN.3.16,19'. [bibleId] is the translation's version ID.
   Future<ScripturePassage> getPassage(
     String passageId, {
     required String bibleId,
@@ -182,16 +172,15 @@ class BibleService {
     try {
       return await _read(passageId, bibleId);
     } on YouVersionException catch (e) {
-      // If the API refuses a Bible version (e.g. 403 Access Denied due to
-      // developer key limitations), gracefully fall back to English (ASV,
-      // ID 12) so the passage is still readable. Timeouts are not refusals:
-      // YouVersion is often slow on a passage's first request, and swapping
-      // an Amharic reader to English for that would be wrong, so those
-      // surface as a retryable error instead.
+      // When the developer key cannot read a version (e.g. 403), fall back
+      // to English (ASV, ID 12) so the passage is still readable. Timeouts
+      // are not refusals: YouVersion is often slow on a passage's first
+      // request, and swapping an Amharic reader to English for that would be
+      // wrong, so those surface as a retryable error instead.
       if (bibleId != _fallbackBibleId && _isRefused(e)) {
         debugPrint(
-          '⚠️ BibleService: Failed to fetch passage for translation '
-          '$bibleId ($e). Falling back to English (ASV - 12)...',
+          'BibleService: failed to fetch passage for translation '
+          '$bibleId ($e). Falling back to English (ASV - 12).',
         );
         return _read(passageId, _fallbackBibleId);
       }
@@ -210,8 +199,6 @@ class BibleService {
     if (subPassageIds.length <= 1) {
       passage = await _fetch(bibleId, subPassageIds.firstOrNull ?? passageId);
     } else {
-      // Fetch multiple passages in parallel, then merge contents and
-      // references.
       final passages = await Future.wait(
         subPassageIds.map((id) => _fetch(bibleId, id)),
       );

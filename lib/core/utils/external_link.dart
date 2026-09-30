@@ -6,9 +6,8 @@ abstract class ExternalLink {
   /// reports whether that worked.
   ///
   /// Deliberately skips `canLaunchUrl`: on Android 11+ it answers false for
-  /// every link unless the manifest lists the apps we may query, which left
-  /// every external link a dead button. Launching directly needs no such
-  /// declaration and still reports failure.
+  /// every link unless the manifest lists the apps we may query. Launching
+  /// directly needs no such declaration and still reports failure.
   static Future<bool> open(Uri uri) async {
     try {
       return await launchUrl(uri, mode: LaunchMode.externalApplication);

@@ -1,7 +1,6 @@
+import 'package:benaiah_app/core/utils/string_utils.dart';
+import 'package:benaiah_app/features/podcast/domain/entities/podcast_host.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../../../core/utils/string_utils.dart';
-import 'podcast_host.dart';
 
 class PodcastEpisode extends Equatable {
   const PodcastEpisode({
@@ -17,18 +16,6 @@ class PodcastEpisode extends Equatable {
     required this.hosts,
     required this.category,
   });
-
-  final String id;
-  final String title;
-  final String description;
-  final String audioUrl;
-  final int durationSeconds;
-  final String imageUrl;
-  final DateTime publishDate;
-  final int episodeNumber;
-  final int seasonNumber;
-  final List<PodcastHost> hosts;
-  final String category;
 
   factory PodcastEpisode.fromJson(Map<String, dynamic> json) {
     return PodcastEpisode(
@@ -49,6 +36,18 @@ class PodcastEpisode extends Equatable {
       category: json['category'] as String? ?? 'General',
     );
   }
+
+  final String id;
+  final String title;
+  final String description;
+  final String audioUrl;
+  final int durationSeconds;
+  final String imageUrl;
+  final DateTime publishDate;
+  final int episodeNumber;
+  final int seasonNumber;
+  final List<PodcastHost> hosts;
+  final String category;
 
   Map<String, dynamic> toJson() {
     return {

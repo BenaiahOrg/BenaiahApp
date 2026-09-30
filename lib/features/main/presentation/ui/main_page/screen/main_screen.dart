@@ -26,7 +26,8 @@ class _MainScreenState extends ConsumerState<_MainScreen> {
     }
 
     final now = DateTime.now();
-    final isSecondPress = _lastBackPressTime != null &&
+    final isSecondPress =
+        _lastBackPressTime != null &&
         now.difference(_lastBackPressTime!) < _exitPressWindow;
 
     if (isSecondPress) {
@@ -49,18 +50,19 @@ class _MainScreenState extends ConsumerState<_MainScreen> {
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
 
-    final isSpecialPage = location == RouteNames.about;
+    final isAboutPage = location == RouteNames.about;
 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) => _handleBack(didPop),
       child: Scaffold(
-        appBar: isSpecialPage ? null : _MainTopSection(location: location),
+        appBar: isAboutPage ? null : _MainTopSection(location: location),
         body: Stack(
           children: [
-            isSpecialPage
-                ? widget.navigationShell
-                : SafeArea(child: widget.navigationShell),
+            if (isAboutPage)
+              widget.navigationShell
+            else
+              SafeArea(child: widget.navigationShell),
             const Positioned(
               left: 0,
               right: 0,

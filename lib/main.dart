@@ -80,9 +80,8 @@ void main() async {
 }
 
 /// Riverpod retries a failed provider up to ten times with growing delays,
-/// about 40 seconds in all, and shows it as loading the whole time, so an
-/// offline launch sat on skeletons before saying it was offline. Being
-/// offline won't clear up in that window: report it at once and let the
+/// about 40 seconds in all, and shows it as loading the whole time. Being
+/// offline won't clear up in that window, so report it at once and let the
 /// reader tap "Try again". Other failures keep Riverpod's default backoff.
 Duration? _retry(int retryCount, Object error) {
   if (error is NetworkError) return null;

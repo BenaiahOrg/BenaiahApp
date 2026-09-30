@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:just_audio/just_audio.dart';
@@ -110,7 +111,7 @@ class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
       return;
     }
 
-    // Save previous episode position before switching
+    // So the previous episode resumes where it left off.
     if (state.currentEpisode != null) {
       await _saveCurrentPosition();
     }
@@ -137,7 +138,8 @@ class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
       await _audioPlayer.setAudioSource(audioSource);
       await _audioPlayer.setSpeed(state.playbackSpeed);
 
-      // Restore position if available
+      // Resume from the saved position unless it is in the last 5 seconds,
+      // in which case start over.
       final savedPos = await _storage.read(key: 'podcast_pos_${episode.id}');
       if (savedPos != null) {
         final seconds = int.tryParse(savedPos) ?? 0;

@@ -40,17 +40,15 @@ void main() {
       expect(result, equals(['JHN.3.16-17', 'JHN.3.19']));
     });
 
-    test('ignores empty components and trims whitespace gracefully', () {
+    test('ignores empty components and trims whitespace', () {
       final result = BibleService.parsePassageIds('  JHN.3.16  ,  19  ');
       expect(result, equals(['JHN.3.16', 'JHN.3.19']));
     });
   });
 
   group('BibleService.combineReferences', () {
-    // Instantiate a dummy BibleService to test its instance method
-    // (Note: Since we are not calling getPassage in this unit test group,
-    // the uninitialized _client won't cause issues for testing
-    // combineReferences)
+    // combineReferences never calls the YouVersion client, so these tests
+    // need no token or network.
     late BibleService bibleService;
 
     setUp(() {

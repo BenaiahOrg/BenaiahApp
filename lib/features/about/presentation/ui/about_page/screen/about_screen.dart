@@ -10,7 +10,7 @@ class _AboutScreen extends HookConsumerWidget {
     );
 
     useEffect(() {
-      unawaited(animationController.forward());
+      animationController.forward();
       return null;
     }, []);
 

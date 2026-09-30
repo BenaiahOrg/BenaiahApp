@@ -8,11 +8,6 @@ class PodcastHost extends Equatable {
     required this.imageUrl,
   });
 
-  final String id;
-  final String name;
-  final String bio;
-  final String imageUrl;
-
   factory PodcastHost.fromJson(Map<String, dynamic> json) {
     return PodcastHost(
       id: json['id'] as String,
@@ -21,6 +16,11 @@ class PodcastHost extends Equatable {
       imageUrl: json['imageUrl'] as String,
     );
   }
+
+  final String id;
+  final String name;
+  final String bio;
+  final String imageUrl;
 
   Map<String, dynamic> toJson() {
     return {

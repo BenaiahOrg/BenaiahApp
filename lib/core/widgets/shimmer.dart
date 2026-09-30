@@ -104,8 +104,7 @@ class SkeletonList extends StatelessWidget {
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: itemCount,
-        itemBuilder: (context, index) =>
-            SkeletonListTile(imageSize: imageSize),
+        itemBuilder: (context, index) => SkeletonListTile(imageSize: imageSize),
       ),
     );
   }

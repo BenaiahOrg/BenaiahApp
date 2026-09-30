@@ -46,7 +46,7 @@ class SubtopicDetail {
 /// Talks to the Benaiah Articles public REST API.
 ///
 /// Endpoints 1-3 back the catalog; Endpoint 4 backs article bodies. Callers are
-/// expected to tolerate [getArticle] failing — see [ContentRepositoryImpl].
+/// expected to tolerate [getArticle] failing — see `ContentRepositoryImpl`.
 abstract class ContentApiDataSource {
   /// Endpoint 1: the whole catalog in one request.
   Future<List<Series>> getCatalog();
@@ -110,8 +110,6 @@ class ContentApiDataSourceImpl implements ContentApiDataSource {
       youtubeUrl: _youtubeUrl(_nullableString(data['audio'])),
     );
   }
-
-  // --- Mapping -------------------------------------------------------------
 
   Series _seriesFrom(Map<String, dynamic> json) {
     final themeSlug = _string(json['slug']);
@@ -285,8 +283,6 @@ class ContentApiDataSourceImpl implements ContentApiDataSource {
     }
     return null;
   }
-
-  // --- Coercion helpers ----------------------------------------------------
 
   /// The API is untyped JSON; every read is defensive so one malformed field
   /// degrades that field instead of failing the whole screen.

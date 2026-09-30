@@ -18,11 +18,9 @@ class ResponsiveConfig {
   static BuildContext? get context => _context;
   static set context(BuildContext context) => _context = context;
 
-  static double get _screenWidth =>
-      MediaQuery.sizeOf(_context!).width;
+  static double get _screenWidth => MediaQuery.sizeOf(_context!).width;
 
-  static double get _screenHeight =>
-      MediaQuery.sizeOf(_context!).height;
+  static double get _screenHeight => MediaQuery.sizeOf(_context!).height;
 
   static double get designWidth => _designWidth;
   static double get designHeight => _designHeight;

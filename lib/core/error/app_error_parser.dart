@@ -9,8 +9,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 final class AppErrorParser {
   const AppErrorParser._();
 
-  /// Single entry point: pass any caught error + stack trace,
-  /// get back a typed [AppError].
+  /// Maps any caught error to a typed [AppError]. Errors it does not
+  /// recognize are reported to Sentry.
   static AppError parse(Object error, StackTrace stackTrace) {
     if (error is SocketException) {
       return const NetworkError();
@@ -20,7 +20,6 @@ final class AppErrorParser {
       return _parseDioException(error);
     }
 
-    // Unknown error → report to Sentry, return generic message.
     unawaited(Sentry.captureException(error, stackTrace: stackTrace));
     return GenericError(stackTrace: stackTrace, cause: error);
   }

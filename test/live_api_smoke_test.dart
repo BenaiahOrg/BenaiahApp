@@ -45,9 +45,10 @@ void main() {
       }
     }
 
+    // Printing the counts is the point of this smoke report.
     // ignore: avoid_print
     print(
-      'catalog: ${series.length} themes, '
+      'catalog:${series.length} themes, '
       '${series.fold<int>(0, (n, s) => n + s.topics.length)} topics',
     );
   });
@@ -93,6 +94,7 @@ void main() {
         }
       }
 
+      // Printing the counts is the point of this smoke report.
       // ignore: avoid_print
       print('Endpoint 4 — bodies served: $ok, unavailable: ${failed.length}');
 

@@ -23,19 +23,21 @@ class Series extends Equatable {
   final String descriptionEn;
   final String descriptionAm;
 
-  String localizedTitle(String langCode) => langCode == 'am' ? titleAm : titleEn;
-  String localizedDescription(String langCode) => langCode == 'am' ? descriptionAm : descriptionEn;
+  String localizedTitle(String langCode) =>
+      langCode == 'am' ? titleAm : titleEn;
+  String localizedDescription(String langCode) =>
+      langCode == 'am' ? descriptionAm : descriptionEn;
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        description,
-        imageUrl,
-        topics,
-        titleEn,
-        titleAm,
-        descriptionEn,
-        descriptionAm,
-      ];
+    id,
+    title,
+    description,
+    imageUrl,
+    topics,
+    titleEn,
+    titleAm,
+    descriptionEn,
+    descriptionAm,
+  ];
 }

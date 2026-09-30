@@ -21,15 +21,13 @@ class _GraphicItem extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              unawaited(
-                Navigator.of(context).push(
-                  PageRouteBuilder<void>(
-                    barrierColor: Colors.black,
-                    pageBuilder: (context, _, _) => _FullscreenGalleryDialog(
-                      allImages: allImages,
-                      initialIndex: initialIndex,
-                      topicTitle: topicTitle,
-                    ),
+              Navigator.of(context).push(
+                PageRouteBuilder<void>(
+                  barrierColor: Colors.black,
+                  pageBuilder: (context, _, _) => _FullscreenGalleryDialog(
+                    allImages: allImages,
+                    initialIndex: initialIndex,
+                    topicTitle: topicTitle,
                   ),
                 ),
               );
@@ -110,7 +108,7 @@ class _FullscreenGalleryDialogState extends State<_FullscreenGalleryDialog> {
               return InteractiveViewer(
                 clipBehavior: Clip.none,
                 minScale: 0.5,
-                maxScale: 4.0,
+                maxScale: 4,
                 child: Center(
                   child: BenaiahNetworkImage(
                     imageUrl: widget.allImages[index],

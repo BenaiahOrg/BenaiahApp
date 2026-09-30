@@ -2,8 +2,8 @@
 /// `bible.com` links the rest of the app already understands.
 ///
 /// Devotionals and writings are authored with bare references
-/// ("John 3:16 NIV", "— ዮሐንስ 3፥16") rather than markdown links, so nothing
-/// downstream could detect them. This sits between the text and
+/// ("John 3:16 NIV", "— ዮሐንስ 3፥16") rather than markdown links, which
+/// nothing downstream would detect. This sits between the text and
 /// `BibleService.parseBibleLink`, so neither the authoring format nor the
 /// `youversion_sdk` package has to change.
 abstract class ScriptureLinkifier {
@@ -38,7 +38,7 @@ abstract class ScriptureLinkifier {
   /// `[original text](https://www.bible.com/bible/<version>/BOOK.CH.VERSES)`.
   ///
   /// Text already inside a markdown link, a bare URL or an HTML/JSX-ish tag is
-  /// left alone, so content that *does* use the old link format is untouched.
+  /// left alone, so references that are already links stay untouched.
   ///
   /// Chapter-only references ("Genesis 22") are deliberately ignored: they are
   /// indistinguishable from ordinary prose without a verse number.

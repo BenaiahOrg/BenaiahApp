@@ -5,21 +5,17 @@ class _TopicDetailBodySection extends ConsumerWidget {
 
   final String topicId;
 
-  // Nothing is pre-fetched here. Passages: linkified articles carry up to
-  // ~20 references, and firing them all at once got the app rate-limited,
-  // so the overlay fetches on tap instead. Graphics: pre-caching decoded all
-  // ~18 at full print size (up to 4258x7543, ~128MB each), which the grid
-  // never showed and which flushed every list thumbnail out of the image
-  // cache, so they reloaded on the way back. The grid loads its own
-  // screen-sized copies.
+  // Nothing is pre-fetched here. A linkified article can cite ~20 passages,
+  // and requesting them all at once gets the app rate-limited, so the
+  // scripture overlay fetches on tap. Graphics are print-sized originals (up
+  // to 4258x7543, ~128MB decoded); pre-caching them would evict every list
+  // thumbnail from the image cache, so the grid loads screen-sized copies.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final topicAsync = ref.watch(topicDetailProvider(topicId));
 
     return topicAsync.when(
       data: (topic) {
-        // Empty falls through to BenaiahNetworkImage's branded fallback
-        // rather than a random stock photo.
         final imageUrl = topic.graphics.data.firstOrNull ?? '';
 
         return NestedScrollView(
@@ -142,7 +138,6 @@ class _TopicDetailBodySection extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            // Excerpt shown only when expanded
                             Positioned(
                               left: 24,
                               right: 24,
@@ -208,11 +203,10 @@ class _TopicDetailBodySection extends ConsumerWidget {
               ),
             ];
           },
-          // A local Overlay so the embedded YouTube player (which renders
-          // itself via OverlayPortal to survive scroll clipping) attaches
-          // here instead of to the app's root Overlay. Without this it
-          // paints above the pinned SliverAppBar instead of scrolling
-          // beneath it like the rest of the body.
+          // The embedded YouTube player renders through an OverlayPortal to
+          // escape scroll clipping. This local Overlay keeps it scrolling
+          // beneath the pinned SliverAppBar; on the root Overlay it would
+          // paint above it.
           body: Overlay(
             initialEntries: [
               OverlayEntry(

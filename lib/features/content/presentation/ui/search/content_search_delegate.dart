@@ -12,7 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ContentSearchDelegate extends SearchDelegate<String?> {
   ContentSearchDelegate(this.ref)
-      : super(searchFieldLabel: 'Search series and topics'.tr());
+    : super(searchFieldLabel: 'Search series and topics'.tr());
 
   final WidgetRef ref;
 

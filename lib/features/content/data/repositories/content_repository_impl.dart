@@ -85,7 +85,9 @@ class ContentRepositoryImpl implements ContentRepository {
           final detail = detailsByTopicId[topic.id];
           if (detail != null) {
             for (final slug in const ['devotional_en', 'devotional_am']) {
-              final match = detail.authorsFor(slug).where((a) => a.id == authorId);
+              final match = detail
+                  .authorsFor(slug)
+                  .where((a) => a.id == authorId);
               if (match.isNotEmpty) {
                 roles.add(ArticleRole.devotional);
                 author = match.first;
@@ -95,7 +97,9 @@ class ContentRepositoryImpl implements ContentRepository {
               'study_material_en',
               'study_material_am',
             ]) {
-              final match = detail.authorsFor(slug).where((a) => a.id == authorId);
+              final match = detail
+                  .authorsFor(slug)
+                  .where((a) => a.id == authorId);
               if (match.isNotEmpty) {
                 roles.add(ArticleRole.studyMaterial);
                 author = match.first;

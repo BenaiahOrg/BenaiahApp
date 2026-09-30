@@ -6,7 +6,7 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     log(
-      '→ ${options.method} ${options.uri}',
+      'request ${options.method} ${options.uri}',
       name: 'HTTP',
     );
     handler.next(options);
@@ -18,7 +18,7 @@ class LoggingInterceptor extends Interceptor {
     ResponseInterceptorHandler handler,
   ) {
     log(
-      '← ${response.statusCode} ${response.requestOptions.uri}',
+      'response ${response.statusCode} ${response.requestOptions.uri}',
       name: 'HTTP',
     );
     handler.next(response);
@@ -27,8 +27,8 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     log(
-      '✕ ${err.response?.statusCode ?? 'NO STATUS'} '
-      '${err.requestOptions.uri} — ${err.message}',
+      'error ${err.response?.statusCode ?? 'NO STATUS'} '
+      '${err.requestOptions.uri}: ${err.message}',
       name: 'HTTP',
     );
     handler.next(err);

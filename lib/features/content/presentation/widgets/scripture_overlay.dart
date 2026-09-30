@@ -82,10 +82,9 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
 
     final passageAsync = ref.watch(biblePassageProvider(param));
 
-    // Riverpod retries a failed provider up to ten times with backoff, and
-    // reports every one of those retries as *loading* while carrying the
-    // error. Going through `when` therefore spins for minutes before the
-    // failure ever reaches the screen, so check the error ourselves first.
+    // Riverpod retries a failed provider (up to ten times, with backoff) and
+    // reports each retry as loading with the error attached, so `when` would
+    // spin for minutes before showing the failure. Check the error first.
     final Widget body;
     if (passageAsync.hasValue) {
       body = _buildContent(context, passageAsync.requireValue);
@@ -95,16 +94,13 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
       body = _buildLoadingState(context);
     }
 
-    // Dynamic menu positioning configuration
     const double cardWidth = 320;
 
-    // Clamp left coordinate to prevent screen boundary overflows
     final left = (widget.tapPosition.dx - cardWidth / 2).clamp(
       16.0,
       screenWidth - cardWidth - 16.0,
     );
 
-    // If tap is in the upper 45% of the screen, show popover below. Otherwise, show above.
     final isBelow = widget.tapPosition.dy < screenHeight * 0.45;
     final top = isBelow ? widget.tapPosition.dy + 12 : null;
     final bottom = isBelow ? null : (screenHeight - widget.tapPosition.dy) + 12;
@@ -113,7 +109,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Completely transparent full-screen tap-to-dismiss barrier
           GestureDetector(
             onTap: _handleDismiss,
             behavior: HitTestBehavior.translucent,
@@ -122,7 +117,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             ),
           ),
 
-          // Scale & Fade Animated Popover Card at the precise location
           Positioned(
             left: left,
             top: top,
@@ -182,7 +176,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Title Header with scripture reference
         Row(
           children: [
             Expanded(
@@ -207,7 +200,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
         const Divider(height: 1),
         const SizedBox(height: 12),
 
-        // Scrollable scripture text
         Flexible(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -237,7 +229,6 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
         const Divider(height: 1),
         const SizedBox(height: 8),
 
-        // Bottom Action buttons (Copy & Share)
         Row(
           children: [
             Expanded(
@@ -313,7 +304,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
     Object error,
   ) {
     final theme = Theme.of(context);
-    debugPrint('🚨 BibleService: ScriptureOverlay error details: $error');
+    debugPrint('BibleService: ScriptureOverlay error details: $error');
     // The raw DioException text is written for developers; readers get the
     // same friendly copy as every other failure in the app.
     final appError = switch (error) {

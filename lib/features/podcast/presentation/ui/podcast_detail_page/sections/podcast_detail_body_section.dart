@@ -31,7 +31,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Category Badge, Season Info
             Row(
               children: [
                 Container(
@@ -65,13 +64,12 @@ class _PodcastDetailBodySection extends ConsumerWidget {
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
+                    letterSpacing: 1,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            // Title
             Text(
               episode.title,
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -80,7 +78,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 12),
-            // Publish Date and Duration
             Text(
               'Published on {} • {}'.tr(
                 args: [
@@ -97,8 +94,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Large custom Play Button
             Builder(
               builder: (context) {
                 final playerState = ref.watch(podcastPlayerProvider);
@@ -143,8 +138,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
             const SizedBox(height: 32),
             const Divider(),
             const SizedBox(height: 24),
-
-            // Episode Description Markdown Header
             Text(
               'Episode Description'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
@@ -153,7 +146,6 @@ class _PodcastDetailBodySection extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 12),
-            // Episode Markdown Body
             BenaiahMarkdown(data: episode.description),
             const SizedBox(height: 32),
             const Divider(),

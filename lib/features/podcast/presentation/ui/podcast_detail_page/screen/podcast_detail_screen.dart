@@ -8,7 +8,6 @@ class _PodcastDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final episodeAsync = ref.watch(podcastDetailProvider(episodeId));
-    final theme = Theme.of(context);
 
     return Scaffold(
       body: episodeAsync.when(

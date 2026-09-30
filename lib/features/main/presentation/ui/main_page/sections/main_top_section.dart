@@ -8,7 +8,8 @@ class _MainTopSection extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isBenaiahHeader = location == RouteNames.home || location == RouteNames.podcasts;
+    final isBenaiahHeader =
+        location == RouteNames.home || location == RouteNames.podcasts;
 
     return AppBar(
       centerTitle: false,

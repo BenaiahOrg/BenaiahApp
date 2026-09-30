@@ -1,6 +1,6 @@
 /// Routes for the Benaiah Articles public REST API (v1).
 ///
-/// Base host lives in [Env.apiUrl]; everything here is a path below it.
+/// The base host lives in `Env.apiUrl`; everything here is a path below it.
 abstract final class ApiEndpoints {
   static const _v1 = '/api/v1';
 

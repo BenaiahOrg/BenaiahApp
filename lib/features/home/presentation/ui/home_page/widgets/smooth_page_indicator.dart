@@ -19,16 +19,11 @@ class SmoothPageIndicator extends StatelessWidget {
       children: List.generate(
         count,
         (index) {
-          // Absolute distance from current scroll position
+          // 1 on the current page, falling to 0 one page away, so the dot
+          // grows from 8 px to a 24 px pill and takes the active color.
           final distance = (index - scrollPosition).abs();
-
-          // Interpolate factor: 1.0 at active center, 0.0 when further
           final factor = (1 - distance).clamp(0.0, 1.0);
-
-          // Width: 8 (inactive dot) to 24 (active pill)
           final width = 8 + (16 * factor);
-
-          // Color fades smoothly between grey and active theme color
           final color = Color.lerp(
             Colors.grey.withAlpha(80),
             activeColor,

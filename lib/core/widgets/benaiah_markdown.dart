@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// A custom theme-aware Markdown renderer that applies Benaiah design guidelines.
+/// Markdown renderer styled for the app's light and dark themes.
 ///
-/// It supports dynamic Light/Dark themes, customizable line-height, text selection,
-/// and stylized headers, lists, code-blocks, and blockquotes.
+/// Scripture references in [data] become bible.com links; tapping one opens
+/// the passage in a popover instead of leaving the app.
 class BenaiahMarkdown extends ConsumerStatefulWidget {
   const BenaiahMarkdown({
     required this.data,
@@ -50,10 +50,8 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Retrieve base text attributes
     final baseFontFamily = theme.textTheme.bodyLarge?.fontFamily;
 
-    // Standard high-readability body text style
     final baseBodyStyle =
         theme.textTheme.bodyLarge?.copyWith(
           fontSize: 15,
@@ -68,13 +66,10 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
           fontFamily: baseFontFamily,
         );
 
-    // Build custom stylesheet
     final styleSheet = MarkdownStyleSheet(
-      // Paragraph styling
       p: baseBodyStyle,
       pPadding: const EdgeInsets.only(bottom: 16),
 
-      // Heading 1
       h1: theme.textTheme.headlineMedium?.copyWith(
         fontWeight: FontWeight.bold,
         color: theme.colorScheme.onSurface,
@@ -83,7 +78,6 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       ),
       h1Padding: const EdgeInsets.only(top: 24, bottom: 12),
 
-      // Heading 2
       h2: theme.textTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
         color: theme.colorScheme.onSurface,
@@ -92,7 +86,6 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       ),
       h2Padding: const EdgeInsets.only(top: 20, bottom: 10),
 
-      // Heading 3
       h3: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.bold,
         color: theme.colorScheme.onSurface,
@@ -101,7 +94,6 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       ),
       h3Padding: const EdgeInsets.only(top: 16, bottom: 8),
 
-      // Heading 4
       h4: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
         color: theme.colorScheme.onSurface,
@@ -110,17 +102,14 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       ),
       h4Padding: const EdgeInsets.only(top: 12, bottom: 6),
 
-      // Strong / Bold
       strong: baseBodyStyle.copyWith(
         fontWeight: FontWeight.bold,
       ),
 
-      // Emphasis / Italic
       em: baseBodyStyle.copyWith(
         fontStyle: FontStyle.italic,
       ),
 
-      // Blockquotes (e.g. scripture quotes, highlights)
       blockquoteDecoration: BoxDecoration(
         color: isDark ? Colors.grey[900] : Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
@@ -140,14 +129,12 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
         color: isDark ? Colors.grey[300] : Colors.grey[700],
       ),
 
-      // Lists
       listBullet: baseBodyStyle.copyWith(
         fontWeight: FontWeight.bold,
       ),
       listBulletPadding: const EdgeInsets.only(right: 8),
       listIndent: 24,
 
-      // Code blocks
       code: TextStyle(
         fontFamily: 'monospace',
         fontSize: 14,
@@ -163,7 +150,6 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
       ),
       codeblockPadding: const EdgeInsets.all(12),
 
-      // Horizontal lines
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(

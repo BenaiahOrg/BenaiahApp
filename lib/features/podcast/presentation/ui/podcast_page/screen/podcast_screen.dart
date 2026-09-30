@@ -31,13 +31,13 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
               if (ep.category.isNotEmpty) ep.category,
           }.toList()..sort();
 
-          // Apply category filters
           final filteredEpisodes = episodes.where((ep) {
             return _selectedCategory == 'All' ||
                 ep.category == _selectedCategory;
           }).toList();
 
-          // Separate featured episode (latest first)
+          // Episodes arrive newest first; under "All" the newest one is
+          // featured in the banner instead of repeated in the list.
           PodcastEpisode? featuredEpisode;
           var listEpisodes = filteredEpisodes;
           if (_selectedCategory == 'All' && filteredEpisodes.isNotEmpty) {
@@ -47,8 +47,8 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
 
           return CustomScrollView(
             slivers: [
-              // Horizontal Category Chips. A single category would only
-              // repeat "All", so the row appears once there is a choice.
+              // With one category the chips would only repeat "All", so
+              // show them once there is a choice.
               if (categories.length > 1)
                 _PodcastCategoryChips(
                   categories: categories,
@@ -76,14 +76,12 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
                         ),
                 ),
 
-              // Featured Episode Banner
               if (featuredEpisode != null)
                 _FeaturedEpisodeBanner(
                   episode: featuredEpisode,
                   onTap: () => _navigateToDetail(featuredEpisode!),
                 ),
 
-              // Regular Episodes List
               if (listEpisodes.isNotEmpty)
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -117,7 +115,7 @@ class _PodcastScreenState extends ConsumerState<_PodcastScreen> {
                   ),
                 ),
 
-              // Safe spacing for the global mini floating player
+              // Keeps the last tile clear of the floating mini player.
               const SliverToBoxAdapter(
                 child: SizedBox(height: 84),
               ),

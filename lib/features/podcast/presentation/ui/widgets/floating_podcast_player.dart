@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:benaiah_app/core/widgets/benaiah_network_image.dart';
 import 'package:benaiah_app/features/podcast/presentation/providers/podcast_player_notifier.dart';
 import 'package:benaiah_app/features/podcast/presentation/ui/widgets/podcast_player_sheet.dart';
@@ -59,7 +60,6 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
       return const SizedBox.shrink();
     }
 
-    // Control rotation based on playback state
     if (playerState.isPlaying) {
       _rotationController.repeat();
     } else {
@@ -100,7 +100,8 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
-                      // Artwork with play/pause overlay + rotation
+                      // Tapping the artwork toggles playback instead of
+                      // opening the player sheet.
                       GestureDetector(
                         onTap: () => ref
                             .read(podcastPlayerProvider.notifier)
@@ -111,7 +112,6 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Rotating artwork
                               RotationTransition(
                                 turns: _rotationController,
                                 child: ClipOval(
@@ -141,7 +141,6 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
                                   ),
                                 ),
                               ),
-                              // Play/Pause icon overlay
                               Container(
                                 width: 28,
                                 height: 28,
@@ -171,7 +170,6 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Text Info
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +198,7 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Close button to remove player
+                      // Stops playback, which also hides this player.
                       GestureDetector(
                         onTap: () => ref
                             .read(podcastPlayerProvider.notifier)
@@ -223,7 +221,6 @@ class _FloatingPodcastPlayerState extends ConsumerState<FloatingPodcastPlayer>
                   ),
                 ),
               ),
-              // Tiny bottom progress indicator bar
               SizedBox(
                 height: 3,
                 child: LinearProgressIndicator(

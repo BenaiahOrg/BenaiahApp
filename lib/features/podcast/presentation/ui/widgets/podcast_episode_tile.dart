@@ -47,7 +47,6 @@ class PodcastEpisodeTile extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              // Left Image
               Container(
                 width: 100,
                 height: 100,
@@ -63,7 +62,6 @@ class PodcastEpisodeTile extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // Text details
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -96,7 +94,8 @@ class PodcastEpisodeTile extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '${DateTimeUtils.formatDate(episode.publishDate)} • ${DateTimeUtils.formatDuration(
+                            '${DateTimeUtils.formatDate(episode.publishDate)}'
+                            ' • ${DateTimeUtils.formatDuration(
                               episode.durationSeconds,
                             )}',
                             style: theme.textTheme.bodySmall?.copyWith(
@@ -129,7 +128,6 @@ class PodcastEpisodeTile extends ConsumerWidget {
                   ),
                 ),
               ),
-              // Fast play icon button
               Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: Builder(

@@ -17,7 +17,6 @@ class _PodcastDetailHostsSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 24),
-            // Hosts profiles header
             Text(
               episode.hosts.length > 1 ? 'Hosts'.tr() : 'Host'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
@@ -26,7 +25,6 @@ class _PodcastDetailHostsSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Hosts listing mapping
             ...episode.hosts.map((host) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
@@ -58,7 +56,6 @@ class _PodcastDetailHostsSection extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Host Image circular
                           Container(
                             width: 50,
                             height: 50,
@@ -72,7 +69,6 @@ class _PodcastDetailHostsSection extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          // Name and Bio details
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,8 +103,6 @@ class _PodcastDetailHostsSection extends StatelessWidget {
                 ),
               );
             }),
-
-            // Extra safe padding bottom
             const SizedBox(height: 80),
           ],
         ),
