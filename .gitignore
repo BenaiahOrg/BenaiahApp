@@ -28,14 +28,19 @@ Thumbs.db
 !.vscode/settings.json
 !.vscode/launch.json
 
-# FVM — symlinks point to the machine cache; .fvmrc and fvm_config.json stay tracked
-.fvm/flutter_sdk
-.fvm/versions/
+# FVM — the SDK cache is per machine; .fvmrc stays tracked
+.fvm/
 
 # Flutter/Dart/Pub related
-# Generated code (build_runner, json_serializable, freezed, etc.)
+# Generated code — run `make -f scripts/Makefile gen` after cloning
 *.g.dart
 *.freezed.dart
+lib/core/di/injection.config.dart
+lib/gen/
+
+# Mason — local brick cache and compiled hooks
+.mason/
+bricks/**/hooks/build/
 
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -79,11 +84,7 @@ secrets.json
 scripts/firebase/service-account*.json
 scripts/firebase/node_modules/
 
-# FVM Version Cache
-.fvm/
-# Project Documentation
+# Local notes
 docs/
-
-sentry.properties
 
 sentry.properties

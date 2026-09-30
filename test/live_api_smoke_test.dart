@@ -8,10 +8,9 @@ import 'package:benaiah_app/features/content/domain/entities/topic_id.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Hits the real Benaiah API. Excluded from the default run because it needs
-/// network; execute with:
+/// Hits the real Benaiah API, so `dart_test.yaml` skips it by default. Run:
 ///
-///     flutter test test/live_api_smoke_test.dart --tags live
+///     flutter test --run-skipped --tags live
 void main() {
   late ContentApiDataSourceImpl source;
 
