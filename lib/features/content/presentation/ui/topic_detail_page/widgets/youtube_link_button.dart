@@ -8,7 +8,7 @@ class _YouTubeLinkButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Sleek premium YouTube color palette
     final backgroundColor = isDark
         ? const Color(0xFF1E1E1E)
@@ -24,15 +24,11 @@ class _YouTubeLinkButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () async {
-            final uri = Uri.parse(url);
-            if (await canLaunchUrl(uri)) {
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
-            } else {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Could not launch video link'.tr())),
-                );
-              }
+            final opened = await ExternalLink.open(Uri.parse(url));
+            if (!opened && context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Could not launch video link'.tr())),
+              );
             }
           },
           borderRadius: BorderRadius.circular(16),

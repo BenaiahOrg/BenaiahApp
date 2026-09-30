@@ -41,19 +41,21 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
     // Graceful fallback for a URL we can't parse a video ID from: a
     // thumbnail card that opens the video in the YouTube app/browser instead.
     if (_hasError || _videoId == null) {
-      final validId = _videoId ?? 'RQMxFTXn1hU';
-      final thumbnailUrl = 'https://img.youtube.com/vi/$validId/mqdefault.jpg';
+      final videoId = _videoId;
+      // Only ever this video's own thumbnail: an unparseable link gets a
+      // plain placeholder, not some unrelated video's artwork.
+      final placeholder = ColoredBox(
+        color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF0F0F0),
+        child: const Icon(
+          Icons.video_library,
+          size: 48,
+          color: Colors.grey,
+        ),
+      );
 
       return Center(
         child: GestureDetector(
-          onTap: () {
-            unawaited(
-              launchUrl(
-                Uri.parse(widget.url),
-                mode: LaunchMode.externalApplication,
-              ),
-            );
-          },
+          onTap: () => unawaited(ExternalLink.open(Uri.parse(widget.url))),
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: Container(
@@ -73,22 +75,15 @@ class _EmbeddedYoutubePlayerState extends State<_EmbeddedYoutubePlayer> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      thumbnailUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return ColoredBox(
-                          color: isDark
-                              ? const Color(0xFF1E1E1E)
-                              : const Color(0xFFF0F0F0),
-                          child: const Icon(
-                            Icons.video_library,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
+                    if (videoId != null)
+                      Image.network(
+                        'https://img.youtube.com/vi/$videoId/mqdefault.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            placeholder,
+                      )
+                    else
+                      placeholder,
                     const ColoredBox(
                       color: Colors.black45,
                     ),

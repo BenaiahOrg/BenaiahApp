@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:benaiah_app/core/network/bible_service.dart';
+import 'package:benaiah_app/core/utils/external_link.dart';
 import 'package:benaiah_app/core/utils/scripture_linkifier.dart';
 import 'package:benaiah_app/features/content/presentation/widgets/scripture_overlay.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// A custom theme-aware Markdown renderer that applies Benaiah design guidelines.
 ///
@@ -232,12 +232,7 @@ class _BenaiahMarkdownState extends ConsumerState<BenaiahMarkdown> {
               if (widget.onTapLink != null) {
                 widget.onTapLink!(text, href, title);
               } else if (href != null) {
-                final uri = Uri.parse(href);
-                unawaited(() async {
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                }());
+                unawaited(ExternalLink.open(Uri.parse(href)));
               }
             },
           ),

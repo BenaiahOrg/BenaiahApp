@@ -3,6 +3,8 @@ part of '../about_page.dart';
 class _AboutBodySection extends StatelessWidget {
   const _AboutBodySection();
 
+  static const _websiteUrl = 'https://www.benaiah.org';
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,11 +27,22 @@ class _AboutBodySection extends StatelessWidget {
           ),
           const SizedBox(height: 48),
           Center(
-            child: Text(
-              'Benaiah.org'.tr(),
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                letterSpacing: 2,
-                fontWeight: FontWeight.w300,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () =>
+                  unawaited(ExternalLink.open(Uri.parse(_websiteUrl))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Text(
+                  'Benaiah.org'.tr(),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
               ),
             ),
           ),
