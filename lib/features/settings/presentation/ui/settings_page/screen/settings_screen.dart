@@ -1,14 +1,10 @@
 part of '../settings_page.dart';
 
-class _SettingsScreen extends ConsumerWidget {
+class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
-      appBar: _SettingsTopSection(),
-      body: _SettingsBodySection(),
-      bottomNavigationBar: _SettingsBottomSection(),
-    );
+  Widget build(BuildContext context) {
+    return const Scaffold(body: _SettingsBodySection());
   }
 }

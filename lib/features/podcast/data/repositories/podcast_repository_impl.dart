@@ -1,6 +1,5 @@
 import 'package:benaiah_app/core/error/app_error.dart';
 import 'package:benaiah_app/core/error/result.dart';
-import 'package:benaiah_app/features/podcast/data/data_sources/podcast_local_data_source.dart';
 import 'package:benaiah_app/features/podcast/data/data_sources/podcast_remote_data_source.dart';
 import 'package:benaiah_app/features/podcast/domain/entities/podcast_episode.dart';
 import 'package:benaiah_app/features/podcast/domain/repositories/podcast_repository.dart';
@@ -8,10 +7,9 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: PodcastRepository)
 class PodcastRepositoryImpl implements PodcastRepository {
-  PodcastRepositoryImpl(this._remoteDataSource, this._localDataSource);
+  PodcastRepositoryImpl(this._remoteDataSource);
 
   final PodcastRemoteDataSource _remoteDataSource;
-  final PodcastLocalDataSource _localDataSource;
 
   @override
   Future<Result<List<PodcastEpisode>>> getEpisodes() async {

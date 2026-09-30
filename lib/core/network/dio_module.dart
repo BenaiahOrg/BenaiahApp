@@ -1,5 +1,4 @@
 import 'package:benaiah_app/core/config/env.dart';
-import 'package:benaiah_app/core/network/interceptors/auth_interceptor.dart';
 import 'package:benaiah_app/core/network/interceptors/logging_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -8,7 +7,7 @@ import 'package:sentry_dio/sentry_dio.dart';
 @module
 abstract class DioModule {
   @lazySingleton
-  Dio dio(AuthInterceptor authInterceptor) =>
+  Dio dio() =>
       Dio(
           BaseOptions(
             baseUrl: Env.apiUrl,
@@ -26,8 +25,5 @@ abstract class DioModule {
           ),
         )
         ..addSentry()
-        ..interceptors.addAll([
-          authInterceptor,
-          LoggingInterceptor(),
-        ]);
+        ..interceptors.add(LoggingInterceptor());
 }

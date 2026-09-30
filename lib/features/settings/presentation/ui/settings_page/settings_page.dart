@@ -10,9 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'screen/settings_screen.dart';
-part 'sections/settings_top_section.dart';
 part 'sections/settings_body_section.dart';
-part 'sections/settings_bottom_section.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});

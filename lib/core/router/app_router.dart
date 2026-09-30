@@ -1,6 +1,4 @@
 import 'package:benaiah_app/core/router/route_names.dart';
-import 'package:benaiah_app/core/router/router_redirect.dart';
-import 'package:benaiah_app/core/router/router_refresh_listenable.dart';
 import 'package:benaiah_app/features/about/presentation/ui/about_page/about_page.dart';
 import 'package:benaiah_app/features/content/presentation/ui/author_articles_page/author_articles_page.dart';
 import 'package:benaiah_app/features/content/presentation/ui/series_detail_page/series_detail_page.dart';
@@ -15,19 +13,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-final routerRefreshListenableProvider = Provider<RouterRefreshListenable>((
-  ref,
-) {
-  return RouterRefreshListenable();
-});
-
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final refreshListenable = ref.watch(routerRefreshListenableProvider);
-
   return GoRouter(
     initialLocation: '/',
-    refreshListenable: refreshListenable,
-    redirect: routerRedirect,
     observers: [
       SentryNavigatorObserver(),
     ],

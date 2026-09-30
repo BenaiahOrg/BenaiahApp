@@ -14,7 +14,6 @@ dependencies:
   easy_localization_loader: ^2.0.2
   equatable: ^2.0.8
   firebase_core: ^4.9.0
-  firebase_storage: ^13.4.1
   flutter:
     sdk: flutter
   flutter_hooks: ^0.21.3+1
@@ -30,7 +29,6 @@ dependencies:
   google_fonts: ^8.1.0
   hooks_riverpod: ^3.3.1
   injectable: ^2.7.1+4
-  json_annotation: ^4.9.0
   just_audio: ^0.10.5
   just_audio_background: ^0.0.1-beta.17
   path_provider: ^2.1.5
@@ -52,7 +50,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   injectable_generator: ^2.6.0
-  json_serializable: ^6.8.0
   riverpod_generator: ^4.0.0
   sentry_dart_plugin: ^3.3.0
   very_good_analysis: ^10.2.0

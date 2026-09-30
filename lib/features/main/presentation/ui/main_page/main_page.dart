@@ -13,7 +13,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'screen/main_screen.dart';
 part 'sections/main_top_section.dart';
-part 'sections/main_body_section.dart';
 part 'sections/main_bottom_section.dart';
 
 class MainPage extends ConsumerWidget {
