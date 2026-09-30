@@ -6,7 +6,9 @@ import 'package:benaiah_app/app.dart';
 import 'package:benaiah_app/core/config/env.dart';
 import 'package:benaiah_app/core/di/injection.dart';
 import 'package:benaiah_app/core/extensions/responsive_extension.dart';
-import 'package:benaiah_app/firebase_options.dart';
+import 'package:benaiah_app/firebase_options_dev.dart' as dev;
+import 'package:benaiah_app/firebase_options_prod.dart' as prod;
+import 'package:benaiah_app/firebase_options_qa.dart' as qa;
 import 'package:benaiah_app/flavors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
@@ -75,11 +77,17 @@ void main() async {
   );
 }
 
+/// Each flavor is registered as its own Firebase app, so a dev build never
+/// reports as the production app.
+FirebaseOptions get _firebaseOptions => switch (F.appFlavor) {
+  Flavor.dev => dev.DefaultFirebaseOptions.currentPlatform,
+  Flavor.qa => qa.DefaultFirebaseOptions.currentPlatform,
+  Flavor.prod => prod.DefaultFirebaseOptions.currentPlatform,
+};
+
 Future<void> _initializeFirebase() async {
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp(options: _firebaseOptions);
   } on FirebaseException catch (e) {
     if (e.code != 'duplicate-app') {
       debugPrint('Firebase initialization skipped: ${e.message}');

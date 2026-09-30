@@ -5,8 +5,8 @@
 > Articles REST API. See [docs/BACKEND_API_NOTES.md](docs/BACKEND_API_NOTES.md).
 > Firebase now backs **podcasts only**.
 
-The app reads podcast episodes from Cloud Firestore and falls back to the
-bundled JSON file when Firebase is not configured or unreachable.
+The app reads podcast episodes from Cloud Firestore. There is no bundled
+fallback, so podcasts are empty when Firebase is unreachable.
 
 ## Collections
 
@@ -18,22 +18,33 @@ longer read by the app.
 
 ## Project setup
 
-1. Create a Firebase project.
-2. Run FlutterFire configuration for this app:
+The app is already connected to the `benaiah-app` project, and every config
+file it needs is committed, so a fresh clone runs without any Firebase
+tooling. Each flavor is registered as its own Firebase app:
 
-   ```sh
-   dart pub global activate flutterfire_cli
-   flutterfire configure
-   ```
+| Flavor | Android package / iOS bundle | Dart options |
+|--------|------------------------------|--------------|
+| dev    | `org.benaiah.app.dev`        | `lib/firebase_options_dev.dart` |
+| qa     | `org.benaiah.app.qa`         | `lib/firebase_options_qa.dart` |
+| prod   | `org.benaiah.app`            | `lib/firebase_options_prod.dart` |
 
-3. Make sure the generated/native config files exist for the platforms you use:
+`main.dart` picks the options for the running flavor. Android also carries all
+three apps in `android/app/google-services.json`; iOS keeps one plist per
+flavor in `ios/Runner/GoogleService-Info-{flavor}.plist`.
 
-   - `android/app/google-services.json`
-   - `ios/Runner/GoogleService-Info.plist`
-   - `macos/Runner/GoogleService-Info.plist`
-   - `lib/firebase_options.dart` for web or explicit Dart options
+To regenerate a flavor's config (e.g. after registering a new platform), run
+FlutterFire once per flavor:
 
-4. Publish rules from `scripts/firebase/firestore.rules`.
+```sh
+dart pub global activate flutterfire_cli
+flutterfire configure --project=benaiah-app \
+  --out=lib/firebase_options_dev.dart \
+  --android-package-name=org.benaiah.app.dev \
+  --ios-bundle-id=org.benaiah.app.dev
+```
+
+The Firebase CLI (`firebase login`) is only needed to deploy rules and
+indexes from `scripts/firebase/`.
 
 ## Seed Firestore from the current JSON
 
