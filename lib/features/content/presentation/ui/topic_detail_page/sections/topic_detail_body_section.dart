@@ -225,12 +225,14 @@ class _TopicDetailBodySection extends ConsumerWidget {
           body: Overlay(
             initialEntries: [
               OverlayEntry(
-                builder: (context) => TabBarView(
-                  children: [
-                    _DevotionalTab(topic: topic),
-                    _StudyTab(topic: topic),
-                    _GraphicsTab(topic: topic),
-                  ],
+                builder: (context) => _TabSwitchGuard(
+                  child: TabBarView(
+                    children: [
+                      _DevotionalTab(topic: topic),
+                      _StudyTab(topic: topic),
+                      _GraphicsTab(topic: topic),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -245,6 +247,32 @@ class _TopicDetailBodySection extends ConsumerWidget {
           onRetry: () => ref.invalidate(topicDetailProvider(topicId)),
         ),
       ),
+    );
+  }
+}
+
+/// Holds touches off the pages while a tapped tab is sliding into view.
+///
+/// Jumping two tabs (Graphics to Devotional) animates through the middle page.
+/// A touch during that slide interrupts the page animation, which then settles
+/// on the middle page while the tab bar still highlights the tapped one, so
+/// the reader sees Study content under a Devotional tab.
+class _TabSwitchGuard extends StatelessWidget {
+  const _TabSwitchGuard({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = DefaultTabController.of(context);
+
+    return AnimatedBuilder(
+      animation: controller.animation!,
+      builder: (context, child) => IgnorePointer(
+        ignoring: controller.indexIsChanging,
+        child: child,
+      ),
+      child: child,
     );
   }
 }
