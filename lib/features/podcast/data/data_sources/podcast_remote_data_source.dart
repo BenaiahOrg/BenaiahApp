@@ -22,6 +22,14 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
   Future<Result<List<PodcastEpisode>>> getEpisodes() async {
     try {
       return Success(await _getEpisodesFromFirestore());
+    } on AppError catch (e) {
+      return Failure(e);
+    } on FirebaseException catch (e, st) {
+      return Failure(
+        e.code == 'unavailable'
+            ? const NetworkError()
+            : GenericError(stackTrace: st, cause: e),
+      );
     } on Exception catch (e, st) {
       return Failure(GenericError(stackTrace: st, cause: e));
     }
@@ -34,6 +42,14 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
         .where('isPublished', isEqualTo: true)
         .orderBy('publishDate', descending: true)
         .get();
+
+    // Offline, Firestore answers from its on-device cache instead of
+    // failing. An empty cache then reads as "no episodes yet", which is
+    // wrong: the server was never asked. Episodes cached from an earlier
+    // online session still show.
+    if (snapshot.metadata.isFromCache && snapshot.docs.isEmpty) {
+      throw const NetworkError();
+    }
 
     return snapshot.docs.map((doc) {
       final data = doc.data();
@@ -106,7 +122,6 @@ class PodcastRemoteDataSourceImpl implements PodcastRemoteDataSource {
         .whereType<PodcastHost>()
         .toList();
   }
-
 
   DateTime _dateTime(Object? value) {
     if (value is Timestamp) {

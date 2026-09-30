@@ -5,6 +5,7 @@
 import 'package:benaiah_app/app.dart';
 import 'package:benaiah_app/core/config/env.dart';
 import 'package:benaiah_app/core/di/injection.dart';
+import 'package:benaiah_app/core/error/app_error.dart';
 import 'package:benaiah_app/core/extensions/responsive_extension.dart';
 import 'package:benaiah_app/firebase_options_dev.dart' as dev;
 import 'package:benaiah_app/firebase_options_prod.dart' as prod;
@@ -61,6 +62,7 @@ void main() async {
     },
     appRunner: () => runApp(
       ProviderScope(
+        retry: _retry,
         child: EasyLocalization(
           supportedLocales: const [
             Locale('en'),
@@ -75,6 +77,16 @@ void main() async {
       ),
     ),
   );
+}
+
+/// Riverpod retries a failed provider up to ten times with growing delays,
+/// about 40 seconds in all, and shows it as loading the whole time, so an
+/// offline launch sat on skeletons before saying it was offline. Being
+/// offline won't clear up in that window: report it at once and let the
+/// reader tap "Try again". Other failures keep Riverpod's default backoff.
+Duration? _retry(int retryCount, Object error) {
+  if (error is NetworkError) return null;
+  return ProviderContainer.defaultRetry(retryCount, error);
 }
 
 /// Each flavor is registered as its own Firebase app, so a dev build never
