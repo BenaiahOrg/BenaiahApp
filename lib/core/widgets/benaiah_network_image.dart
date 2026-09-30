@@ -1,3 +1,4 @@
+import 'package:benaiah_app/core/utils/cloudinary_url.dart';
 import 'package:benaiah_app/gen/assets.gen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class BenaiahNetworkImage extends StatelessWidget {
         : null;
 
     return CachedNetworkImage(
-      imageUrl: imageUrl,
+      imageUrl: CloudinaryUrl.sized(imageUrl, cacheWidth),
       fit: fit,
       width: width,
       height: height,

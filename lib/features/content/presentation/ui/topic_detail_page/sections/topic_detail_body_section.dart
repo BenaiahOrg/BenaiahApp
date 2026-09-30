@@ -5,28 +5,19 @@ class _TopicDetailBodySection extends ConsumerWidget {
 
   final String topicId;
 
-  // Passages are no longer pre-fetched. Linkified articles carry up to ~20
-  // references, and firing them all at once got the app rate-limited, which
-  // left every popover — including the one actually tapped — waiting on a
-  // request that never came back. The overlay fetches on tap instead.
-  void _preFetchImages(BuildContext context, Topic topic) {
-    for (final imageUrl in topic.graphics.data) {
-      if (imageUrl.isNotEmpty) {
-        unawaited(precacheImage(CachedNetworkImageProvider(imageUrl), context));
-      }
-    }
-  }
-
+  // Nothing is pre-fetched here. Passages: linkified articles carry up to
+  // ~20 references, and firing them all at once got the app rate-limited,
+  // so the overlay fetches on tap instead. Graphics: pre-caching decoded all
+  // ~18 at full print size (up to 4258x7543, ~128MB each), which the grid
+  // never showed and which flushed every list thumbnail out of the image
+  // cache, so they reloaded on the way back. The grid loads its own
+  // screen-sized copies.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final topicAsync = ref.watch(topicDetailProvider(topicId));
 
     return topicAsync.when(
       data: (topic) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _preFetchImages(context, topic);
-        });
-
         // Empty falls through to BenaiahNetworkImage's branded fallback
         // rather than a random stock photo.
         final imageUrl = topic.graphics.data.firstOrNull ?? '';
