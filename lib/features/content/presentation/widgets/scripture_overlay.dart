@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:benaiah_app/core/error/app_error.dart';
+import 'package:benaiah_app/core/error/app_error_parser.dart';
+import 'package:benaiah_app/core/network/bible_service.dart';
 import 'package:benaiah_app/features/content/presentation/providers/bible_passage_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -161,8 +164,10 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
     );
   }
 
-  Widget _buildContent(BuildContext context, Passage passage) {
+  Widget _buildContent(BuildContext context, ScripturePassage scripture) {
     final theme = Theme.of(context);
+    final passage = scripture.passage;
+    final copyright = scripture.copyright;
     final isAmharic = context.locale.languageCode == 'am';
 
     final textStyle = TextStyle(
@@ -182,7 +187,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
           children: [
             Expanded(
               child: Text(
-                passage.reference,
+                _citation(scripture),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.1,
@@ -208,9 +213,21 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
-              child: SelectableText(
-                _cleanHtml(passage.content),
-                style: textStyle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SelectableText(
+                    _cleanHtml(passage.content),
+                    style: textStyle,
+                  ),
+                  // Each version's license asks for its notice with the
+                  // quoted text; it sits one tap away so it doesn't crowd
+                  // the verse.
+                  if (copyright != null) ...[
+                    const SizedBox(height: 8),
+                    _buildCopyright(context, scripture, copyright),
+                  ],
+                ],
               ),
             ),
           ),
@@ -235,7 +252,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
                 ),
                 icon: const Icon(Icons.copy_rounded, size: 16),
                 label: Text('Copy'.tr(), style: const TextStyle(fontSize: 13)),
-                onPressed: () => _copyToClipboard(context, passage),
+                onPressed: () => _copyToClipboard(context, scripture),
               ),
             ),
             const SizedBox(width: 8),
@@ -254,7 +271,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
                 ),
                 icon: const Icon(Icons.share_rounded, size: 16),
                 label: Text('Share'.tr(), style: const TextStyle(fontSize: 13)),
-                onPressed: () => _sharePassage(passage),
+                onPressed: () => _sharePassage(scripture),
               ),
             ),
           ],
@@ -297,6 +314,13 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
   ) {
     final theme = Theme.of(context);
     debugPrint('🚨 BibleService: ScriptureOverlay error details: $error');
+    // The raw DioException text is written for developers; readers get the
+    // same friendly copy as every other failure in the app.
+    final appError = switch (error) {
+      AppError() => error,
+      YouVersionNetworkException() => const NetworkError(),
+      _ => AppErrorParser.parse(error, StackTrace.current),
+    };
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -332,8 +356,8 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
             physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: SelectableText(
-                error.toString(),
+              child: Text(
+                appError.userMessage,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.grey[600],
@@ -370,11 +394,64 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
         .trim();
   }
 
-  Future<void> _copyToClipboard(BuildContext context, Passage passage) async {
-    final cleanContent = _cleanHtml(passage.content);
-    await Clipboard.setData(
-      ClipboardData(text: '$cleanContent\n\n— ${passage.reference}'),
+  /// A small "© NIV" mark; tapping it shows the full notice as a tooltip,
+  /// so the popover keeps its size and the verse stays the focus.
+  Widget _buildCopyright(
+    BuildContext context,
+    ScripturePassage scripture,
+    String copyright,
+  ) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurface.withAlpha(120);
+    final label = scripture.versionLabel;
+
+    return Tooltip(
+      message: copyright,
+      triggerMode: TooltipTriggerMode.tap,
+      showDuration: const Duration(seconds: 8),
+      preferBelow: false,
+      margin: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.all(12),
+      textStyle: theme.textTheme.bodySmall?.copyWith(
+        fontSize: 11,
+        height: 1.4,
+        color: theme.colorScheme.onInverseSurface,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label == null ? '©' : '© $label',
+              style: theme.textTheme.labelSmall?.copyWith(color: muted),
+            ),
+            const SizedBox(width: 3),
+            Icon(Icons.info_outline_rounded, size: 12, color: muted),
+          ],
+        ),
+      ),
     );
+  }
+
+  /// "John 3:16 (NIV)": the version travels with the reference wherever the
+  /// verse is shown or shared, as the translations' licenses require.
+  String _citation(ScripturePassage scripture) {
+    final label = scripture.versionLabel;
+    final reference = scripture.passage.reference;
+    return label == null ? reference : '$reference ($label)';
+  }
+
+  String _shareText(ScripturePassage scripture) {
+    final cleanContent = _cleanHtml(scripture.passage.content);
+    return '$cleanContent\n\n— ${_citation(scripture)}';
+  }
+
+  Future<void> _copyToClipboard(
+    BuildContext context,
+    ScripturePassage scripture,
+  ) async {
+    await Clipboard.setData(ClipboardData(text: _shareText(scripture)));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -388,12 +465,7 @@ class _ScriptureOverlayState extends ConsumerState<ScriptureOverlay>
     }
   }
 
-  Future<void> _sharePassage(Passage passage) async {
-    final cleanContent = _cleanHtml(passage.content);
-    await SharePlus.instance.share(
-      ShareParams(
-        text: '$cleanContent\n\n— ${passage.reference}',
-      ),
-    );
+  Future<void> _sharePassage(ScripturePassage scripture) async {
+    await SharePlus.instance.share(ShareParams(text: _shareText(scripture)));
   }
 }

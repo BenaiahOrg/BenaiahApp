@@ -2,7 +2,6 @@ import 'package:benaiah_app/core/di/injection.dart';
 import 'package:benaiah_app/core/network/bible_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:youversion_sdk/youversion_sdk.dart';
 
 part 'bible_passage_provider.g.dart';
 
@@ -20,7 +19,7 @@ class BiblePassageParam extends Equatable {
 }
 
 @Riverpod(keepAlive: true)
-FutureOr<Passage> biblePassage(Ref ref, BiblePassageParam param) {
+FutureOr<ScripturePassage> biblePassage(Ref ref, BiblePassageParam param) {
   final bibleService = container<BibleService>();
 
   return bibleService.getPassage(

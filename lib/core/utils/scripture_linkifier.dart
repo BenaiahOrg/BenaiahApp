@@ -7,12 +7,32 @@
 /// `BibleService.parseBibleLink`, so neither the authoring format nor the
 /// `youversion_sdk` package has to change.
 abstract class ScriptureLinkifier {
-  /// Bible version per app language: NASV (አዲሱ መደበኛ ትርጒም) for Amharic,
-  /// ASV for everything else. `BibleService.getPassage` falls back to 12 if a
-  /// version request fails, so an unreachable translation still reads.
-  // ponytail: one version per language; add a picker only if users ask.
-  static const _bibleIds = {'am': '1260', 'en': '12'};
-  static const _defaultBibleId = '12';
+  /// Bible version per app language when a reference names no translation:
+  /// NASV (አዲሱ መደበኛ ትርጒም, which Amharic authors cite as "አመት") for
+  /// Amharic, NIV for English since that is what most English articles quote.
+  /// `BibleService.getPassage` falls back to ASV if the API refuses a version.
+  static const _bibleIds = {'am': '1260', 'en': '111'};
+  static const _defaultBibleId = '111';
+
+  /// Translation labels authors write after a reference ("John 3:16 NIV",
+  /// "(Romans 5:5, NASB)"), mapped to the YouVersion Bible our app key is
+  /// licensed for. The key cannot read KJV, NKJV, NLT or ESV (the API returns
+  /// 404), so the KJV family maps to ASV, the closest licensed wording, and
+  /// NLT/ESV fall through to the language default.
+  static const _versionIds = {
+    'niv': '111',
+    'niv11': '111',
+    'nivuk': '113',
+    'nirv': '110',
+    'amp': '1588',
+    'nasb': '2692',
+    'nasb2020': '2692',
+    'nasb1995': '100',
+    'bsb': '3034',
+    'asv': '12',
+    'kjv': '12',
+    'nkjv': '12',
+  };
 
   /// Returns [markdown] with every recognized bare reference replaced by
   /// `[original text](https://www.bible.com/bible/<version>/BOOK.CH.VERSES)`.
@@ -22,12 +42,13 @@ abstract class ScriptureLinkifier {
   ///
   /// Chapter-only references ("Genesis 22") are deliberately ignored: they are
   /// indistinguishable from ordinary prose without a verse number.
-  /// [languageCode] selects the translation the popover will fetch, so an
-  /// Amharic article opens Amharic scripture.
+  /// A translation label right after the reference picks the version the
+  /// popover fetches; otherwise [languageCode] does, so an Amharic article
+  /// opens Amharic scripture.
   static String linkify(String markdown, {String languageCode = 'en'}) {
     if (markdown.isEmpty) return markdown;
 
-    final bibleId = _bibleIds[languageCode] ?? _defaultBibleId;
+    final languageBibleId = _bibleIds[languageCode] ?? _defaultBibleId;
 
     return markdown.replaceAllMapped(_pattern, (match) {
       final whole = match.group(0)!;
@@ -52,6 +73,8 @@ abstract class ScriptureLinkifier {
             .replaceAll(' ', '')
             .replaceAll('፣', ',')
             .replaceAll(RegExp('[–—]'), '-');
+        final bibleId =
+            _versionIds[match.group(5)?.toLowerCase()] ?? languageBibleId;
 
         return '${candidate.substring(0, words[start].start)}'
             '[$name${whole.substring(candidate.length)}]'
@@ -298,6 +321,9 @@ abstract class ScriptureLinkifier {
     // Ethiopic colon (፥), or — most often — an Ethiopic wordspace (፡),
     // which looks the same on screen.
     ' ?[:፡፥፦] ?'
-    r'(\d{1,3}(?: ?[-–—] ?\d{1,3})?(?: ?[,፣] ?\d{1,3}(?: ?[-–—] ?\d{1,3})?)*)',
+    r'(\d{1,3}(?: ?[-–—] ?\d{1,3})?(?: ?[,፣] ?\d{1,3}(?: ?[-–—] ?\d{1,3})?)*)'
+    // 5: a translation label that follows ("NIV", ", NASB", " (AMP)"). Only
+    // peeked at, so it stays outside the link text.
+    r'(?=(?:[ ,]*\(? ?([A-Za-z]{2,5}\d{0,4})(?![A-Za-z0-9]))?)',
   );
 }

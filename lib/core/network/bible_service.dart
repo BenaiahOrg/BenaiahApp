@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:benaiah_app/core/config/env.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -138,6 +140,11 @@ class BibleService {
   /// forever. Bound it here instead of forking the package.
   static const _requestTimeout = Duration(seconds: 15);
 
+  /// The SDK turns HTTP 401/403 and 404 into these; both mean the key cannot
+  /// read that version, as opposed to a slow or dropped request.
+  static bool _isRefused(YouVersionException e) =>
+      e is YouVersionAuthException || e is YouVersionNotFoundException;
+
   Future<Passage> _fetch(String bibleId, String passageId) => _client.bibles
       .getPassage(
         bibleId,
@@ -147,48 +154,101 @@ class BibleService {
       )
       .timeout(_requestTimeout);
 
+  /// Version details (abbreviation, copyright) per Bible ID, fetched once per
+  /// session. Each license requires its notice beside quoted text.
+  final _bibles = <String, Future<Bible?>>{};
+
+  Future<Bible?> _bibleInfo(String bibleId) {
+    return _bibles[bibleId] ??= _client.bibles
+        .get(bibleId)
+        .timeout(_requestTimeout)
+        .then<Bible?>((bible) => bible)
+        .catchError((Object e) {
+          // The verse still shows; retry the details on the next popover.
+          debugPrint('⚠️ BibleService: No details for Bible $bibleId ($e)');
+          unawaited(_bibles.remove(bibleId));
+          return null;
+        });
+  }
+
   /// Fetches a Bible passage using the `youversion_sdk`.
   ///
   /// [passageId] is the standard coordinate (e.g., 'JHN.3.16' or 'JHN.3.16,19').
   /// [bibleId] is the specific translation version ID.
-  Future<Passage> getPassage(
+  Future<ScripturePassage> getPassage(
     String passageId, {
     required String bibleId,
   }) async {
+    try {
+      return await _read(passageId, bibleId);
+    } on YouVersionException catch (e) {
+      // If the API refuses a Bible version (e.g. 403 Access Denied due to
+      // developer key limitations), gracefully fall back to English (ASV,
+      // ID 12) so the passage is still readable. Timeouts are not refusals:
+      // YouVersion is often slow on a passage's first request, and swapping
+      // an Amharic reader to English for that would be wrong, so those
+      // surface as a retryable error instead.
+      if (bibleId != _fallbackBibleId && _isRefused(e)) {
+        debugPrint(
+          '⚠️ BibleService: Failed to fetch passage for translation '
+          '$bibleId ($e). Falling back to English (ASV - 12)...',
+        );
+        return _read(passageId, _fallbackBibleId);
+      }
+      rethrow;
+    }
+  }
+
+  static const _fallbackBibleId = '12';
+
+  Future<ScripturePassage> _read(String passageId, String bibleId) async {
+    // Started first so the details load alongside the verses.
+    final bibleFuture = _bibleInfo(bibleId);
     final subPassageIds = parsePassageIds(passageId);
 
+    final Passage passage;
     if (subPassageIds.length <= 1) {
-      final targetId = subPassageIds.firstOrNull ?? passageId;
-      try {
-        return await _fetch(bibleId, targetId);
-      } catch (e) {
-        // If a non-default Bible version request fails (e.g. 403 Access
-        // Denied due to developer key limitations), gracefully fall back to
-        // English (ASV, ID 12) so the passage is still readable.
-        if (bibleId != '12') {
-          debugPrint(
-            '⚠️ BibleService: Failed to fetch passage for translation '
-            '$bibleId ($e). Falling back to English (ASV - 12)...',
-          );
-          return _fetch('12', targetId);
-        }
-        rethrow;
-      }
+      passage = await _fetch(bibleId, subPassageIds.firstOrNull ?? passageId);
+    } else {
+      // Fetch multiple passages in parallel, then merge contents and
+      // references.
+      final passages = await Future.wait(
+        subPassageIds.map((id) => _fetch(bibleId, id)),
+      );
+      passage = Passage(
+        id: passageId,
+        content: passages.map((p) => p.content).join(' '),
+        reference: combineReferences(passages),
+      );
     }
 
-    // Fetch multiple passages in parallel recursively
-    final passages = await Future.wait(
-      subPassageIds.map((id) => getPassage(id, bibleId: bibleId)),
+    // Details are usually back well before the verses. If they lag, show the
+    // verse now; the request keeps going and the next popover has them.
+    final bible = await bibleFuture.timeout(
+      const Duration(seconds: 3),
+      onTimeout: () => null,
     );
+    return ScripturePassage(passage: passage, bible: bible);
+  }
+}
 
-    // Merge contents and references
-    final combinedReference = combineReferences(passages);
-    final combinedContent = passages.map((p) => p.content).join(' ');
+/// A passage plus the version it was read from, which can differ from the
+/// one requested after a fallback, so the popover labels it truthfully.
+class ScripturePassage {
+  const ScripturePassage({required this.passage, this.bible});
 
-    return Passage(
-      id: passageId,
-      content: combinedContent,
-      reference: combinedReference,
-    );
+  final Passage passage;
+
+  /// Null when the version details could not be loaded.
+  final Bible? bible;
+
+  /// Short label to print after the reference, e.g. "NIV".
+  String? get versionLabel => bible?.localizedAbbreviation;
+
+  /// The notice the version's license asks for, e.g. "Copyright © 2011 by
+  /// Biblica, Inc.® Used by Permission".
+  String? get copyright {
+    final text = bible?.copyright?.trim();
+    return text == null || text.isEmpty ? null : text;
   }
 }
