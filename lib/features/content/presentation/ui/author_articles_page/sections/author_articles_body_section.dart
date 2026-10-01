@@ -12,11 +12,11 @@ class _AuthorArticlesBodySection extends ConsumerWidget {
     return profileAsync.when(
       data: (profile) => _AuthorProfileView(profile: profile),
       loading: () => Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text('Team Member'.tr())),
         body: const SkeletonList(imageSize: 56),
       ),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text('Team Member'.tr())),
         body: BenaiahStateView.error(
           error: error,
           onRetry: () => ref.invalidate(authorProfileProvider(authorId)),
@@ -44,9 +44,10 @@ class _AuthorProfileView extends StatelessWidget {
           elevation: 0,
           backgroundColor: Theme.of(context).colorScheme.surface,
           surfaceTintColor: Colors.transparent,
+          title: Text('Team Member'.tr()),
         ),
         SliverPadding(
-          padding: contentInsets.copyWith(bottom: 32),
+          padding: contentInsets.copyWith(top: 24, bottom: 32),
           sliver: SliverToBoxAdapter(
             child: _AuthorHeader(author: author, lang: lang),
           ),

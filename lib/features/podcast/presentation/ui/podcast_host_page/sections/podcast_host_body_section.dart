@@ -28,9 +28,10 @@ class _PodcastHostBodySection extends ConsumerWidget {
               elevation: 0,
               backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
+              title: Text('Host'.tr()),
             ),
             SliverPadding(
-              padding: contentInsets.copyWith(bottom: 32),
+              padding: contentInsets.copyWith(top: 24, bottom: 32),
               sliver: SliverToBoxAdapter(
                 child: _PodcastHostHeader(host: host),
               ),
@@ -85,11 +86,11 @@ class _PodcastHostBodySection extends ConsumerWidget {
         );
       },
       loading: () => Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text('Host'.tr())),
         body: const SkeletonList(imageSize: 100),
       ),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text('Host'.tr())),
         body: BenaiahStateView.error(
           error: error,
           onRetry: () => ref.invalidate(podcastListProvider),

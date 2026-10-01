@@ -16,14 +16,14 @@ class _PodcastDetailHostsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             Text(
               episode.hosts.length > 1 ? 'Hosts'.tr() : 'Host'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             ...episode.hosts.map((host) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),

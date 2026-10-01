@@ -20,7 +20,7 @@ class _PodcastDetailBodySection extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
 
     return SliverPadding(
-      padding: AppLayout.readingInsets(context).copyWith(top: 24, bottom: 24),
+      padding: AppLayout.readingInsets(context).copyWith(top: 16),
       sliver: SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,12 +29,12 @@ class _PodcastDetailBodySection extends ConsumerWidget {
             // metadata rather than a badge above it.
             Text(
               episode.title,
-              style: theme.textTheme.headlineMedium?.copyWith(
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                height: 1.2,
+                height: 1.25,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               [
                 if (episode.category.isNotEmpty) episode.category.tr(),
@@ -61,7 +61,7 @@ class _PodcastDetailBodySection extends ConsumerWidget {
               ),
               style: theme.textTheme.bodyMedium?.copyWith(color: muted),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Builder(
               builder: (context) {
                 final (currentId, playing) = ref.watch(
@@ -97,18 +97,18 @@ class _PodcastDetailBodySection extends ConsumerWidget {
                 );
               },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             const Divider(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             Text(
               'Episode Description'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
+            // The markdown's last paragraph already ends in 16px of space.
             BenaiahMarkdown(data: episode.description),
-            const SizedBox(height: 32),
             const Divider(),
           ],
         ),

@@ -149,8 +149,17 @@ class _TopicDetailBodySection extends ConsumerWidget {
                   ),
                   bottom: PreferredSize(
                     preferredSize: const Size.fromHeight(_tabBarHeight),
+                    // Rounded on top like the player sheet, so the artwork
+                    // shows around its corners while the header is open.
+                    // Collapsed, the bar behind is the same color and the
+                    // corners disappear.
                     child: Material(
                       color: scheme.surfaceContainer,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(28),
+                        ),
+                      ),
                       // The selected tab is a filled pill in the same colors
                       // as a selected podcast category chip, so the app has
                       // one look for "this one is chosen".
