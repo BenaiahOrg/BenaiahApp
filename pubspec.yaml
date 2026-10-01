@@ -58,8 +58,14 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icons/app_icon_white.png"
+  # The App Store rejects icons with transparency, so iOS gets the same mark
+  # already flattened onto black, the color iOS showed behind it before.
+  image_path_ios: "assets/icons/app_icon_ios.png"
+  remove_alpha_ios: true
   adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/icons/app_icon_white.png"
+  # Android masks adaptive icons to the middle 66dp of a 108dp layer, so the
+  # foreground carries the same mark scaled to fit inside that safe zone.
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
 
 flavorizr:
   flavors:
