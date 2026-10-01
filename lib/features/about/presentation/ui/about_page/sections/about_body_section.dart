@@ -38,12 +38,12 @@ class _AboutBodySection extends StatelessWidget {
           ),
           _buildParagraph(
             context,
-            'We have been at work for 4 months and produced so much content that you are completely free to take, share and spread along with us. You can find us on all major platforms, in both English and Amharic.'
+            'We have been at work for over a year and produced so much content that you are completely free to take, share and spread along with us. You can find us on all major platforms, in both English and Amharic.'
                 .tr(),
           ),
           const SizedBox(height: 16),
           Text(
-            'It is our prayer, that this blessed you and comforts your soul in more ways than imaginable.'
+            'It is our prayer that this blesses you and comforts your soul in more ways than imaginable.'
                 .tr(),
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontStyle: FontStyle.italic,
