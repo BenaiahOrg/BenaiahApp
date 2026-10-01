@@ -6,6 +6,7 @@ import 'package:benaiah_app/core/theme/app_layout.dart';
 import 'package:benaiah_app/features/content/presentation/ui/search/content_search_delegate.dart';
 import 'package:benaiah_app/features/podcast/presentation/ui/search/podcast_search_delegate.dart';
 import 'package:benaiah_app/features/podcast/presentation/ui/widgets/floating_podcast_player.dart';
+import 'package:benaiah_app/gen/assets.gen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

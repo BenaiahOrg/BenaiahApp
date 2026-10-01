@@ -14,12 +14,16 @@ class _MainTopSection extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       centerTitle: false,
       title: isBenaiahHeader
-          ? Text(
-              'BENAIAH'.tr(),
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2,
-              ),
+          ? Image.asset(
+              theme.brightness == Brightness.dark
+                  ? Assets.images.wordmarkWhite.path
+                  : Assets.images.wordmarkBlack.path,
+              height: _wordmarkHeight,
+              // Decoded at the size it is drawn, not the 1272px source.
+              cacheHeight:
+                  (_wordmarkHeight * MediaQuery.devicePixelRatioOf(context))
+                      .round(),
+              semanticLabel: 'Benaiah'.tr(),
             )
           : Text(
               _getTitle(location).tr(),
@@ -57,6 +61,8 @@ class _MainTopSection extends ConsumerWidget implements PreferredSizeWidget {
       ],
     );
   }
+
+  static const _wordmarkHeight = 32.0;
 
   String _getTitle(String location) {
     if (location == RouteNames.settings) return 'Settings';

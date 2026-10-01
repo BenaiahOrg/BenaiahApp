@@ -3,6 +3,9 @@ part of '../topic_detail_page.dart';
 class _TopicDetailBodySection extends ConsumerWidget {
   const _TopicDetailBodySection({required this.topicId});
 
+  /// 44px pills plus 6px above and below.
+  static const _tabBarHeight = 56.0;
+
   final String topicId;
 
   // Nothing is pre-fetched here. A linkified article can cite ~20 passages,
@@ -17,6 +20,8 @@ class _TopicDetailBodySection extends ConsumerWidget {
     return topicAsync.when(
       data: (topic) {
         final imageUrl = topic.graphics.data.firstOrNull ?? '';
+        final theme = Theme.of(context);
+        final scheme = theme.colorScheme;
 
         return NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -37,7 +42,9 @@ class _TopicDetailBodySection extends ConsumerWidget {
                     builder: (context, constraints) {
                       final mediaQuery = MediaQuery.of(context);
                       final minHeight =
-                          kToolbarHeight + mediaQuery.padding.top + 48.0;
+                          kToolbarHeight +
+                          mediaQuery.padding.top +
+                          _tabBarHeight;
                       const maxHeight = 300.0;
                       final delta = maxHeight - minHeight;
                       final currentHeight = constraints.biggest.height;
@@ -62,7 +69,8 @@ class _TopicDetailBodySection extends ConsumerWidget {
                           centerTitle: false,
                           titlePadding: EdgeInsetsDirectional.only(
                             start: 24.0 + (48.0 * (1.0 - t)),
-                            bottom: 60.0 + (4.0 * t),
+                            // Clear of the tab bar pinned below the title.
+                            bottom: _tabBarHeight + 12 + (4.0 * t),
                             end: 24,
                           ),
                           title: Hero(
@@ -140,20 +148,40 @@ class _TopicDetailBodySection extends ConsumerWidget {
                     },
                   ),
                   bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(48),
+                    preferredSize: const Size.fromHeight(_tabBarHeight),
                     child: Material(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      color: scheme.surfaceContainer,
+                      // The selected tab is a filled pill in the same colors
+                      // as a selected podcast category chip, so the app has
+                      // one look for "this one is chosen".
                       child: TabBar(
-                        labelColor: Theme.of(context).colorScheme.primary,
-                        unselectedLabelColor: Theme.of(
-                          context,
-                        ).colorScheme.onSurfaceVariant,
-                        indicatorColor: Theme.of(context).colorScheme.primary,
-                        indicatorWeight: 3,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        labelColor: scheme.onPrimary,
+                        unselectedLabelColor: scheme.onSurfaceVariant,
+                        labelStyle: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        unselectedLabelStyle: theme.textTheme.titleSmall,
+                        indicator: ShapeDecoration(
+                          color: scheme.primary,
+                          shape: const StadiumBorder(),
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicatorPadding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                        ),
+                        dividerColor: Colors.transparent,
+                        splashBorderRadius: BorderRadius.circular(22),
                         tabs: [
-                          Tab(text: 'Devotional'.tr()),
-                          Tab(text: 'Study'.tr()),
-                          Tab(text: 'Graphics'.tr()),
+                          for (final label in [
+                            'Devotional',
+                            'Study',
+                            'Graphics',
+                          ])
+                            Tab(text: label.tr(), height: 44),
                         ],
                       ),
                     ),
@@ -237,13 +265,13 @@ class _TopicDetailSkeleton extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // The three tab pills.
                   Row(
+                    spacing: 8,
                     children: [
-                      ShimmerBox(width: 90, height: 32, borderRadius: 16),
-                      SizedBox(width: 12),
-                      ShimmerBox(width: 90, height: 32, borderRadius: 16),
-                      SizedBox(width: 12),
-                      ShimmerBox(width: 90, height: 32, borderRadius: 16),
+                      Expanded(child: ShimmerBox(height: 44, borderRadius: 22)),
+                      Expanded(child: ShimmerBox(height: 44, borderRadius: 22)),
+                      Expanded(child: ShimmerBox(height: 44, borderRadius: 22)),
                     ],
                   ),
                   SizedBox(height: 20),
